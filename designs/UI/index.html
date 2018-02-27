@@ -10,25 +10,27 @@
     <title>Business - weConnect</title>
 
     <!--======== All Stylesheet =========-->
-
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <!-- custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <header>
-        <div>
-            <div>
+    <header id="home">
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
                 <!-- menu-1 -->
-                <nav>
-                    <a href="index.html">CosmasDesigns</a>
-                    <button type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span></span>
+                <nav class="navbar fixed-top navbar-expand-lg we-menu navbar-light ">
+                    <a class="navbar-brand we-logo" href="index.html">WeConnect</a>
+                    <button class="navbar-toggler we-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
                     </button>
 
-                    <div id="navbarSupportedContent">
-                        <ul>
-                            <li><a href="index.html">Home<span class="sr-only">(current)</span></a></li>
-                            <li><a href="our-causes.html">Our Causes</a></li>
-                            <li><a href="index.html">Sign Up</a></li>
-                            <li><a href="sign-in.html">Login</a></li>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item"><a class="nav-link" href="index.html">Home<span class="sr-only">(current)</span></a></li>
+                            <li class="nav-item"><a class="nav-link" href="index.html">Sign Up</a></li>
+                            <li class="nav-item"><a class="nav-link" href="sign-in.html">Login</a></li>
                         </ul>
                     </div>
                 </nav>
@@ -37,50 +39,55 @@
     </header>
     <!--======== end header =========-->
 
-    <!--======== landing page main content =========-->
-    <main>
-        <div>
-            <div>
-                <div>
-                    <div>
-                        <h1>WeConnect</h1>
-                        <p>
-                            Connect with a vibrant, International business network by sign-up in
-                            <i>WeConnect</i> today for <strong>FREE</strong>!!!
-                        </p>
-                    </div>
-                    <div>
-                        <h1>Resources</h1>
-                        <p>
-                            Find <strong>Resources</strong> and other key assets you may need
-                            to grow your <i>business</i>.
-                        </p>
-                    </div>
-                    <div>
-                        <h1>Business Search</h1>
-                        <p>
-                            Search our directory of 993 registered business with 200 unique
-                            locations through out <strong>Kenya</strong>.
-                        </p>
+    <!--======== landing page content =========-->
+    <main class="main-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <h1>WeConnect</h1>
+                            <p class="landing-content">
+                                Connect with a vibrant, International business network by sign-up in
+                                <i>WeConnect</i> today for <strong>FREE</strong>!!!
+                            </p>
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <h1>Resources</h1>
+                            <p class="landing-content">
+                                Find <strong>Resources</strong> and other key assets you may need
+                                to grow your <i>business</i>.
+                            </p>
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <h1>Business Search</h1>
+                            <p class="landing-content">
+                                Search our directory of 993 registered business with 200 unique
+                                locations through out <strong>Kenya</strong>.
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <div>
+                <div class="col-md-4 col-sm-12 col-xs-12 offset-md-4">
                     <div>
-                        <h2>Sign up to use our services</h2>
+                        <h2>Sign up to register a business</h2>
                         <form>
-                            <div>
-                                <input type="email" id="email" name="email" placeholder="Email Address">
+                            <div class="form-input-division">
+                                <input type="email" id="email" name="email" class="input-default form-text-input" placeholder="Email Address">
                             </div>
-                            <div>
-                                <input type="password" id="password" name="password" placeholder="Password">
+                            <div class="form-input-division">
+                                <input type="text" id="username" name="username" class="input-default form-text-input" placeholder="Username">
                             </div>
-                            <div>
-                                <input type="password" id="confirm_pwd" name="confirm_pwd" placeholder="Confirm password">
+                            <div class="form-input-division">
+                                <input type="password" id="password" name="password" class="input-default form-text-input" placeholder="Password">
                             </div>
-                            <div>
-                                <button type="submit" class="btn btn-primary">Sign Up</button>
+                            <div class="form-input-division">
+                                <input type="password" id="confirm_pwd" name="confirm_pwd" class="input-default form-text-input" placeholder="Confirm password">
                             </div>
-                            <div>
+                            <div class="form-input-division">
+                                <button type="submit" class="btn btn-primary input-default form-btn">Sign Up</button>
+                            </div>
+                            <div class="form-input-division">
                                 <a href="sign-in.html">You have an account?</a>
                             </div>
                         </form>
@@ -92,14 +99,17 @@
     <!--======== landing page content end =========-->
 
     <!-- Footer -->
-    <footer>
-        <div>
-            <h5>2017 CosmaDesigns</h5>
+    <footer class="fixed-bottom main-footer">
+        <div class="container-fluid">
+            <h5>2018 WeConnect</h5>
         </div>
     </footer>
     <!-- Footer Ends-->
 
-    <!-- JavaScript links -->
-
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
 </body>
 </html>
