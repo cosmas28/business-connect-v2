@@ -15,15 +15,7 @@ on how to deploy the project on a live system.
 What things you need to install the software and how to install them
 
 ```
-* Chrome
-```
-
-### Installing
-
-```
-* Download chrome from [Google](https://www.google.com/chrome/?brand=CHBD&gclid=CjwKCAiAoNTUBRBUEiwAWje2lph6kDCqwaaYv20BRpvpyTPd2peAb1cGfDhYQnoulimJJ35GWBRhexoCVgMQAvD_BwE) - Where you can download chrome
-* It will start automatic installation
-* Follow the installation wizard and fill in the required information
+* Chrome or any other browser
 ```
 
 ## Running ui templates
