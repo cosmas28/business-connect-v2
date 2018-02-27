@@ -81,6 +81,9 @@ body {
     background-color: #9fcdff;
     color: white;
 }
+.main-login-page {
+    margin: 0 300px 0 300px;
+}
 .landing-content {
     font-weight: 500;
     font-size: 20px;
