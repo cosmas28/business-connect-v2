@@ -1,6 +1,12 @@
 body {
     overflow-x: hidden;
 }
+#body-wrapper {
+    max-width: 100%;
+    padding-top: 0;
+    margin-top: 0;
+}
+
 /* Navigation bar */
 .navbar.we-menu {
     border-radius: 0;
@@ -9,6 +15,9 @@ body {
     min-height: 70px;
     background-color: transparent;
     border-bottom: 0px solid #000000;
+}
+.account-menu {
+    background-color: #00A6FF;
 }
 .navbar-brand.we-logo {
     font-family: "Playball",cursive;
@@ -56,6 +65,7 @@ body {
     background-color: transparent;
     color: deepskyblue;
 }
+
 /* Main content */
 .service-overflow,
 .main-content {
@@ -91,7 +101,7 @@ body {
 }
 .form-input-division {
     width: 100%;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
 }
 .input-default {
     width: 100%;
@@ -124,6 +134,43 @@ body {
 }
 .form-input-division > a:hover {
     color: deepskyblue;
+}
+/* user account */
+.account-menu {
+    background-color: #00A6FF;
+}
+.navbar.account-menu .navbar-nav > li > a {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 20px !important;
+    font-family: "Raleway", sans-serif;
+    letter-spacing: 0.3px;
+    padding: 15px 20px;
+    color: white;
+    text-transform: capitalize;
+}
+.main-body {
+    padding: 100px 100px 100px 100px;
+    max-width: 100%;
+    background: #FFFFFF;
+    background-attachment: inherit;
+    position: inherit;
+}
+.account-title {
+    border-bottom: 3px solid #9fcdff;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    color: #00A6FF;
+    font-weight: 600;
+}
+.register-form-input {
+    width: 100%;
+    padding: 10px 10px;
+    border-bottom: 2px solid #00A6FF;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
 }
 /* footer */
 .main-footer {
