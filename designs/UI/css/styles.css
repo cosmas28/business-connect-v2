@@ -1,3 +1,6 @@
+body {
+    overflow-x: hidden;
+}
 /* Navigation bar */
 .navbar.we-menu {
     border-radius: 0;
