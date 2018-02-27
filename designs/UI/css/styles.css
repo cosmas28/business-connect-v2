@@ -101,6 +101,7 @@ body {
 }
 .form-input-division {
     width: 100%;
+    padding-top: 5px;
     padding-bottom: 20px;
 }
 .input-default {
@@ -134,6 +135,33 @@ body {
 }
 .form-input-division > a:hover {
     color: deepskyblue;
+}
+.main-view-page {
+    margin: 0 200px 0 200px;
+}
+.business-view {
+    padding-top: 10px;
+    border-bottom: 2px solid #218838;
+}
+.view-left-side {
+    padding: 10px 20px 10px 0;
+}
+.view-right-side {
+    padding: 10px 0 10px 0;
+    margin-left: 0;
+}
+.view-right-side > h3 {
+    color: #77D353;
+}
+.view-right-side > h4 {
+    color: #47525E;
+}
+.view-right-side > p {
+    color: #47525E;
+}
+.view-image {
+    max-width: 100%;
+    max-height: 100%;
 }
 /* user account */
 .account-menu {
