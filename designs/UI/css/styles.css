@@ -200,6 +200,9 @@ body {
     border-left: 0;
     border-right: 0;
 }
+.business-view .single-business {
+    border-bottom: none;
+}
 /* footer */
 .main-footer {
     padding: 30px;
