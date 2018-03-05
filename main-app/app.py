@@ -1,6 +1,11 @@
 from flask import Flask
 
+
+from resources.business import business_api
+
+
 app = Flask(__name__)
+app.register_blueprint(business_api, url_prefix='/api/v1')
 
 
 @app.route('/')
