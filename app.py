@@ -1,7 +1,7 @@
 from flask import Flask
 
 
-from resources.business import business_api
+from src.resources.business import business_api
 
 
 app = Flask(__name__)

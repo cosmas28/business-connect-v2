@@ -1,6 +1,0 @@
-#####Register business#######
-get business id, name, location, category, owner
-    add the record into a business list
-        if the record was added successfully
-            return true
-        else return false

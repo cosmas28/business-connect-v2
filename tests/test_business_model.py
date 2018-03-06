@@ -1,6 +1,6 @@
 import unittest
 
-from models.business import Business
+from src.models.business import Business
 
 
 class CreateBusinessTest(unittest.TestCase):

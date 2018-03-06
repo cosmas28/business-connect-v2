@@ -1,4 +1,0 @@
-sudo: enabled
-
-language: python
-  - 3.6.3
