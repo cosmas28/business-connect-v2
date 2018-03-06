@@ -66,3 +66,15 @@ class Business(object):
             result_list.append(single_record[key])
 
         return {"value_list": result_list, "message": success_message}
+
+    def view_all_businesses(self):
+        """View all registered businesses.
+
+                Returns:
+                    A a dictionary of the registered businesses.
+
+                """
+        if len(self.business_records) == 0:
+            return "There is no registered business!"
+        else:
+            return self.business_records
