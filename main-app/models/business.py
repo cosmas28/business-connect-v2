@@ -6,12 +6,13 @@ view registered businesses.
 
 """
 
-class Business:
+
+class Business(object):
 
     """Illustrate methods to manipulate business data.
 
     Attributes:
-        b_records (dict): A dictionary that store the registered business records.
+        business_records (dict): A dictionary that store the registered business records.
 
     """
 
