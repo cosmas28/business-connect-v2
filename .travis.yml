@@ -1,13 +1,9 @@
 language: python
- - "3.6.3"
+ - "3.6"
 install:
  - pip install -r requirements.txt
- - pip install python-coveralls
-env:
- - DB=postgresql
 script:
- - nosetests --with-coverage --cover-package=src
- - coveralls
+ - nosetests --with-coverage --cover-package=main-app && coveralls
 after_success:
 - coveralls
 notifications:
