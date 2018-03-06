@@ -1,2 +1,4 @@
-.idea/
-main-app/
+*.pyc
+*.xml
+.idea
+
