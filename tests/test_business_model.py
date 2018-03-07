@@ -73,7 +73,7 @@ class ViewBusinessTest(unittest.TestCase):
 
         self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
         self.assertEqual(
-            self.business.view_business_by_id(), {'owner': 'Cosmas', 'name': "Cosma Tech", 'location': 'Nairobi',
+            self.business.view_business_by_id(1), {'owner': 'Cosmas', 'name': "Cosma Tech", 'location': 'Nairobi',
                                                  'category': 'Technology', 'summary': 'Masters of ecommerce'}
         )
 
