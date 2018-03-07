@@ -4,23 +4,9 @@ from flask.ext.restful import (Resource, Api, reqparse, fields, marshal)
 
 from src.models.business import Business
 
-business_info = {}
-business_info['id'] = {}
-business_info['id']['owner'] = fields.String
-business_info['id']['name'] = fields.String
-business_info['id']['category'] = fields.String
-business_info['id']['location'] = fields.String
-business_info['id']['summary'] = fields.String
-
-business_fields = {
-    'owner': fields.String,
-    'name': fields.String,
-    'category': fields.String,
-    'location': fields.String,
-    'summary': fields.String
-}
 
 business = Business()
+
 
 class BusinessRecord(Resource):
 
@@ -69,12 +55,12 @@ class BusinessRecord(Resource):
         """View all registered businesses.
 
         Returns:
-            A json records of the registered businesses.
+            A json format records of the registered businesses.
 
         """
 
         business_dict = business.view_all_businesses()
-        return json.dumps(marshal(business_dict, business_info)), 200
+        return business_dict, 200
 
 
 class OneBusinessRecord(Resource):
@@ -94,12 +80,11 @@ class OneBusinessRecord(Resource):
 
         """
         response = business.view_business_by_id(business_id)
-        print("This is the response", response)
 
         if response.get("message") == "There is no registered business!":
             return "Business does not exist", abort(404)
 
-        return marshal(response, business_fields), 200
+        return response, 200
 
 
 business_api = Blueprint('resources.business', __name__)
