@@ -1,4 +1,4 @@
-from flask import jsonify, json, Blueprint, abort
+from flask import jsonify, json, Blueprint, abort, request
 
 from flask.ext.restful import (Resource, Api, reqparse, fields, marshal)
 
@@ -20,6 +20,7 @@ business_fields = {
     'summary': fields.String
 }
 
+business = Business()
 
 class BusinessRecord(Resource):
 
@@ -52,10 +53,16 @@ class BusinessRecord(Resource):
                                    location=['form', 'json'])
 
     def post(self):
-        business = Business()
-        args = self.reqparse.parse_args()
-        save_result = business.create_business(int(args['business_id']), args['business_owner'], args['business_name'],
-                                               args['business_category'], args['business_location'], args['business_summary'])
+        req_data = request.get_json()
+        business_id = req_data['business_id']
+        business_owner = req_data['business_owner']
+        business_name = req_data['business_name']
+        business_category = req_data['business_category']
+        business_location = req_data['business_location']
+        business_summary = req_data['business_summary']
+
+        save_result = business.create_business(business_id, business_owner, business_name, business_category,
+                                               business_location, business_summary)
         return save_result["message"], 201
 
     def get(self):
@@ -66,7 +73,6 @@ class BusinessRecord(Resource):
 
         """
 
-        business = Business()
         business_dict = business.view_all_businesses()
         return json.dumps(marshal(business_dict, business_info)), 200
 
@@ -79,8 +85,6 @@ class OneBusinessRecord(Resource):
            business (class): A class that implement business related methods.
 
        """
-    def __init__(self):
-        self.business = Business()
 
     def get(self, business_id):
         """View a registered business by id.
@@ -89,9 +93,10 @@ class OneBusinessRecord(Resource):
             A json record of the registered business.
 
         """
-        response = self.business.view_business_by_id(business_id)
+        response = business.view_business_by_id(business_id)
+        print("This is the response", response)
 
-        if response["message"] == "There is no registered business!":
+        if response.get("message") == "There is no registered business!":
             return "Business does not exist", abort(404)
 
         return marshal(response, business_fields), 200
