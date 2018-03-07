@@ -1,8 +1,16 @@
-from flask import jsonify, Blueprint
+from flask import jsonify, json, Blueprint
 
-from flask.ext.restful import (Resource, Api, reqparse)
+from flask.ext.restful import (Resource, Api, reqparse, fields, marshal)
 
 from src.models.business import Business
+
+business_info = {}
+business_info['id'] = {}
+business_info['id']['owner'] = fields.String
+business_info['id']['name'] = fields.String
+business_info['id']['category'] = fields.String
+business_info['id']['location'] = fields.String
+business_info['id']['summary'] = fields.String
 
 
 class BusinessRecord(Resource):
@@ -41,6 +49,18 @@ class BusinessRecord(Resource):
         save_result = business.create_business(int(args['business_id']), args['business_owner'], args['business_name'],
                                                args['business_category'], args['business_location'], args['business_summary'])
         return save_result["message"], 201
+
+    def get(self):
+        """View all registered businesses.
+
+        Returns:
+            A json records of the registered businesses.
+
+        """
+
+        business = Business()
+        business_dict = business.view_all_businesses()
+        return json.dumps(marshal(business_dict, business_info)), 200
 
 
 business_api = Blueprint('resources.business', __name__)
