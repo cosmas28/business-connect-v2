@@ -73,8 +73,20 @@ class Business(object):
                 Returns:
                     A a dictionary of the registered businesses.
 
-                """
+        """
         if len(self.business_records) == 0:
             return "There is no registered business!"
         else:
             return self.business_records
+
+    def view_business_by_id(self, business_id):
+        """View a registered businesses using an id.
+
+                       Returns:
+                           A a dictionary of the registered businesses.
+
+        """
+        if business_id not in self.business_records:
+            raise KeyError("Business does not exist")
+
+        return self.business_records[business_id]

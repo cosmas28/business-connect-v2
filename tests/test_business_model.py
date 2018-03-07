@@ -111,7 +111,8 @@ class ViewBusinessTest(unittest.TestCase):
         self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
         self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
         self.business.create_business(3, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
-        self.assertRaises(KeyError, self.business.view_business_by_id, 4)
+        with self.assertRaises(KeyError):
+            self.business.view_business_by_id(4)
 
     def test_non_existed_business_category_print_not_found(self):
         """Test whether a not found message will be returned if no business is located in the given location."""
