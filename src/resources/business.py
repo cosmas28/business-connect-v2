@@ -1,4 +1,4 @@
-from flask import jsonify, json, Blueprint
+from flask import jsonify, json, Blueprint, abort
 
 from flask.ext.restful import (Resource, Api, reqparse, fields, marshal)
 
@@ -11,6 +11,14 @@ business_info['id']['name'] = fields.String
 business_info['id']['category'] = fields.String
 business_info['id']['location'] = fields.String
 business_info['id']['summary'] = fields.String
+
+business_fields = {
+    'owner': fields.String,
+    'name': fields.String,
+    'category': fields.String,
+    'location': fields.String,
+    'summary': fields.String
+}
 
 
 class BusinessRecord(Resource):
@@ -63,10 +71,41 @@ class BusinessRecord(Resource):
         return json.dumps(marshal(business_dict, business_info)), 200
 
 
+class OneBusinessRecord(Resource):
+
+    """Illustrate API endpoints to manipulate business data.
+
+       Attributes:
+           business (class): A class that implement business related methods.
+
+       """
+    def __init__(self):
+        self.business = Business()
+
+    def get(self, business_id):
+        """View a registered business by id.
+
+        Returns:
+            A json record of the registered business.
+
+        """
+        response = self.business.view_business_by_id(business_id)
+
+        if response["message"] == "There is no registered business!":
+            return "Business does not exist", abort(404)
+
+        return marshal(response, business_fields), 200
+
+
 business_api = Blueprint('resources.business', __name__)
 api = Api(business_api)
 api.add_resource(
     BusinessRecord,
     '/business',
     endpoint='business'
+)
+api.add_resource(
+    OneBusinessRecord,
+    '/businesses/<int:business_id>',
+    endpoint='businesses'
 )
