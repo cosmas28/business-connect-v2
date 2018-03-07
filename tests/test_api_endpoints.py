@@ -35,6 +35,12 @@ class TestBusinessEndpointsTestCase(unittest.TestCase):
         response = self.run_app.get('/api/v1/business')
         self.assertEqual(response.status_code, 200)
 
+    def test_view_businesses_by_id_endpoint(self):
+        """Test whether providing business id to a get request to business API endpoint has succeeded."""
+
+        response = self.run_app.get('/api/v1/business/1')
+        self.assertEqual(response.status_code, 200)
+
 
 if __name__ == '__main__':
     unittest.main()
