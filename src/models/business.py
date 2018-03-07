@@ -86,7 +86,12 @@ class Business(object):
                            A a dictionary of the registered businesses.
 
         """
+        result_message = ""
         if business_id not in self.business_records:
-            raise KeyError("Business does not exist")
+            result_message += "Business does not exist"
 
-        return self.business_records[business_id]
+        if len(result_message) > 0:
+            return {"message": result_message}
+        elif len(result_message) == 0:
+            single_record = self.business_records[business_id]
+            return single_record
