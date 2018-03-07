@@ -38,7 +38,7 @@ class Business(object):
             ValueError: if business id a negative number.
 
         """
-        user_data = {
+        business_data = {
             'owner': b_owner,
             'name': b_name,
             'location': b_location,
@@ -55,7 +55,7 @@ class Business(object):
         elif b_id in self.business_records:
             raise KeyError("The business id already exists")
         else:
-            self.business_records[b_id] = user_data
+            self.business_records[b_id] = business_data
 
         if b_id in self.business_records:
             success_message += "The business is successfully registered!!!"
