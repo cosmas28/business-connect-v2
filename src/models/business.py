@@ -89,6 +89,7 @@ class Business(object):
         result_message = ""
         if business_id not in self.business_records:
             result_message += "Business does not exist"
+            raise KeyError("Key does not exist")
 
         if len(result_message) > 0:
             return {"message": result_message}
