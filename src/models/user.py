@@ -62,6 +62,13 @@ class User(object):
 
         return response
 
+    def is_user_logged_in(self, username):
+        is_logged_in = False
+        if username in self.user_persistent:
+            is_logged_in = True
+
+        return is_logged_in
+
     def login_user(self, username, password):
         """Login a user.
 
@@ -94,10 +101,12 @@ class User(object):
             response += "Both username and password is required!"
         elif not username_exist:
             response += "The username does not exist"
+        elif self.is_user_logged_in(username):
+            response += "You are already logged in!"
         elif not valid_password:
             response += "The password is invalid!"
         else:
             self.user_persistent[username] = password
             response += "Successful login"
-        print(self.user_persistent)
+
         return response
