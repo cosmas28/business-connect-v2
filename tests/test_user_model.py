@@ -110,5 +110,17 @@ class UserLoginTest(AbstractTest):
         test_response = self.user.logout_user("cosmas28")
         self.assertEqual(test_response, "You are already logged out.Please login!")
 
+    def test_user_can_reset_password(self):
+        """Test user can reset their passwords."""
+
+        test_response = self.user.reset_password("cosmas28", "newpassword")
+        self.assertEqual(test_response, "Successful reset password. Login with new password!")
+
+    def test_reset_password_with_wrong_username(self):
+        """Test user can reset their passwords."""
+
+        test_response = self.user.reset_password("cosmas", "newpassword")
+        self.assertEqual(test_response, "Invalid username!")
+
 if __name__ == '__main__':
     unittest.main()
