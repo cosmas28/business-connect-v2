@@ -8,7 +8,7 @@ are expected from business model.
 
 import unittest
 
-from src.models.business import Business
+from app.models.business import Business
 
 
 class CreateBusinessTest(unittest.TestCase):

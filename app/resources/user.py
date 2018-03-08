@@ -8,7 +8,7 @@ from flask import Blueprint,  request
 
 from flask.ext.restful import (Resource, Api, reqparse)
 
-from src.models.user import User
+from app.models.user import User
 
 user = User()
 

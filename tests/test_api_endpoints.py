@@ -10,7 +10,7 @@ import unittest
 from flask import json
 
 from app import app
-from src.models.business import Business
+from app.models.business import Business
 
 
 class TestBusinessEndpointsTestCase(unittest.TestCase):

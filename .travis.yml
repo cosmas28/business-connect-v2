@@ -4,7 +4,7 @@ python:
 install:
  - pip install -r requirements.txt
 script:
- - nosetests --with-coverage --cover-package=src && coveralls
+ - nosetests --with-coverage --cover-package=app && coveralls
 after_success:
 - coveralls
 notifications:
