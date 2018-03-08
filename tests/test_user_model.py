@@ -102,5 +102,13 @@ class UserLoginTest(AbstractTest):
         test_response = self.user.logout_user("cosmas28")
         self.assertEqual(test_response, "Logged out successfully!")
 
+    def test_user_already_logged_out(self):
+        """Test user cannot log out twice."""
+
+        self.user.login_user("cosmas28", "password123")
+        self.user.logout_user("cosmas28")
+        test_response = self.user.logout_user("cosmas28")
+        self.assertEqual(test_response, "You are already logged out.Please login!")
+
 if __name__ == '__main__':
     unittest.main()

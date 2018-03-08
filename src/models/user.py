@@ -132,8 +132,10 @@ class User(object):
         """
 
         response = ""
-        del self.user_persistent[username]
         if username not in self.user_persistent:
+            response += "You are already logged out.Please login!"
+        elif username in self.user_persistent:
+            del self.user_persistent[username]
             response += "Logged out successfully!"
 
         return response
