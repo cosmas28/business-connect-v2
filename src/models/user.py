@@ -19,6 +19,24 @@ class User(object):
         self.registered_users = []
         self.user_persistent = {}
 
+    def username_exist(self, username):
+        """Check is a username exist.
+
+        Args:
+            username (str): username parameter should be unique to identify each user.
+
+        Returns:
+           boolean value
+
+        """
+        global username_exist
+        username_exist = False
+        for user in self.registered_users:
+            if user["username"] == username:
+                username_exist = True
+
+        return username_exist
+
     def register_user(self, username, password, confirm_password):
         """Register a new user.
 
@@ -38,13 +56,13 @@ class User(object):
             'password': password,
         }
         response = ""
-        global username_exist
-        username_exist = False
-        for user in self.registered_users:
-            if user["username"] == username:
-                username_exist = True
+        # global username_exist
+        # username_exist = False
+        # for user in self.registered_users:
+        #     if user["username"] == username:
+        #         username_exist = True
 
-        if username_exist:
+        if self.username_exist(username):
             response += "The username already exist"
         elif len(username) == 0 and len(password) == 0:
             response += "Username and password is required!"
@@ -92,11 +110,11 @@ class User(object):
 
         response = ""
 
-        global username_exist
-        username_exist = False
-        for user in self.registered_users:
-            if user["username"] == username:
-                username_exist = True
+        # global username_exist
+        # username_exist = False
+        # for user in self.registered_users:
+        #     if user["username"] == username:
+        #         username_exist = True
 
         global valid_password
         valid_password = False
@@ -108,7 +126,7 @@ class User(object):
             response += "Username and password is required!"
         elif len(username) == 0 or len(password) == 0:
             response += "Both username and password is required!"
-        elif not username_exist:
+        elif not self.username_exist(username):
             response += "The username does not exist"
         elif self.is_user_logged_in(username):
             response += "You are already logged in!"
@@ -137,5 +155,29 @@ class User(object):
         elif username in self.user_persistent:
             del self.user_persistent[username]
             response += "Logged out successfully!"
+
+        return response
+
+    def reset_password(self, username, password):
+        """Reset use password.
+
+        Args:
+            username (str): username parameter should be unique to identify each user.
+            password (str): password parameter should be at least 6 characters.
+
+        Returns:
+            Success message if the password was changed
+            Error message if the username does not exist
+
+        """
+
+        response = ""
+        if not self.username_exist(username):
+            response += "Invalid username!"
+        else:
+            for user in self.registered_users:
+                if user['username'] == username:
+                    user['password'] = password
+                    response += "Successful reset password. Login with new password!"
 
         return response
