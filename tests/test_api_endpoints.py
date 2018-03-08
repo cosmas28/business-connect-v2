@@ -69,6 +69,14 @@ class TestBusinessEndpointsTestCase(unittest.TestCase):
         response = self.run_app.post('/api/v1/register_user', data=json_data, headers=self.headers)
         self.assertEqual(response.status_code, 201)
 
+    def test_user_can_login(self):
+        """Test login user API endpoint can login a user with POST request."""
+        login_data = json.dumps({'username': 'cosmas', 'password': 'andela2018'})
+        json_data = json.dumps(self.user_data)
+        self.run_app.post('/api/v1/register_user', data=json_data, headers=self.headers)
+        response = self.run_app.post('/api/v1/login_user', data=login_data, headers=self.headers)
+        self.assertEqual(response.status_code, 200)
+
 
 if __name__ == '__main__':
     unittest.main()
