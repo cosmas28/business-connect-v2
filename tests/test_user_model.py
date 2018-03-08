@@ -12,6 +12,9 @@ from src.models.user import User
 
 
 class AbstractTest(unittest.TestCase):
+
+    """Illustrate test cases to test expected behavior of business registration functionality. """
+
     def setUp(self):
         """Instantiate the User class so that it can be reused by other test cases."""
 
