@@ -2,12 +2,9 @@ language: python
 python:
   - "3.6"
 install:
- - pip install -r requirements.txt
+ - "pip install -r requirements.txt"
+ - "pip install coveralls"
 script:
  - nosetests --with-coverage --cover-package=app && coveralls
 after_success:
 - coveralls
-notifications:
-  slack:
-    on_success: never
-    0n_failure: never
