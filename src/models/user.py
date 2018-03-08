@@ -44,12 +44,12 @@ class User(object):
 
         if username_exist:
             response += "The username already exist"
-        elif len(password) < 6:
-            response += "Password must be more that 6 characters!"
         elif len(username) == 0 and len(password) == 0:
             response += "Username and password is required!"
         elif len(username) == 0 or len(password) == 0:
             response += "Both username and password is requird!"
+        elif len(password) < 6:
+            response += "Password must be more that 6 characters!"
         else:
             self.registered_users.append(user_data)
 
