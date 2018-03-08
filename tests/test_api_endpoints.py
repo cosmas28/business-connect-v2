@@ -29,6 +29,10 @@ class TestBusinessEndpointsTestCase(unittest.TestCase):
             'business_location': 'Arusha',
             'business_summary': 'Internet of things is making the world a better place'
         }
+        self.user_data = {
+            'username': 'cosmas',
+            'password': 'andela2018'
+        }
         self.business.create_business(1, 'cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
         self.business.create_business(2, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
 
@@ -56,6 +60,13 @@ class TestBusinessEndpointsTestCase(unittest.TestCase):
 
         response = self.run_app.get('/api/v1/businesses/1')
         self.assertEqual(response.status_code, 200)
+
+    def test_user_can_register(self):
+        """Test registerUser API endpoint can register a new user with POST request."""
+
+        json_data = json.dumps(self.user_data)
+        response = self.run_app.post('/api/v1/register_user', data=json_data, headers=self.headers)
+        self.assertEqual(response.status_code, 201)
 
 
 if __name__ == '__main__':
