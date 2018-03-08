@@ -35,6 +35,11 @@ class RegisterUser(Resource):
                                    help="Password is required!",
                                    location=['form', 'json']
                                    )
+        self.reqparse.add_argument('confirm_password',
+                                   required=True,
+                                   help="Confirmation password is required!",
+                                   location=['form', 'json']
+                                   )
 
     def post(self):
         """Register a new business.
@@ -54,8 +59,9 @@ class RegisterUser(Resource):
         req_data = request.get_json()
         username = req_data["username"]
         password = req_data["password"]
+        confirm_password = req_data["confirm_password"]
 
-        save_response = user.register_user(username, password)
+        save_response = user.register_user(username, password, confirm_password)
 
         return save_response, 201
 

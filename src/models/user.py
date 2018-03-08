@@ -19,12 +19,13 @@ class User(object):
         self.registered_users = []
         self.user_persistent = {}
 
-    def register_user(self, username, password):
+    def register_user(self, username, password, confirm_password):
         """Register a new user.
 
         Args:
             username (str): username parameter should be unique to identify each user.
             password (str): password parameter should be at least 6 characters.
+            confirm_password (str): confirmation password parameter should match.
 
         Returns:
             A list of values of the registered username.
@@ -34,7 +35,7 @@ class User(object):
 
         user_data = {
             'username': username,
-            'password': password
+            'password': password,
         }
         response = ""
         global username_exist
@@ -47,10 +48,12 @@ class User(object):
             response += "The username already exist"
         elif len(username) == 0 and len(password) == 0:
             response += "Username and password is required!"
-        elif len(username) == 0 or len(password) == 0:
-            response += "Both username and password is requird!"
+        elif len(username) == 0 or len(confirm_password) == 0:
+            response += "Both username and password is required!"
         elif len(password) < 6:
             response += "Password must be more that 6 characters!"
+        elif password != confirm_password:
+            response += "The password does not match!"
         else:
             self.registered_users.append(user_data)
 

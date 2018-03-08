@@ -31,7 +31,8 @@ class TestBusinessEndpointsTestCase(unittest.TestCase):
         }
         self.user_data = {
             'username': 'cosmas',
-            'password': 'andela2018'
+            'password': 'andela2018',
+            'confirm_password': 'andela2018'
         }
         self.business.create_business(1, 'cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
         self.business.create_business(2, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
