@@ -72,8 +72,8 @@ class UserLoginTest(AbstractTest):
     def test_one_user_input_missing_when_login(self):
         """Test user input one login parameter."""
 
-        self.assertEqual(self.user.login_user("yoyo2018", ""), "Both username and password is requird!")
-        self.assertEqual(self.user.login_user("", "TIA2018"), "Both username and password is requird!")
+        self.assertEqual(self.user.login_user("yoyo2018", ""), "Both username and password is required!")
+        self.assertEqual(self.user.login_user("", "TIA2018"), "Both username and password is required!")
 
     def test_user_login_successfully(self):
         """Test can login successfully."""
