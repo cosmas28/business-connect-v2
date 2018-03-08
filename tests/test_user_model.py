@@ -88,6 +88,13 @@ class UserLoginTest(AbstractTest):
         test_response = self.user.login_user("cosmas28", "password123")
         self.assertEqual(test_response, "Successful login")
 
+    def test_user_already_logged_in(self):
+        """Test whether user is already logged in."""
+
+        self.user.login_user("cosmas28", "password123")
+        test_response = self.user.is_user_logged_in("cosmas28")
+        self.assertTrue(test_response)
+
 
 if __name__ == '__main__':
     unittest.main()
