@@ -59,4 +59,4 @@ GET `/api/v1/business` View all businesses
 GET `/api/v1/businesses/<int:business_id>` view business by using business ID
 
 ## Acknowledgements
-* Andela Kenya Recruitment for inspiration
+* Andela Kenya Recruitment team for inspiration
