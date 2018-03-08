@@ -95,6 +95,12 @@ class UserLoginTest(AbstractTest):
         test_response = self.user.is_user_logged_in("cosmas28")
         self.assertTrue(test_response)
 
+    def test_logout_user(self):
+        """Test whether user can log out."""
+
+        self.user.login_user("cosmas28", "password123")
+        test_response = self.user.logout_user("cosmas28")
+        self.assertEqual(test_response, "Logged out successfully!")
 
 if __name__ == '__main__':
     unittest.main()
