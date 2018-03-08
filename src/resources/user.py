@@ -4,7 +4,7 @@ This module provides API endpoints to register users, login users, and reset use
 
 """
 
-from flask import Blueprint, abort, request
+from flask import Blueprint,  request
 
 from flask.ext.restful import (Resource, Api, reqparse)
 
@@ -43,10 +43,6 @@ class RegisterUser(Resource):
 
     def post(self):
         """Register a new user.
-
-        Args:
-            username (str): username is a unique field to identify user.
-            password (str): secret word to authenticate users.
 
         Returns:
             A success message to indicate successful registration.

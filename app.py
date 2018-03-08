@@ -13,5 +13,6 @@ app.register_blueprint(user_api, url_prefix='/api/v1')
 def index():
     return "<h1>Hello, world</>"
 
+
 if __name__ == '__main__':
     app.run(debug=True)

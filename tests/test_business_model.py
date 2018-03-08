@@ -44,7 +44,7 @@ class CreateBusinessTest(unittest.TestCase):
 
         test_result = self.business.create_business(2, 'Bruce', 'Bruce Tech', 'Nairobi', 'Masoko', 'Womens wear')
         self.assertEqual(['Bruce', 'Bruce Tech', 'Nairobi', 'Masoko', 'Womens wear'], test_result["value_list"])
-        self.assertEqual("The business is successfully registered!!!", test_result["message"], msg="Fail to register")
+        self.assertEqual('The business is successfully registered!!!', test_result['message'], msg='Fail to register')
 
 
 class ViewBusinessTest(unittest.TestCase):
@@ -62,9 +62,9 @@ class ViewBusinessTest(unittest.TestCase):
         self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
         self.business.create_business(2, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
         self.assertEqual(
-            self.business.view_all_businesses(), {1: {'owner': 'Cosmas', 'name': "Cosma Tech", 'location': 'Nairobi',
+            self.business.view_all_businesses(), {1: {'owner': 'Cosmas', 'name': 'Cosma Tech', 'location': 'Nairobi',
                                                       'category': 'Technology', 'summary': 'Masters of ecommerce'},
-                                                  2: {'owner': 'Allan', 'name': "Allan Tech", 'location': 'Kitale',
+                                                  2: {'owner': 'Allan', 'name': 'Allan Tech', 'location': 'Kitale',
                                                       'category': 'Technology', 'summary': 'Cryptocurrency'}}
         )
 
@@ -73,7 +73,7 @@ class ViewBusinessTest(unittest.TestCase):
 
         self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
         self.assertEqual(
-            self.business.view_business_by_id(1), {'owner': 'Cosmas', 'name': "Cosma Tech", 'location': 'Nairobi',
+            self.business.view_business_by_id(1), {'owner': 'Cosmas', 'name': 'Cosma Tech', 'location': 'Nairobi',
                                                  'category': 'Technology', 'summary': 'Masters of ecommerce'}
         )
 
@@ -85,9 +85,9 @@ class ViewBusinessTest(unittest.TestCase):
         self.business.create_business(3, 'John', 'John Corporate', 'Kisumu', 'Fishing', 'Process fish')
         self.assertEqual(
             self.business.view_businesses_by_category(),
-                {1: {'owner': 'Cosmas', 'name': "Cosma Tech", 'location': 'Nairobi',
+                {1: {'owner': 'Cosmas', 'name': 'Cosma Tech', 'location': 'Nairobi',
                     'category': 'Technology', 'summary': 'Masters of ecommerce'},
-                  2: {'owner': 'Allan', 'name': "Allan Tech", 'location': 'Kitale',
+                  2: {'owner': 'Allan', 'name': 'Allan Tech', 'location': 'Kitale',
                       'category': 'Technology', 'summary': 'Cryptocurrency'}}
         )
 
@@ -99,9 +99,9 @@ class ViewBusinessTest(unittest.TestCase):
         self.business.create_business(3, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
         self.assertEqual(
             self.business.view_businesses_by_location(),
-            {2: {'owner': 'John', 'name': "John Corporate", 'location': 'Kitale',
+            {2: {'owner': 'John', 'name': 'John Corporate', 'location': 'Kitale',
                  'category': 'Fishing', 'summary': 'Process fish'},
-             3: {'owner': 'Allan', 'name': "Allan Tech", 'location': 'Kitale',
+             3: {'owner': 'Allan', 'name': 'Allan Tech', 'location': 'Kitale',
                  'category': 'Technology', 'summary': 'Cryptocurrency'}}
         )
 
@@ -120,7 +120,7 @@ class ViewBusinessTest(unittest.TestCase):
         self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
         self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
         self.business.create_business(3, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
-        self.assertEqual("Not found", self.business.view_business_by_category("Accounting"))
+        self.assertEqual('Not found', self.business.view_business_by_category('Accounting'))
 
     def test_non_existed_business_location_print_not_found(self):
         """Test whether a not found message will be returned if no business is related to the given category."""
@@ -128,7 +128,7 @@ class ViewBusinessTest(unittest.TestCase):
         self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
         self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
         self.business.create_business(3, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
-        self.assertEqual("Not found", self.business.view_business_by_location("Mombassa"))
+        self.assertEqual('Not found', self.business.view_business_by_location('Mombassa'))
 
 
 if __name__ == '__main__':

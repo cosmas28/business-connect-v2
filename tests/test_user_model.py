@@ -19,7 +19,7 @@ class AbstractTest(unittest.TestCase):
         """Instantiate the User class so that it can be reused by other test cases."""
 
         self.user = User()
-        self.user.register_user("cosmas28", "password123", "password123")
+        self.user.register_user('cosmas28', 'password123', 'password123')
 
 
 class UserRegistrationTest(AbstractTest):
@@ -32,38 +32,38 @@ class UserRegistrationTest(AbstractTest):
     def test_empty_user_input(self):
         """Test user inserted no data."""
 
-        self.assertEqual(self.user.register_user("", "", ""), "Username and password is required!")
+        self.assertEqual(self.user.register_user('', '', ''), 'Username and password is required!')
 
     def test_duplicate_username(self):
         """Test username already exist."""
 
-        test_resonse = self.user.register_user("cosmas28", "mark123444", "mark123444")
-        self.assertEqual(test_resonse, "The username already exist")
+        test_resonse = self.user.register_user('cosmas28', 'mark123444', 'mark123444')
+        self.assertEqual(test_resonse, 'The username already exist')
 
     def test_password_length(self):
         """Test user password to be more than 6 characters."""
 
-        test_response = self.user.register_user("facebook", "net23", "net23")
-        self.assertEqual(test_response, "Password must be more than 6 characters!")
+        test_response = self.user.register_user('facebook', 'net23', 'net23')
+        self.assertEqual(test_response, 'Password must be more than 6 characters!')
 
     def test_password_confirmation(self):
         """Test user password match confirmation password."""
 
-        test_response = self.user.register_user("facebook", "passion123", "passion1")
-        self.assertEqual(test_response, "The password does not match!")
+        test_response = self.user.register_user('facebook', 'passion123', 'passion1')
+        self.assertEqual(test_response, 'The password does not match!')
 
     def test_one_user_input_missing(self):
         """Test user input one field."""
 
-        self.assertEqual(self.user.register_user("yoyo2018", "TIA2018", ""), "Both username and password is required!")
-        self.assertEqual(self.user.register_user("", "TIA2018", "TIA2018"), "Both username and password is required!")
+        self.assertEqual(self.user.register_user('yoyo2018', 'TIA2018', ''), 'Both username and password is required!')
+        self.assertEqual(self.user.register_user('', 'TIA2018', 'TIA2018'), 'Both username and password is required!')
 
     def test_success_user_registration(self):
         """Test user registration is successful."""
 
-        test_response = self.user.register_user("augustino28", "andela2018", "andela2018")
-        self.assertEqual(test_response, "Successful registered")
-        # self.assertIn("augustino28", test_response["user_list"])
+        test_response = self.user.register_user('augustino28', 'andela2018', 'andela2018')
+        self.assertEqual(test_response, 'Successful registered')
+        # self.assertIn('augustino28', test_response['user_list'])
 
 
 class UserLoginTest(AbstractTest):
@@ -73,54 +73,54 @@ class UserLoginTest(AbstractTest):
     def test_empty_user_input_when_login(self):
         """Test user inserted no data when login."""
 
-        self.assertEqual(self.user.login_user("", ""), "Username and password is required!")
+        self.assertEqual(self.user.login_user('', ''), 'Username and password is required!')
 
     def test_one_user_input_missing_when_login(self):
         """Test user input one login parameter."""
 
-        self.assertEqual(self.user.login_user("yoyo2018", ""), "Both username and password is required!")
-        self.assertEqual(self.user.login_user("", "TIA2018"), "Both username and password is required!")
+        self.assertEqual(self.user.login_user('yoyo2018', ''), 'Both username and password is required!')
+        self.assertEqual(self.user.login_user('', 'TIA2018'), 'Both username and password is required!')
 
     def test_user_login_successfully(self):
         """Test can login successfully."""
 
         # self.assertTrue(self.user.login_user)
-        test_response = self.user.login_user("cosmas28", "password123")
-        self.assertEqual(test_response, "Successful login")
+        test_response = self.user.login_user('cosmas28', 'password123')
+        self.assertEqual(test_response, 'Successful login')
 
     def test_user_already_logged_in(self):
         """Test whether user is already logged in."""
 
-        self.user.login_user("cosmas28", "password123")
-        test_response = self.user.is_user_logged_in("cosmas28")
+        self.user.login_user('cosmas28', 'password123')
+        test_response = self.user.is_user_logged_in('cosmas28')
         self.assertTrue(test_response)
 
     def test_logout_user(self):
         """Test whether user can log out."""
 
-        self.user.login_user("cosmas28", "password123")
-        test_response = self.user.logout_user("cosmas28")
-        self.assertEqual(test_response, "Logged out successfully!")
+        self.user.login_user('cosmas28', 'password123')
+        test_response = self.user.logout_user('cosmas28')
+        self.assertEqual(test_response, 'Logged out successfully!')
 
     def test_user_already_logged_out(self):
         """Test user cannot log out twice."""
 
-        self.user.login_user("cosmas28", "password123")
-        self.user.logout_user("cosmas28")
-        test_response = self.user.logout_user("cosmas28")
-        self.assertEqual(test_response, "You are already logged out.Please login!")
+        self.user.login_user('cosmas28', 'password123')
+        self.user.logout_user('cosmas28')
+        test_response = self.user.logout_user('cosmas28')
+        self.assertEqual(test_response, 'You are already logged out.Please login!')
 
     def test_user_can_reset_password(self):
         """Test user can reset their passwords."""
 
-        test_response = self.user.reset_password("cosmas28", "newpassword")
-        self.assertEqual(test_response, "Successful reset password. Login with new password!")
+        test_response = self.user.reset_password('cosmas28', 'newpassword')
+        self.assertEqual(test_response, 'Successful reset password. Login with new password!')
 
     def test_reset_password_with_wrong_username(self):
         """Test user can reset their passwords."""
 
-        test_response = self.user.reset_password("cosmas", "newpassword")
-        self.assertEqual(test_response, "Invalid username!")
+        test_response = self.user.reset_password('cosmas', 'newpassword')
+        self.assertEqual(test_response, 'Invalid username!')
 
 
 if __name__ == '__main__':

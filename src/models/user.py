@@ -32,7 +32,7 @@ class User(object):
         global username_exist
         username_exist = False
         for user in self.registered_users:
-            if user["username"] == username:
+            if user['username'] == username:
                 username_exist = True
 
         return username_exist
@@ -55,28 +55,23 @@ class User(object):
             'username': username,
             'password': password,
         }
-        response = ""
-        # global username_exist
-        # username_exist = False
-        # for user in self.registered_users:
-        #     if user["username"] == username:
-        #         username_exist = True
+        response = ''
 
         if self.username_exist(username):
-            response += "The username already exist"
+            response += 'The username already exist'
         elif len(username) == 0 and len(password) == 0:
-            response += "Username and password is required!"
+            response += 'Username and password is required!'
         elif len(username) == 0 or len(confirm_password) == 0:
-            response += "Both username and password is required!"
+            response += 'Both username and password is required!'
         elif len(password) < 6:
-            response += "Password must be more than 6 characters!"
+            response += 'Password must be more than 6 characters!'
         elif password != confirm_password:
-            response += "The password does not match!"
+            response += 'The password does not match!'
         else:
             self.registered_users.append(user_data)
 
-        if self.registered_users[-1]["password"] == password:
-            response += "Successful registered"
+        if self.registered_users[-1]['password'] == password:
+            response += 'Successful registered'
 
         return response
 
@@ -108,33 +103,27 @@ class User(object):
 
         """
 
-        response = ""
-
-        # global username_exist
-        # username_exist = False
-        # for user in self.registered_users:
-        #     if user["username"] == username:
-        #         username_exist = True
+        response = ''
 
         global valid_password
         valid_password = False
         for user in self.registered_users:
-            if user["username"] == username and user["password"] == password:
+            if user['username'] == username and user['password'] == password:
                 valid_password = True
 
         if len(username) == 0 and len(password) == 0:
-            response += "Username and password is required!"
+            response += 'Username and password is required!'
         elif len(username) == 0 or len(password) == 0:
-            response += "Both username and password is required!"
+            response += 'Both username and password is required!'
         elif not self.username_exist(username):
-            response += "The username does not exist"
+            response += 'The username does not exist'
         elif self.is_user_logged_in(username):
-            response += "You are already logged in!"
+            response += 'You are already logged in!'
         elif not valid_password:
-            response += "The password is invalid!"
+            response += 'The password is invalid!'
         else:
             self.user_persistent[username] = password
-            response += "Successful login"
+            response += 'Successful login'
 
         return response
 
@@ -149,12 +138,12 @@ class User(object):
 
         """
 
-        response = ""
+        response = ''
         if username not in self.user_persistent:
-            response += "You are already logged out.Please login!"
+            response += 'You are already logged out.Please login!'
         elif username in self.user_persistent:
             del self.user_persistent[username]
-            response += "Logged out successfully!"
+            response += 'Logged out successfully!'
 
         return response
 
@@ -171,15 +160,15 @@ class User(object):
 
         """
 
-        response = ""
+        response = ''
         if not self.username_exist(username):
-            response += "Invalid username!"
+            response += 'Invalid username!'
         elif len(password) < 6:
-            response += "Password must be more than 6 characters!"
+            response += 'Password must be more than 6 characters!'
         else:
             for user in self.registered_users:
                 if user['username'] == username:
                     user['password'] = password
-                    response += "Successful reset password. Login with new password!"
+                    response += 'Successful reset password. Login with new password!'
 
         return response

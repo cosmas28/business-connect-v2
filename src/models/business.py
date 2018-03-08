@@ -19,16 +19,17 @@ class Business(object):
     def __init__(self):
         self.business_records = {}
 
-    def create_business(self, b_id, b_owner, b_name, b_location, b_category, b_summary):
+    def create_business(self, business_id, business_owner, business_name, business_location, business_category,
+                        business_summary):
         """Register a new business.
 
         Args:
-            b_id (int): business id parameter should be unique to identify each business.
-            b_owner (str): business owner name parameter describes the business owner.
-            b_name (str): business name that summarises what the business is.
-            b_location (str): business location parameter describes the where the business is located.
-            b_category (str): business category to group the business with the same features.
-            b_summary (str): summary of what the business is about.
+            business_id (int): business id parameter should be unique to identify each business.
+            business_owner (str): business owner name parameter describes the business owner.
+            business_name (str): business name that summarises what the business is.
+            business_location (str): business location parameter describes the where the business is located.
+            business_category (str): business category to group the business with the same features.
+            business_summary (str): summary of what the business is about.
 
         Returns:
             A list of values of the registered business.
@@ -39,33 +40,33 @@ class Business(object):
 
         """
         business_data = {
-            'owner': b_owner,
-            'name': b_name,
-            'location': b_location,
-            'category': b_category,
-            'summary': b_summary
+            'owner': business_owner,
+            'name': business_name,
+            'location': business_location,
+            'category': business_category,
+            'summary': business_summary
         }
-        success_message = ""
+        success_message = ''
         result_list = []
 
-        if type(b_id) != int:
-            raise TypeError("The business id must be an number!")
-        elif b_id < 0:
-            raise ValueError("The business id must be a positive number")
-        elif b_id in self.business_records:
-            raise KeyError("The business id already exists")
+        if type(business_id) != int:
+            raise TypeError('The business id must be an number!')
+        elif business_id < 0:
+            raise ValueError('The business id must be a positive number')
+        elif business_id in self.business_records:
+            raise KeyError('The business id already exists')
         else:
-            self.business_records[b_id] = business_data
+            self.business_records[business_id] = business_data
 
-        if b_id in self.business_records:
-            success_message += "The business is successfully registered!!!"
+        if business_id in self.business_records:
+            success_message += 'The business is successfully registered!!!'
 
-        single_record = self.business_records[b_id]
+        single_record = self.business_records[business_id]
 
         for key in single_record:
             result_list.append(single_record[key])
 
-        return {"value_list": result_list, "message": success_message}
+        return {'value_list': result_list, 'message': success_message}
 
     def view_all_businesses(self):
         """View all registered businesses.
@@ -75,7 +76,7 @@ class Business(object):
 
         """
         if len(self.business_records) == 0:
-            return "There is no registered business!"
+            return 'There is no registered business!'
         else:
             return self.business_records
 
@@ -86,13 +87,13 @@ class Business(object):
                            A a dictionary of the registered businesses.
 
         """
-        result_message = ""
+        result_message = ''
         if business_id not in self.business_records:
-            result_message += "Business does not exist"
-            raise KeyError("Key does not exist")
+            result_message += 'Business does not exist'
+            raise KeyError('Key does not exist')
 
         if len(result_message) > 0:
-            return {"message": result_message}
+            return {'message': result_message}
         elif len(result_message) == 0:
             single_record = self.business_records[business_id]
             return single_record

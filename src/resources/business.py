@@ -1,6 +1,13 @@
-from flask import jsonify, json, Blueprint, abort, request
+"""Demonstrate all business related API endpoints.
 
-from flask.ext.restful import (Resource, Api, reqparse, fields, marshal)
+This module provides API endpoints to register business, view a single business, view all
+businesses.
+
+"""
+
+from flask import Blueprint, abort, request
+
+from flask.ext.restful import (Resource, Api, reqparse)
 
 from src.models.business import Business
 
@@ -9,6 +16,14 @@ business = Business()
 
 
 class BusinessRecord(Resource):
+
+    """Illustrate API endpoints to register and view business.
+
+    Attributes:
+        reqparse (object): A request parsing interface designed to access simple and uniform
+        variables on the flask.request object.
+
+    """
 
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
@@ -39,6 +54,18 @@ class BusinessRecord(Resource):
                                    location=['form', 'json'])
 
     def post(self):
+        """Register a business.
+
+        Returns:
+            A success message to indicate successful registration.
+
+        Raises:
+            TypeError is raised when business id not a number.
+            ValueError is raised when business id a negative number.
+            KeyError is raised when business id already exist.
+            Error message when no data supplied.
+
+        """
         req_data = request.get_json()
         business_id = req_data['business_id']
         business_owner = req_data['business_owner']
@@ -81,8 +108,8 @@ class OneBusinessRecord(Resource):
         """
         response = business.view_business_by_id(business_id)
 
-        if response.get("message") == "There is no registered business!":
-            return "Business does not exist", abort(404)
+        if response.get('message') == 'There is no registered business!':
+            return 'Business does not exist', abort(404)
 
         return response, 200
 
