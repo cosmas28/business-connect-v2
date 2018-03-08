@@ -63,6 +63,15 @@ class User(object):
         return response
 
     def is_user_logged_in(self, username):
+        """Login a user.
+
+        Args:
+            username (str): username parameter should be unique to identify each user.
+
+        Returns:
+            True if the username exist in persistent data
+
+        """
         is_logged_in = False
         if username in self.user_persistent:
             is_logged_in = True
@@ -108,5 +117,23 @@ class User(object):
         else:
             self.user_persistent[username] = password
             response += "Successful login"
+
+        return response
+
+    def logout_user(self, username):
+        """Login a user.
+
+        Args:
+            username (str): username parameter should be unique to identify each user.
+
+        Returns:
+            Success message
+
+        """
+
+        response = ""
+        del self.user_persistent[username]
+        if username not in self.user_persistent:
+            response += "Logged out successfully!"
 
         return response
