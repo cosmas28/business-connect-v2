@@ -90,10 +90,10 @@ class LoginUser(Resource):
                                    )
 
     def post(self):
-        """Register a new business.
+        """Login a user.
 
         Returns:
-            A success message to indicate successful registration.
+            A success message to indicate successful login.
 
         Raises:
             An username error when username does not exist exist.
@@ -109,6 +109,40 @@ class LoginUser(Resource):
         return save_response, 200
 
 
+class Logout(Resource):
+
+    """Illustrate API endpoints to logout user.
+
+    Attributes:
+        reqparse (object): A request parsing interface designed to access simple and uniform to
+        variables on the flask.request object.
+
+    """
+
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('username',
+                                   required=True,
+                                   help="Username is required!",
+                                   location=['form', 'json']
+                                   )
+
+    def post(self):
+        """logout a user.
+
+        Returns:
+            A success message to indicate successful logout.
+            A message when the user is not logged in.
+
+        """
+        req_data = request.get_json()
+        username = req_data["username"]
+
+        save_response = user.logout_user(username)
+
+        return save_response, 200
+
+
 user_api = Blueprint('resources.user', __name__)
 api = Api(user_api)
 api.add_resource(
@@ -120,4 +154,9 @@ api.add_resource(
     LoginUser,
     '/login_user',
     endpoint='login_user'
+)
+api.add_resource(
+    Logout,
+    '/logout',
+    endpoint='logout'
 )
