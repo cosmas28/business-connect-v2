@@ -44,7 +44,7 @@ class UserRegistrationTest(AbstractTest):
         """Test user password to be more than 6 characters."""
 
         test_response = self.user.register_user("facebook", "net23", "net23")
-        self.assertEqual(test_response, "Password must be more that 6 characters!")
+        self.assertEqual(test_response, "Password must be more than 6 characters!")
 
     def test_password_confirmation(self):
         """Test user password match confirmation password."""
@@ -121,6 +121,7 @@ class UserLoginTest(AbstractTest):
 
         test_response = self.user.reset_password("cosmas", "newpassword")
         self.assertEqual(test_response, "Invalid username!")
+
 
 if __name__ == '__main__':
     unittest.main()

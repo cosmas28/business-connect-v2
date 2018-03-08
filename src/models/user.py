@@ -69,7 +69,7 @@ class User(object):
         elif len(username) == 0 or len(confirm_password) == 0:
             response += "Both username and password is required!"
         elif len(password) < 6:
-            response += "Password must be more that 6 characters!"
+            response += "Password must be more than 6 characters!"
         elif password != confirm_password:
             response += "The password does not match!"
         else:
@@ -174,6 +174,8 @@ class User(object):
         response = ""
         if not self.username_exist(username):
             response += "Invalid username!"
+        elif len(password) < 6:
+            response += "Password must be more than 6 characters!"
         else:
             for user in self.registered_users:
                 if user['username'] == username:
