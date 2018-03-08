@@ -15,10 +15,10 @@ user = User()
 
 class RegisterUser(Resource):
 
-    """Illustrate methods to manipulate business data.
+    """Illustrate API endpoints to register user.
 
     Attributes:
-        reqparse (object): A request parsing interface designed to access simple and uniform to
+        reqparse (object): A request parsing interface designed to access simple and uniform
         variables on the flask.request object.
 
     """
@@ -66,10 +66,58 @@ class RegisterUser(Resource):
         return save_response, 201
 
 
+class LoginUser(Resource):
+
+    """Illustrate API endpoints to login user.
+
+    Attributes:
+        reqparse (object): A request parsing interface designed to access simple and uniform to
+        variables on the flask.request object.
+
+    """
+
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('username',
+                                   required=True,
+                                   help="Username is required!",
+                                   location=['form', 'json']
+                                   )
+        self.reqparse.add_argument('password',
+                                   required=True,
+                                   help="Password is required!",
+                                   location=['form', 'json']
+                                   )
+
+    def post(self):
+        """Register a new business.
+
+        Returns:
+            A success message to indicate successful registration.
+
+        Raises:
+            An username error when username does not exist exist.
+            password error when the password is invalid.
+
+        """
+        req_data = request.get_json()
+        username = req_data["username"]
+        password = req_data["password"]
+
+        save_response = user.login_user(username, password)
+
+        return save_response, 200
+
+
 user_api = Blueprint('resources.user', __name__)
 api = Api(user_api)
 api.add_resource(
     RegisterUser,
     '/register_user',
     endpoint='register_user'
+)
+api.add_resource(
+    LoginUser,
+    '/login_user',
+    endpoint='login_user'
 )

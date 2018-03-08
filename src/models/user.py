@@ -99,5 +99,5 @@ class User(object):
         else:
             self.user_persistent[username] = password
             response += "Successful login"
-
+        print(self.user_persistent)
         return response
