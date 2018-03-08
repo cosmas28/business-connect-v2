@@ -9,7 +9,7 @@ are expected from API endpoints.
 import unittest
 from flask import json
 
-from app import app
+from run import app
 from app.models.business import Business
 
 
