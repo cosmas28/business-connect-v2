@@ -17,6 +17,7 @@ class User(object):
 
     def __init__(self):
         self.registered_users = []
+        self.user_persistent = {}
 
     def register_user(self, username, password):
         """Register a new user.
@@ -55,5 +56,45 @@ class User(object):
 
         if self.registered_users[-1]["password"] == password:
             response += "Successful registered"
+
+        return response
+
+    def login_user(self, username, password):
+        """Login a user.
+
+        Args:
+            username (str): username parameter should be unique to identify each user.
+            password (str): password parameter should be at least 6 characters.
+
+        Returns:
+            Successful login
+
+        """
+
+        response = ""
+
+        global username_exist
+        username_exist = False
+        for user in self.registered_users:
+            if user["username"] == username:
+                username_exist = True
+
+        global valid_password
+        valid_password = False
+        for user in self.registered_users:
+            if user["username"] == username and user["password"] == password:
+                valid_password = True
+
+        if len(username) == 0 and len(password) == 0:
+            response += "Username and password is required!"
+        elif len(username) == 0 or len(password) == 0:
+            response += "Both username and password is required!"
+        elif not username_exist:
+            response += "The username does not exist"
+        elif not valid_password:
+            response += "The password is invalid!"
+        else:
+            self.user_persistent[username] = password
+            response += "Successful login"
 
         return response
