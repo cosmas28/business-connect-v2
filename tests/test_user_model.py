@@ -11,15 +11,17 @@ import unittest
 from src.models.user import User
 
 
-class UserRegistrationTest(unittest.TestCase):
-
-    """Illustrate test cases to test expected behavior of business registration functionality. """
-
+class AbstractTest(unittest.TestCase):
     def setUp(self):
         """Instantiate the User class so that it can be reused by other test cases."""
 
         self.user = User()
         self.user.register_user("cosmas28", "password123")
+
+
+class UserRegistrationTest(AbstractTest):
+
+    """Illustrate test cases to test expected behavior of business registration functionality. """
 
     # def tearDown(self):
     #     self.user.registered_users.remove(0)
@@ -53,6 +55,27 @@ class UserRegistrationTest(unittest.TestCase):
         test_response = self.user.register_user("augustino28", "andela2018")
         self.assertEqual(test_response, "Successful registered")
         # self.assertIn("augustino28", test_response["user_list"])
+
+
+class UserLoginTest(AbstractTest):
+
+    """Illustrate test cases to test expected behavior of user login functionality. """
+
+    def test_empty_user_input_when_login(self):
+        """Test user inserted no data when login."""
+
+        self.assertEqual(self.user.login_user("", ""), "Username and password is required!")
+
+    def test_one_user_input_missing_when_login(self):
+        """Test user input one login parameter."""
+
+        self.assertEqual(self.user.login_user("yoyo2018", ""), "Both username and password is requird!")
+        self.assertEqual(self.user.login_user("", "TIA2018"), "Both username and password is requird!")
+
+    def test_user_login_successfully(self):
+        """Test can login successfully."""
+
+        self.assertTrue(self.user.login_user)
 
 
 if __name__ == '__main__':
