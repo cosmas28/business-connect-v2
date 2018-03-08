@@ -39,7 +39,7 @@ class CreateBusinessTest(unittest.TestCase):
             self.business.create_business(1, 'cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
             self.business.create_business(1, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
 
-    def test_successful_registered_business_returns_successful_message_and_list_of_business_info(self):
+    def test_successful_registered_business(self):
         """Test whether a success message is returned when a business is registered."""
 
         test_result = self.business.create_business(2, 'Bruce', 'Bruce Tech', 'Nairobi', 'Masoko', 'Womens wear')
@@ -56,7 +56,7 @@ class ViewBusinessTest(unittest.TestCase):
 
         self.business = Business()
 
-    def test_view_all_businesses_returns_all_business_records(self):
+    def test_view_all_businesses_records(self):
         """Test whether a dictionary of all the registered businesses will be returned."""
 
         self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
@@ -68,7 +68,7 @@ class ViewBusinessTest(unittest.TestCase):
                                                       'category': 'Technology', 'summary': 'Cryptocurrency'}}
         )
 
-    def test_view_business_by_id_returns_a_dictionary_of_business_info(self):
+    def test_view_business_by_id(self):
         """Test whether a dictionary of the registered information will be returned."""
 
         self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
@@ -77,7 +77,7 @@ class ViewBusinessTest(unittest.TestCase):
                                                  'category': 'Technology', 'summary': 'Masters of ecommerce'}
         )
 
-    def test_view_by_category_returns_all_businesses_with_same_category(self):
+    def test_view_by_category(self):
         """Test whether a dictionary of all the business with the same category will be returned."""
 
         self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
@@ -91,7 +91,7 @@ class ViewBusinessTest(unittest.TestCase):
                       'category': 'Technology', 'summary': 'Cryptocurrency'}}
         )
 
-    def test_view_by_location_returns_all_businesses_with_same_location(self):
+    def test_view_by_location(self):
         """Test whether a dictionary of all the business in the same location will be returned."""
 
         self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
