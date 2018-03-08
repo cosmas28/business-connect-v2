@@ -78,7 +78,9 @@ class UserLoginTest(AbstractTest):
     def test_user_login_successfully(self):
         """Test can login successfully."""
 
-        self.assertTrue(self.user.login_user)
+        # self.assertTrue(self.user.login_user)
+        test_response = self.user.login_user("cosmas28", "password123")
+        self.assertEqual(test_response, "Successful login")
 
 
 if __name__ == '__main__':
