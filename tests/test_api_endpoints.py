@@ -34,6 +34,8 @@ class TestBusinessEndpointsTestCase(unittest.TestCase):
             'password': 'andela2018',
             'confirm_password': 'andela2018'
         }
+        json_data = json.dumps(self.user_data)
+        self.response = self.run_app.post('/api/v1/register_user', data=json_data, headers=self.headers)
         self.business.create_business(1, 'cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
         self.business.create_business(2, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
 
@@ -65,26 +67,29 @@ class TestBusinessEndpointsTestCase(unittest.TestCase):
     def test_user_can_register(self):
         """Test registerUser API endpoint can register a new user with POST request."""
 
-        json_data = json.dumps(self.user_data)
-        response = self.run_app.post('/api/v1/register_user', data=json_data, headers=self.headers)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(self.response.status_code, 201)
 
     def test_user_can_login(self):
         """Test login user API endpoint can login a user with POST request."""
+
         login_data = json.dumps({'username': 'cosmas', 'password': 'andela2018'})
-        json_data = json.dumps(self.user_data)
-        self.run_app.post('/api/v1/register_user', data=json_data, headers=self.headers)
         response = self.run_app.post('/api/v1/login_user', data=login_data, headers=self.headers)
         self.assertEqual(response.status_code, 200)
 
     def test_user_can_logout(self):
         """Test log out user API endpoint can log out a user with POST request."""
+
         login_data = json.dumps({'username': 'cosmas', 'password': 'andela2018'})
-        json_data = json.dumps(self.user_data)
-        self.run_app.post('/api/v1/register_user', data=json_data, headers=self.headers)
         self.run_app.post('/api/v1/login_user', data=login_data, headers=self.headers)
         response = self.run_app.post('/api/v1/logout', data=json.dumps({'username': 'cosmas'}), headers=self.headers)
         self.assertEqual(response.status_code, 200)
+
+    def test_user_can_reset_password(self):
+        """Test reset password API endpoint reset user password with POST request."""
+
+        new_password = json.dumps({'username': 'cosmas', 'password': 'andela2022'})
+        response = self.run_app.post('/api/v1/reset-password', data=new_password, headers=self.headers)
+        self.assertEqual(response.status_code, 201)
 
 
 if __name__ == '__main__':
