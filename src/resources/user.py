@@ -42,7 +42,7 @@ class RegisterUser(Resource):
                                    )
 
     def post(self):
-        """Register a new business.
+        """Register a new user.
 
         Args:
             username (str): username is a unique field to identify user.
@@ -57,9 +57,9 @@ class RegisterUser(Resource):
 
         """
         req_data = request.get_json()
-        username = req_data["username"]
-        password = req_data["password"]
-        confirm_password = req_data["confirm_password"]
+        username = req_data['username']
+        password = req_data['password']
+        confirm_password = req_data['confirm_password']
 
         save_response = user.register_user(username, password, confirm_password)
 
@@ -80,12 +80,12 @@ class LoginUser(Resource):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('username',
                                    required=True,
-                                   help="Username is required!",
+                                   help='Username is required!',
                                    location=['form', 'json']
                                    )
         self.reqparse.add_argument('password',
                                    required=True,
-                                   help="Password is required!",
+                                   help='Password is required!',
                                    location=['form', 'json']
                                    )
 
@@ -101,8 +101,8 @@ class LoginUser(Resource):
 
         """
         req_data = request.get_json()
-        username = req_data["username"]
-        password = req_data["password"]
+        username = req_data['username']
+        password = req_data['password']
 
         save_response = user.login_user(username, password)
 
@@ -123,7 +123,7 @@ class Logout(Resource):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('username',
                                    required=True,
-                                   help="Username is required!",
+                                   help='Username is required!',
                                    location=['form', 'json']
                                    )
 
@@ -136,11 +136,52 @@ class Logout(Resource):
 
         """
         req_data = request.get_json()
-        username = req_data["username"]
+        username = req_data['username']
 
         save_response = user.logout_user(username)
 
         return save_response, 200
+
+
+class ResetPassword(Resource):
+
+    """Illustrate API endpoint to reset user password.
+
+    Attributes:
+        reqparse (object): A request parsing interface designed to access simple and uniform to
+        variables on the flask.request object.
+
+    """
+
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('username',
+                                   required=True,
+                                   help='Username is required!',
+                                   location=['form', 'json']
+                                   )
+        self.reqparse.add_argument('password',
+                                   required=True,
+                                   help='Password is required!',
+                                   location=['form', 'json']
+                                   )
+
+    def post(self):
+        """Reset user password.
+
+        Returns:
+            A success message to indicate successful logout.
+            An error message if username does not exist.
+            An error message if the password is less than 6 characters
+
+        """
+        req_data = request.get_json()
+        username = req_data['username']
+        password = req_data['password']
+
+        save_response = user.reset_password(username, password)
+
+        return save_response, 201
 
 
 user_api = Blueprint('resources.user', __name__)
@@ -159,4 +200,9 @@ api.add_resource(
     Logout,
     '/logout',
     endpoint='logout'
+)
+api.add_resource(
+    ResetPassword,
+    '/reset-password',
+    endpoint='reset-password'
 )
