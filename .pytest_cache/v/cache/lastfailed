@@ -1,0 +1,7 @@
+{
+  "tests/test_api_endpoints.py::TestBusinessEndpointsTestCase::test_user_can_register": true,
+  "tests/test_business_model.py::ViewBusinessTest::test_non_existed_business_category_print_not_found": true,
+  "tests/test_business_model.py::ViewBusinessTest::test_non_existed_business_location_print_not_found": true,
+  "tests/test_business_model.py::ViewBusinessTest::test_view_by_category_returns_all_businesses_with_same_category": true,
+  "tests/test_business_model.py::ViewBusinessTest::test_view_by_location_returns_all_businesses_with_same_location": true
+}
