@@ -7,7 +7,7 @@ businesses.
 
 from flask import Blueprint, abort, request
 
-from flask.ext.restful import (Resource, Api, reqparse)
+from flask_restful import (Resource, Api, reqparse)
 
 from app.models.business import Business
 

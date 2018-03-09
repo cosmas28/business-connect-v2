@@ -6,7 +6,7 @@ This module provides API endpoints to register users, login users, and reset use
 
 from flask import Blueprint,  request
 
-from flask.ext.restful import (Resource, Api, reqparse)
+from flask_restful import (Resource, Api, reqparse)
 
 from app.models.user import User
 
