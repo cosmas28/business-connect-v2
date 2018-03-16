@@ -9,7 +9,6 @@ are expected from review model.
 import unittest
 
 from app.models.reviews import Reviews
-from app.models.business import Business
 
 
 class AddReviewTest(unittest.TestCase):
@@ -20,8 +19,7 @@ class AddReviewTest(unittest.TestCase):
         """Instantiate the Review class so that it can be reused by other test cases."""
 
         self.reviews = Reviews()
-        self.business = Business()
-        self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
+        self.reviews.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
 
     def test_empty_business_id(self):
         """Test whether business id is empty."""
