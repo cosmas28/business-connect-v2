@@ -143,9 +143,10 @@ class DeleteBusinessTest(unittest.TestCase):
         """Test if a KeyError will be raised when the business id does not exist."""
 
         self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
-        self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
-        with self.assertRaises(KeyError):
-            self.business.delete_business(4)
+        self.assertEqual(self.business.delete_business(4), 'Business does not exist')
+        # self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
+        # with self.assertRaises(KeyError):
+        #     self.business.delete_business(4)
 
     def test_empty_business_id(self):
         """Test whether no business id is provided."""
