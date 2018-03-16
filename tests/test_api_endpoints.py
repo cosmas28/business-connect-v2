@@ -104,7 +104,14 @@ class TestBusinessEndpointsTestCase(unittest.TestCase):
     def test_user_can_update_business(self):
         """Test whether a user can update a business using PUT request."""
 
-        response = self.run_app.put('/api/v1/businesses/1')
+        new_info = json.dumps({
+            'business_owner': 'Cosmas',
+            'business_name': 'Cosma Tech',
+            'business_category': 'Technology',
+            'business_location': 'Arusha',
+            'business_summary': 'IoT is making our world smart'
+        })
+        response = self.run_app.put('/api/v1/businesses/1', data=new_info, headers=self.headers)
         self.assertEqual(response.status_code, 200)
 
 
