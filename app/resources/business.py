@@ -113,6 +113,21 @@ class OneBusinessRecord(Resource):
 
         return response, 200
 
+    def delete(self, business_id):
+        """View all registered businesses.
+
+        Args:
+            business_id (int): business id parameter should be unique to identify each business.
+
+        Returns:
+           A successful message when the business record is deleted.
+
+        """
+
+        response = business.delete_business(business_id)
+
+        return response, 200
+
 
 business_api = Blueprint('resources.business', __name__)
 api = Api(business_api)
