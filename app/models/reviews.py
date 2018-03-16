@@ -5,7 +5,8 @@ such as adding review and view reviews of a business.
 
 """
 
-from app.models.business import Business
+# from app.models.business import Business
+from tests import business
 
 
 class Reviews(object):
@@ -18,7 +19,7 @@ class Reviews(object):
     """
 
     def __init__(self):
-        self.business = Business()
+        # self.business = Business()
         self.business_reviews = []
 
     def add_review(self, business_id, review, created_at):
@@ -49,7 +50,7 @@ class Reviews(object):
 
         if len(str(business_id)) == 0:
             response += 'Business id is required!'
-        elif business_id not in self.business.business_records:
+        elif business_id not in business.business_records:
             response += 'Business id does not exist'
             raise KeyError('Business id does not exist')
         elif len(review) == 0:

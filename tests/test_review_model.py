@@ -8,6 +8,7 @@ are expected from review model.
 
 import unittest
 
+from tests import business
 from app.models.reviews import Reviews
 
 
@@ -19,7 +20,16 @@ class AddReviewTest(unittest.TestCase):
         """Instantiate the Review class so that it can be reused by other test cases."""
 
         self.reviews = Reviews()
-        self.reviews.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
+        # self.reviews.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology',
+        #                                           'Masters of ecommerce')
+        business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
+
+    def tearDown(self):
+        """Delete registered business records after every test case has run."""
+
+        # for key in list(self.business.business_records.keys()):
+        #     del self.business.business_records[key]
+        del business.business_records[1]
 
     def test_empty_business_id(self):
         """Test whether business id is empty."""
