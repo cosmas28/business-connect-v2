@@ -165,19 +165,21 @@ class DeleteBusinessTest(unittest.TestCase):
             self.business.delete_business('1')
 
 
-class DeleteBusinessTest(unittest.TestCase):
+class UpdateBusinessTest(unittest.TestCase):
     """Illustrate test cases to test expected behavior of update business functionality. """
 
     def setUp(self):
         """Instantiate the Business class so that it can be reused by other test cases."""
 
         self.business = Business()
+        self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
+        self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
 
     def test_business_id_existence(self):
         """Test if a KeyError will be raised when the business id does not exist."""
 
-        self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
-        self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
+        # self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
+        # self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
         with self.assertRaises(KeyError):
             self.business.update_business(3, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology',
                                           'Masters of ecommerce and statics')
