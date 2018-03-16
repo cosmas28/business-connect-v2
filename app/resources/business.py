@@ -9,10 +9,7 @@ from flask import Blueprint, abort, request
 
 from flask_restful import (Resource, Api, reqparse)
 
-from app.models.business import Business
-
-
-business = Business()
+from app import business
 
 
 class BusinessRecord(Resource):

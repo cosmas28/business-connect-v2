@@ -5,8 +5,7 @@ such as adding review and view reviews of a business.
 
 """
 
-# from app.models.business import Business
-from tests import business
+from app import business
 
 
 class Reviews(object):
@@ -19,7 +18,6 @@ class Reviews(object):
     """
 
     def __init__(self):
-        # self.business = Business()
         self.business_reviews = []
 
     def add_review(self, business_id, review, created_at):
