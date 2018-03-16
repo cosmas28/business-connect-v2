@@ -115,6 +115,12 @@ class Business(object):
         Returns:
            A successful message when the business record is deleted.
 
+        Raises:
+            Error message when business id does not exists.
+            ValueError: if business id a negative number.
+            TypeError: when business id is not an number.
+            Error message when business id empty
+
         """
         response = ''
         if len(str(business_id)) == 0:
@@ -127,7 +133,6 @@ class Business(object):
             raise ValueError('The business id must be a positive number')
         elif business_id not in self.business_records:
             response += 'Business does not exist'
-            raise KeyError('Key does not exist')
         else:
             del self.business_records[business_id]
             response += 'Business deleted successfully!'
