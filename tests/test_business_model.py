@@ -165,5 +165,50 @@ class DeleteBusinessTest(unittest.TestCase):
             self.business.delete_business('1')
 
 
+class DeleteBusinessTest(unittest.TestCase):
+    """Illustrate test cases to test expected behavior of update business functionality. """
+
+    def setUp(self):
+        """Instantiate the Business class so that it can be reused by other test cases."""
+
+        self.business = Business()
+
+    def test_business_id_existence(self):
+        """Test if a KeyError will be raised when the business id does not exist."""
+
+        self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
+        self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
+        with self.assertRaises(KeyError):
+            self.business.update_business(3, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology',
+                                          'Masters of ecommerce and statics')
+
+    def test_empty_business_id(self):
+        """Test whether no business id is provided."""
+
+        self.assertEqual(self.business.update_business('', 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology',
+                                                       'Masters of ecommerce and statics'), 'Business id is required!')
+
+    def test_negative_integer_business_id_raises_ValueError(self):
+        """Test if ValueError is raised when business id a negative number."""
+
+        with self.assertRaises(ValueError):
+            self.business.update_business(-1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology',
+                                          'Masters of ecommerce and statics')
+
+    def test_non_integer_business_id_raises_TypeError(self):
+        """Test if TypeError is raised when business id not a number."""
+
+        with self.assertRaises(TypeError):
+            self.business.update_business('1', 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology',
+                                          'Masters of ecommerce and statics')
+
+    def test_business_updated_successfully(self):
+        """Test whether business was updated successfully."""
+
+        response = self.business.update_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology',
+                                                 'Masters of ecommerce and statics')
+        self.assertEqual(response, "Business was successfully updated!")
+
+
 if __name__ == '__main__':
     unittest.main()
