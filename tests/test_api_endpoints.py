@@ -29,6 +29,8 @@ class TestBusinessEndpointsTestCase(unittest.TestCase):
             'business_location': 'Arusha',
             'business_summary': 'Internet of things is making the world a better place'
         }
+        json_data = json.dumps(self.business_record)
+        self.business_res = self.run_app.post('/api/v1/business', data=json_data, headers=self.headers)
         self.user_data = {
             'username': 'cosmas',
             'password': 'andela2018',
@@ -36,21 +38,22 @@ class TestBusinessEndpointsTestCase(unittest.TestCase):
         }
         json_data = json.dumps(self.user_data)
         self.response = self.run_app.post('/api/v1/register_user', data=json_data, headers=self.headers)
-        self.business.create_business(1, 'cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
-        self.business.create_business(2, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
+        # self.business.create_business(1, 'cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
+        # self.business.create_business(2, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
 
     def tearDown(self):
         """Delete registered business records after every test case has run."""
 
-        for key in list(self.business.business_records.keys()):
-            del self.business.business_records[key]
+        # for key in list(self.business.business_records.keys()):
+        #     del self.business.business_records[key]
+        self.run_app.delete('/api/v1/businesses/1')
 
     def test_register_business_endpoint(self):
         """Test business API endpoint can register new business with POST request."""
 
-        json_data = json.dumps(self.business_record)
-        response = self.run_app.post('/api/v1/business', data=json_data, headers=self.headers)
-        self.assertEqual(response.status_code, 201)
+        # json_data = json.dumps(self.business_record)
+        # response = self.run_app.post('/api/v1/business', data=json_data, headers=self.headers)
+        self.assertEqual(self.business_res.status_code, 201)
 
     def test_view_businesses_endpoint(self):
         """Test whether a get request to business API endpoint has succeeded."""
@@ -60,7 +63,8 @@ class TestBusinessEndpointsTestCase(unittest.TestCase):
 
     def test_view_businesses_by_id_endpoint(self):
         """Test whether providing business id to a get request to business API endpoint has succeeded."""
-
+        # json_data = json.dumps(self.business_record)
+        # self.run_app.post('/api/v1/business', data=json_data, headers=self.headers)
         response = self.run_app.get('/api/v1/businesses/1')
         self.assertEqual(response.status_code, 200)
 
