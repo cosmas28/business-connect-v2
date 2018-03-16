@@ -77,34 +77,6 @@ class ViewBusinessTest(unittest.TestCase):
                                                  'category': 'Technology', 'summary': 'Masters of ecommerce'}
         )
 
-    def test_view_by_category(self):
-        """Test whether a dictionary of all the business with the same category will be returned."""
-
-        self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
-        self.business.create_business(2, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
-        self.business.create_business(3, 'John', 'John Corporate', 'Kisumu', 'Fishing', 'Process fish')
-        self.assertEqual(
-            self.business.view_businesses_by_category(),
-                {1: {'owner': 'Cosmas', 'name': 'Cosma Tech', 'location': 'Nairobi',
-                    'category': 'Technology', 'summary': 'Masters of ecommerce'},
-                  2: {'owner': 'Allan', 'name': 'Allan Tech', 'location': 'Kitale',
-                      'category': 'Technology', 'summary': 'Cryptocurrency'}}
-        )
-
-    def test_view_by_location(self):
-        """Test whether a dictionary of all the business in the same location will be returned."""
-
-        self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
-        self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
-        self.business.create_business(3, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
-        self.assertEqual(
-            self.business.view_businesses_by_location(),
-            {2: {'owner': 'John', 'name': 'John Corporate', 'location': 'Kitale',
-                 'category': 'Fishing', 'summary': 'Process fish'},
-             3: {'owner': 'Allan', 'name': 'Allan Tech', 'location': 'Kitale',
-                 'category': 'Technology', 'summary': 'Cryptocurrency'}}
-        )
-
     def test_non_existed_business_id_raises_KeyError(self):
         """Test if a KeyError will be raised when the business id does not exist."""
 
@@ -113,22 +85,6 @@ class ViewBusinessTest(unittest.TestCase):
         self.business.create_business(3, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
         with self.assertRaises(KeyError):
             self.business.view_business_by_id(4)
-
-    def test_non_existed_business_category_print_not_found(self):
-        """Test whether a not found message will be returned if no business is located in the given location."""
-
-        self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
-        self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
-        self.business.create_business(3, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
-        self.assertEqual('Not found', self.business.view_business_by_category('Accounting'))
-
-    def test_non_existed_business_location_print_not_found(self):
-        """Test whether a not found message will be returned if no business is related to the given category."""
-
-        self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
-        self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
-        self.business.create_business(3, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
-        self.assertEqual('Not found', self.business.view_business_by_location('Mombassa'))
 
 
 class DeleteBusinessTest(unittest.TestCase):
