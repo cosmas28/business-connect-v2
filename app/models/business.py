@@ -125,6 +125,9 @@ class Business(object):
         elif business_id < 0:
             response += 'The business id must be a positive number'
             raise ValueError('The business id must be a positive number')
+        elif business_id not in self.business_records:
+            response += 'Business does not exist'
+            raise KeyError('Key does not exist')
         else:
             del self.business_records[business_id]
             response += 'Business deleted successfully!'
