@@ -58,3 +58,26 @@ class Reviews(object):
             response += 'Business review added successfully!'
 
         return response
+
+    def view_business_reviews(self, business_id):
+        """View a registered businesses using an id.
+
+        Returns:
+           A a dictionary of the registered businesses.
+
+        """
+        reviews = []
+
+        if len(str(business_id)) == 0:
+            return 'Business id is required!'
+        elif business_id not in business.business_records:
+            return 'Business ID does not exist!'
+        else:
+            for review in self.business_reviews:
+                if review['business_id'] == business_id:
+                    reviews.append({
+                        'review': review['review'],
+                        'created_at': review['created_at']
+                    })
+
+        return reviews
