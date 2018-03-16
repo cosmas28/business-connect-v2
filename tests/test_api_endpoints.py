@@ -8,6 +8,7 @@ are expected from API endpoints.
 
 import unittest
 from flask import json
+import datetime
 
 from run import app
 from app.models.business import Business
@@ -113,6 +114,16 @@ class TestBusinessEndpointsTestCase(unittest.TestCase):
         })
         response = self.run_app.put('/api/v1/businesses/1', data=new_info, headers=self.headers)
         self.assertEqual(response.status_code, 200)
+
+    def test_user_can_add_reviews(self):
+        """Test whether a user can add a business review using POST request."""
+
+        json_data = json.dumps({
+            'review': 'first review',
+            'created_at': datetime.datetime.now().strftime("%y-%m-%d")
+        })
+        response = self.run_app.post('/api/v1/businesses/1/reviews', data=json_data, headers=self.headers)
+        self.assertEqual(response.status_code, 201)
 
 
 if __name__ == '__main__':
