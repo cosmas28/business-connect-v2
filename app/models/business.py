@@ -133,3 +133,47 @@ class Business(object):
             response += 'Business deleted successfully!'
 
         return response
+
+    def update_business(self, business_id, business_owner, business_name, business_location, business_category,
+                        business_summary):
+        """Update a registered business.
+
+        Args:
+            business_id (int): business id parameter should be unique to identify each business.
+            business_owner (str): business owner name parameter describes the business owner.
+            business_name (str): business name that summarises what the business is.
+            business_location (str): business location parameter describes the where the business is located.
+            business_category (str): business category to group the business with the same features.
+            business_summary (str): summary of what the business is about.
+
+        Returns:
+            A list of values of the registered business.
+            Success message
+
+        Raises:
+            KeyError: if the business id already exists.
+            TypeError: if the business is not integer.
+            ValueError: if business id a negative number.
+
+        """
+        response = ''
+
+        if len(str(business_id)) == 0:
+            response += 'Business id is required!'
+        elif type(business_id) != int:
+            raise TypeError('The business id must be an number!')
+        elif business_id < 0:
+            raise ValueError('The business id must be a positive number')
+        elif business_id not in self.business_records:
+            response += 'Business does not exist'
+            raise KeyError('Key does not exist')
+        else:
+            business_record = self.business_records[business_id]
+            business_record['owner'] = business_owner
+            business_record['name'] = business_name
+            business_record['category'] = business_category
+            business_record['location'] = business_location
+            business_record['summary'] = business_summary
+            response += 'Business was successfully updated!'
+
+        return response
