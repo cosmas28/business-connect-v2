@@ -113,8 +113,31 @@ class OneBusinessRecord(Resource):
 
         return response, 200
 
+    def put(self, business_id):
+        """Update a registered businesses.
+
+        Args:
+            business_id (int): business id parameter should be unique to identify each business.
+
+        Returns:
+           A successful message when the business record is deleted.
+
+        """
+
+        req_data = request.get_json()
+        business_owner = req_data['business_owner']
+        business_name = req_data['business_name']
+        business_category = req_data['business_category']
+        business_location = req_data['business_location']
+        business_summary = req_data['business_summary']
+
+        response = business.update_business(business_id, business_owner, business_name, business_category,
+                                            business_location, business_summary)
+
+        return response, 200
+
     def delete(self, business_id):
-        """View all registered businesses.
+        """Delete a registered businesses.
 
         Args:
             business_id (int): business id parameter should be unique to identify each business.
