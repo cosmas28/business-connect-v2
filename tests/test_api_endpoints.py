@@ -116,6 +116,12 @@ class TestReviewsEndpoints(unittest.TestCase):
         business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology',
                                               'Masters of ecommerce')
 
+    def tearDown(self):
+        """Delete registered business records after every test case has run."""
+
+        # self.run_app.delete('/api/v1/businesses/1')
+        del business.business_records[1]
+
     def test_user_can_add_reviews(self):
         """Test whether a user can add a business review using POST request."""
 
@@ -124,6 +130,16 @@ class TestReviewsEndpoints(unittest.TestCase):
         })
         response = self.run_app.post('/api/v1/businesses/1/reviews', data=json_data, headers=self.headers)
         self.assertEqual(response.status_code, 201)
+
+    def test_view_businesses_reviews(self):
+        """Test whether providing business id to a get request to business API endpoint has succeeded."""
+
+        json_data = json.dumps({
+            'review': 'first review'
+        })
+        self.run_app.post('/api/v1/businesses/1/reviews', data=json_data, headers=self.headers)
+        response = self.run_app.get('/api/v1/businesses/1/reviews')
+        self.assertEqual(response.status_code, 200)
 
 
 if __name__ == '__main__':
