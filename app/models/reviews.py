@@ -80,4 +80,6 @@ class Reviews(object):
                         'created_at': review['created_at']
                     })
 
+        if len(reviews) == 0:
+            return 'Sorry! This business have no reviews at the moment.'
         return reviews

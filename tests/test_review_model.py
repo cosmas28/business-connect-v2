@@ -74,10 +74,12 @@ class ViewBusinessReviewsTest(unittest.TestCase):
 
         self.assertEqual(self.reviews.view_business_reviews(2), 'Business ID does not exist!')
 
-    # def test_empty_business_reviews(self):
-    #     """Test whether business have no reviews."""
-    #
-    #     self.assertEqual(self.reviews.view_business_reviews(1), 'Sorry! This business have no reviews at the moment.')
+    def test_empty_business_reviews(self):
+        """Test whether business have no reviews."""
+
+        self.reviews.add_review(1, 'first review', '18-03-17')
+        business.create_business(2, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
+        self.assertEqual(self.reviews.view_business_reviews(2), 'Sorry! This business have no reviews at the moment.')
 
     def test_view_business_reviews(self):
         """Test whether view_business_reviews method returns reviews."""
