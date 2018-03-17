@@ -41,6 +41,20 @@ class BusinessReviews(Resource):
         response = reviews.add_review(business_id, business_review, created_at)
         return response, 201
 
+    def get(self, business_id):
+        """View reviews for a business using business by id.
+
+        Args:
+            business_id (int): business id parameter should be unique to identify each business.
+
+        Returns:
+            A json record of the business reviews.
+
+        """
+        response = reviews.view_business_reviews(business_id)
+
+        return response, 200
+
 
 reviews_api = Blueprint('resources.reviews', __name__)
 api = Api(reviews_api)
