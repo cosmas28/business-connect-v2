@@ -5,7 +5,13 @@ WeConnect provides a platform that brings businesses and individuals together.
 This platform creates awareness for businesses and gives the users the ability
 to write reviews about the businesses they have interacted with.
 
-## Installation
+## HTML templates installation
+
+* Clone the master branch into your local directory.
+
+```bash
+$ git clone https://github.com/cosmas28/business-connect-v1.git
+```
 
 * cd business-connect-v1/designs/UI
 * Run index.html in your browser
@@ -14,15 +20,19 @@ to write reviews about the businesses they have interacted with.
 ### API installation
 To set up WeConnect API, make sure that you have python 3.6, postman and pip installed.
 
-Clone the Repo into your local directory.
+* Clone the Repo into your local directory.
 
-git clone https://github.com/cosmas28/business-connect-v1.git
+```bash
+$ git clone https://github.com/cosmas28/business-connect-v1.git
+```
 
-create a virtual environment.
+* create a virtual environment.
 
 ```bash
 $ virtualenv <your_virtualenv>
 ```
+
+* Activate your virtual environment
 
 Navigate to the API directory.
 
@@ -57,6 +67,11 @@ POST `/api/v1/reset-password` Reset users passwords
 POST `/api/v1/business` Registers business
 GET `/api/v1/business` View all businesses
 GET `/api/v1/businesses/<int:business_id>` view business by using business ID
+DELETE `/api/v1/businesses/<int:business_id>` delete business by using business ID
+PUT `/api/v1/businesses/<int:business_id>` update a registered business by using business ID
+POST `/api/v1/businesses/<int:business_id>/reviews` add business review using business ID
+GET `/api/v1/businesses/<int:business_id>/reviews` view business reviews using business ID
 
 ## Acknowledgements
+
 * Andela Kenya Recruitment team for inspiration
