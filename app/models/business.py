@@ -20,12 +20,6 @@ class Business(object):
         self.business_records = {}
 
     def business_id_exist(self, business_id):
-        # business_id_existence = False
-        #
-        # if business_id in self.business_records:
-        #     business_id_existence = True
-        #
-        # return business_id_existence
         if business_id not in self.business_records:
             return False
         else:
@@ -36,10 +30,8 @@ class Business(object):
             return 'Business ID is required!'
         elif type(business_id) != int:
             return 'The business id must be an number!'
-            # raise TypeError('The business id must be an number!')
         elif business_id < 0:
             return 'The business id must be a positive number'
-            # raise ValueError('The business id must be a positive number')
         else:
             return True
 
@@ -73,10 +65,6 @@ class Business(object):
         success_message = ''
         result_list = []
 
-        # if type(business_id) != int:
-        #     raise TypeError('The business id must be an number!')
-        # elif business_id < 0:
-        #     raise ValueError('The business id must be a positive number')
         if self.valid_business_id(business_id) is not True:
             return self.valid_business_id(business_id)
         elif self.business_id_exist(business_id):
@@ -109,26 +97,19 @@ class Business(object):
     def view_business_by_id(self, business_id):
         """View a registered businesses using an id.
 
+        Args:
+            business_id (int): business id parameter should be unique to identify each business.
+
         Returns:
+            An Error message if business id does not exist.
            A a dictionary of the registered businesses.
 
         """
-        # result_message = ''
-        # if business_id not in self.business_records:
-        #     result_message += 'Business does not exist'
-        #     raise KeyError('Key does not exist')
+
         if self.business_id_exist(business_id) is not True:
-            # result_message += 'Business does not exist'
-            # raise KeyError('Key does not exist')
             return 'Business does not exist'
         else:
             return self.business_records[business_id]
-
-        # if len(result_message) > 0:
-        #     return {'message': result_message}
-        # elif len(result_message) == 0:
-        #     single_record = self.business_records[business_id]
-        #     return single_record
 
     def delete_business(self, business_id):
         """Delete a business.
