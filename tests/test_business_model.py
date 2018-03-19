@@ -20,17 +20,27 @@ class CreateBusinessTest(unittest.TestCase):
 
         self.business = Business()
 
+    def test_empty_business_id(self):
+        """Test whether no business id is provided."""
+
+        response = self.business.create_business('', 'cosmas', 'Cosma Tech', 'Nairobi', 'Category_one', 'Womens wear')
+        self.assertEqual(response, 'Business ID is required!')
+
     def test_non_integer_business_id_raises_TypeError(self):
         """Test if TypeError is raised when business id not a number."""
 
-        with self.assertRaises(TypeError):
-            self.business.create_business('1', 'cosmas', 'Cosma Tech', 'Nairobi', 'Category_one', 'Womens wear')
+        response = self.business.create_business('1', 'cosmas', 'Cosma Tech', 'Nairobi', 'Category_one', 'Womens wear')
+        self.assertEqual(response, 'The business id must be an number!')
+        # with self.assertRaises(TypeError):
+        #     self.business.create_business('1', 'cosmas', 'Cosma Tech', 'Nairobi', 'Category_one', 'Womens wear')
 
     def test_negative_integer_business_id_raises_ValueError(self):
         """Test if ValueError is raised when business id a negative number."""
 
-        with self.assertRaises(ValueError):
-            self.business.create_business(-1, 'cosmas', 'Cosma Tech', 'Nairobi', 'Category_one', 'Womens wear')
+        response = self.business.create_business(-1, 'cosmas', 'Cosma Tech', 'Nairobi', 'Category_one', 'Womens wear')
+        self.assertEqual(response, 'The business id must be a positive number')
+        # with self.assertRaises(ValueError):
+        #     self.business.create_business(-1, 'cosmas', 'Cosma Tech', 'Nairobi', 'Category_one', 'Womens wear')
 
     def test_duplicate_business_id_raises_KeyError(self):
         """Test if KeyError is raised when business id already exist."""
@@ -83,8 +93,9 @@ class ViewBusinessTest(unittest.TestCase):
         self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
         self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
         self.business.create_business(3, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
-        with self.assertRaises(KeyError):
-            self.business.view_business_by_id(4)
+        self.assertEqual(self.business.view_business_by_id(4), 'Business does not exist')
+        # with self.assertRaises(KeyError):
+        #     self.business.view_business_by_id(4)
 
 
 class DeleteBusinessTest(unittest.TestCase):
