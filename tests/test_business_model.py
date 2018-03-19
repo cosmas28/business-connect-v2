@@ -30,13 +30,13 @@ class CreateBusinessTest(unittest.TestCase):
         """Test if TypeError is raised when business id not a number."""
 
         response = self.business.create_business('1', 'cosmas', 'Cosma Tech', 'Nairobi', 'Category_one', 'Womens wear')
-        self.assertEqual(response, 'The business id must be an number!')
+        self.assertEqual(response, 'The business ID must be an number!')
 
     def test_negative_integer_business_id_raises_ValueError(self):
         """Test if ValueError is raised when business id a negative number."""
 
         response = self.business.create_business(-1, 'cosmas', 'Cosma Tech', 'Nairobi', 'Category_one', 'Womens wear')
-        self.assertEqual(response, 'The business id must be a positive number')
+        self.assertEqual(response, 'The business ID must be a positive number')
 
     def test_duplicate_business_id_raises_KeyError(self):
         """Test if KeyError is raised when business id already exist."""
@@ -105,26 +105,21 @@ class DeleteBusinessTest(unittest.TestCase):
 
         self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
         self.assertEqual(self.business.delete_business(4), 'Business does not exist')
-        # self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
-        # with self.assertRaises(KeyError):
-        #     self.business.delete_business(4)
 
     def test_empty_business_id(self):
         """Test whether no business id is provided."""
 
-        self.assertEqual(self.business.delete_business(''), 'Business is required!')
+        self.assertEqual(self.business.delete_business(''), 'Business ID is required!')
 
     def test_negative_integer_business_id_raises_ValueError(self):
         """Test if ValueError is raised when business id a negative number."""
 
-        with self.assertRaises(ValueError):
-            self.business.delete_business(-1)
+        self.assertEqual(self.business.delete_business(-1), 'The business ID must be a positive number')
 
     def test_non_integer_business_id_raises_TypeError(self):
         """Test if TypeError is raised when business id not a number."""
 
-        with self.assertRaises(TypeError):
-            self.business.delete_business('1')
+        self.assertEqual(self.business.delete_business('1'), 'The business ID must be an number!')
 
 
 class UpdateBusinessTest(unittest.TestCase):
@@ -140,8 +135,6 @@ class UpdateBusinessTest(unittest.TestCase):
     def test_business_id_existence(self):
         """Test if a KeyError will be raised when the business id does not exist."""
 
-        # self.business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
-        # self.business.create_business(2, 'John', 'John Corporate', 'Kitale', 'Fishing', 'Process fish')
         with self.assertRaises(KeyError):
             self.business.update_business(3, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology',
                                           'Masters of ecommerce and statics')
@@ -150,21 +143,21 @@ class UpdateBusinessTest(unittest.TestCase):
         """Test whether no business id is provided."""
 
         self.assertEqual(self.business.update_business('', 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology',
-                                                       'Masters of ecommerce and statics'), 'Business id is required!')
+                                                       'Masters of ecommerce and statics'), 'Business ID is required!')
 
     def test_negative_integer_business_id_raises_ValueError(self):
         """Test if ValueError is raised when business id a negative number."""
 
-        with self.assertRaises(ValueError):
-            self.business.update_business(-1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology',
-                                          'Masters of ecommerce and statics')
+        response = self.business.update_business(-1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology',
+                                                 'Masters of ecommerce and statics')
+        self.assertEqual(response, 'The business ID must be a positive number')
 
     def test_non_integer_business_id_raises_TypeError(self):
         """Test if TypeError is raised when business id not a number."""
 
-        with self.assertRaises(TypeError):
-            self.business.update_business('1', 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology',
-                                          'Masters of ecommerce and statics')
+        response = self.business.update_business('1', 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology',
+                                                 'Masters of ecommerce and statics')
+        self.assertEqual(response, 'The business ID must be an number!')
 
     def test_business_updated_successfully(self):
         """Test whether business was updated successfully."""

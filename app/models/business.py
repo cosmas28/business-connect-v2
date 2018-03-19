@@ -29,9 +29,9 @@ class Business(object):
         if len(str(business_id)) == 0:
             return 'Business ID is required!'
         elif type(business_id) != int:
-            return 'The business id must be an number!'
+            return 'The business ID must be an number!'
         elif business_id < 0:
-            return 'The business id must be a positive number'
+            return 'The business ID must be a positive number'
         else:
             return True
 
@@ -128,14 +128,9 @@ class Business(object):
 
         """
         response = ''
-        if len(str(business_id)) == 0:
-            response += 'Business is required!'
-        elif type(business_id) != int:
-            response += 'The business id must be an number!'
-            raise TypeError('The business id must be an number!')
-        elif business_id < 0:
-            response += 'The business id must be a positive number'
-            raise ValueError('The business id must be a positive number')
+
+        if self.valid_business_id(business_id) is not True:
+            response = self.valid_business_id(business_id)
         elif self.business_id_exist(business_id) is not True:
             response += 'Business does not exist'
         else:
@@ -168,12 +163,8 @@ class Business(object):
         """
         response = ''
 
-        if len(str(business_id)) == 0:
-            response += 'Business id is required!'
-        elif type(business_id) != int:
-            raise TypeError('The business id must be an number!')
-        elif business_id < 0:
-            raise ValueError('The business id must be a positive number')
+        if self.valid_business_id(business_id) is not True:
+            response = self.valid_business_id(business_id)
         elif self.business_id_exist(business_id) is not True:
             response += 'Business does not exist'
             raise KeyError('Key does not exist')
