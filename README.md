@@ -38,7 +38,6 @@ Navigate to the API directory.
 
 ```bash
 $ cd business-connect-v1
-$ git checkout challenge-two
 ```
 
 To install the packages run pip install -r requirements.txt
@@ -46,7 +45,7 @@ To install the packages run pip install -r requirements.txt
 ## Usage
 
 ```bash
-$ python app.py
+$ python run.py
 ```
 
 Run the endpoints on Postman
