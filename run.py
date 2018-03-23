@@ -1,14 +1,10 @@
-from flask import Flask
+import os
 
+from app import create_app
 
-from app.resources.business import business_api
-from app.resources.user import user_api
-from app.resources.reviews import reviews_api
-
-app = Flask(__name__)
-app.register_blueprint(business_api, url_prefix='/api/v1')
-app.register_blueprint(user_api, url_prefix='/api/v1')
-app.register_blueprint(reviews_api, url_prefix='/api/v1')
+# config_name = os.environ.get('FLASK_CONFIG')
+# app = create_app(os.environ.get('FLASK_CONFIG'))
+app = create_app()
 
 
 @app.route('/')
@@ -17,4 +13,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
