@@ -2,7 +2,8 @@ import os
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 
 # from app.resources.business import business_api
 # from app.resources.user import user_api
@@ -27,12 +28,15 @@ def create_app():
 
     db.init_app(app)
 
-    migrate = Migrate()
+    migrate = Migrate(app, db)
 
-    from app import models
+    manager = Manager(app)
+    manager.add_command('db', MigrateCommand)
+
+    from app.models import user
 
     # app.register_blueprint(business_api, url_prefix='/api/v1')
     # app.register_blueprint(user_api, url_prefix='/api/v1')
     # app.register_blueprint(reviews_api, url_prefix='/api/v1')
 
-    return app
+    return manager
