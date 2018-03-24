@@ -35,48 +35,48 @@ class AbstractTest(unittest.TestCase):
 
         user_data = json.dumps({'email': '', 'username': 'cosmas', 'first_name': 'first',
                                 'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
-        response = self.run_app.post('/api/v1/register_user', data=user_data, headers=self.headers)
-        self.assertEqual(response.status_code, 204)
+        response = self.run_app.post('/api/v1/auth/register_user', data=user_data, headers=self.headers)
+        self.assertEqual(response.status_code, 406)
 
     def test_empty_username(self):
         """Test whether user have not provided a username."""
 
         user_data = json.dumps({'email': 'test@andela.com', 'username': '', 'first_name': 'first',
                                 'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
-        response = self.run_app.post('/api/v1/register_user', data=user_data, headers=self.headers)
-        self.assertEqual(response.status_code, 204)
+        response = self.run_app.post('/api/v1/auth/register_user', data=user_data, headers=self.headers)
+        self.assertEqual(response.status_code, 406)
 
     def test_empty_firstname(self):
         """Test whether user have provided first name."""
 
         user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': '',
                                 'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
-        response = self.run_app.post('/api/v1/register_user', data=user_data, headers=self.headers)
-        self.assertEqual(response.status_code, 204)
+        response = self.run_app.post('/api/v1/auth/register_user', data=user_data, headers=self.headers)
+        self.assertEqual(response.status_code, 406)
 
     def test_empty_lastname(self):
         """Test whether user have provided last name."""
 
         user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
                                 'last_name': '', 'password': 'andela2018', 'confirm_password': 'andela2018'})
-        response = self.run_app.post('/api/v1/register_user', data=user_data, headers=self.headers)
-        self.assertEqual(response.status_code, 204)
+        response = self.run_app.post('/api/v1/auth/register_user', data=user_data, headers=self.headers)
+        self.assertEqual(response.status_code, 406)
 
     def test_empty_password(self):
         """Test whether user have provided password."""
 
         user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
                                 'last_name': 'last', 'password': '', 'confirm_password': 'andela2018'})
-        response = self.run_app.post('/api/v1/register_user', data=user_data, headers=self.headers)
-        self.assertEqual(response.status_code, 204)
+        response = self.run_app.post('/api/v1/auth/register_user', data=user_data, headers=self.headers)
+        self.assertEqual(response.status_code, 406)
 
     def test_empty_password_confirm(self):
         """Test whether user have provided confirmation password."""
 
         user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
                                 'last_name': 'last', 'password': 'andela2018', 'confirm_password': ''})
-        response = self.run_app.post('/api/v1/register_user', data=user_data, headers=self.headers)
-        self.assertEqual(response.status_code, 204)
+        response = self.run_app.post('/api/v1/auth/register_user', data=user_data, headers=self.headers)
+        self.assertEqual(response.status_code, 406)
 
     def test_duplicate_email(self):
         """Test whether the email address exist."""
@@ -87,7 +87,7 @@ class AbstractTest(unittest.TestCase):
 
         user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
                                 'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
-        response = self.run_app.post('/api/v1/register_user', data=user_data, headers=self.headers)
+        response = self.run_app.post('/api/v1/auth/register_user', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 406)
 
     def test_duplicate_username(self):
@@ -99,7 +99,7 @@ class AbstractTest(unittest.TestCase):
 
         user_data = json.dumps({'email': 'test2@andela.com', 'username': 'testuser', 'first_name': 'first',
                                 'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
-        response = self.run_app.post('/api/v1/register_user', data=user_data, headers=self.headers)
+        response = self.run_app.post('/api/v1/auth/register_user', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 406)
 
     def test_password_length(self):
@@ -107,7 +107,7 @@ class AbstractTest(unittest.TestCase):
 
         user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
                                 'last_name': 'last', 'password': 'a2018', 'confirm_password': 'a2018'})
-        response = self.run_app.post('/api/v1/register_user', data=user_data, headers=self.headers)
+        response = self.run_app.post('/api/v1/auth/register_user', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 406)
 
     def test_password_confirmation(self):
@@ -115,7 +115,7 @@ class AbstractTest(unittest.TestCase):
 
         user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
                                 'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2017'})
-        response = self.run_app.post('/api/v1/register_user', data=user_data, headers=self.headers)
+        response = self.run_app.post('/api/v1/auth/register_user', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 406)
 
     def test_user_can_create_account(self):
@@ -123,7 +123,7 @@ class AbstractTest(unittest.TestCase):
 
         user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
                                 'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
-        response = self.run_app.post('/api/v1/register_user', data=user_data, headers=self.headers)
+        response = self.run_app.post('/api/v1/auth/register_user', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 201)
 
 
