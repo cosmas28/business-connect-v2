@@ -9,9 +9,8 @@ import unittest
 
 from flask import json
 
-from app import db
 from . import app
-from app.models.user import User
+from app.models.user import db, User
 
 
 class AbstractTest(unittest.TestCase):
@@ -37,7 +36,7 @@ class AbstractTest(unittest.TestCase):
         user_data = json.dumps({'username': 'cosmas', 'first_name': 'first',
                                 'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
         response = self.run_app.post('/api/v1/register_user', data=user_data, headers=self.headers)
-        self.assertEqual(response.status_code, "Username is required!")
+        self.assertEqual(response.status_code, "Email is required!")
 
     def test_empty_username(self):
         """Test whether user have not provided a username."""
