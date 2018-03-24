@@ -1,3 +1,3 @@
-from app.models.business import Business
+from app import create_app
 
-business = Business()
+app = create_app('config.TestingConfig')
