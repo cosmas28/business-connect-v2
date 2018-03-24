@@ -6,9 +6,11 @@ such as user registration, user login, logout, reset password.
 """
 
 
+from flask_sqlalchemy import SQLAlchemy
+
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app import db
+db = SQLAlchemy()
 
 
 class User(db.Model):
@@ -16,8 +18,8 @@ class User(db.Model):
 
     __tablename__ = 'users'
     uid = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(60), unique=True)
-    username = db.Column(db.String(60), unique=True)
+    email = db.Column(db.String(60))
+    username = db.Column(db.String(60))
     first_name = db.Column(db.String(60))
     last_name = db.Column(db.String(60))
     pwd_hash = db.Column(db.String(120))
