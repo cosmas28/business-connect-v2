@@ -8,9 +8,8 @@ are expected from user model.
 
 import unittest
 
-from app import db
 from . import app
-from app.models.user import User
+from app.models.user import db, User
 
 
 class AbstractTest(unittest.TestCase):
