@@ -187,7 +187,8 @@ class LoginUserTest(AbstractTest):
         # get the response text in json format
         json_res = json.loads(login_response.data.decode())
         self.assertEqual(json_res['response_message'], "Invalid email or password!")
-        self.assertEqual(login_response.status_code, 401)
+        # self.assertEqual(login_response.status_code, 401)
+        self.assertEqual(json_res['status_code'], 401)
 
     def test_user_login_wrong_password(self):
         """Test whether user have provided a correct password."""
@@ -201,7 +202,8 @@ class LoginUserTest(AbstractTest):
         # get the response text in json format
         json_res = json.loads(login_response.data.decode())
         self.assertEqual(json_res['response_message'], "Invalid email or password!")
-        self.assertEqual(login_response.status_code, 401)
+        # self.assertEqual(login_response.status_code, 401)
+        self.assertEqual(json_res['status_code'], 401)
 
     def test_user_can_login(self):
         """Test registered user can login."""
@@ -215,7 +217,8 @@ class LoginUserTest(AbstractTest):
         # get the response text in json format
         json_res = json.loads(login_response.data.decode())
         self.assertEqual(json_res['response_message'], "You logged in successfully!")
-        self.assertEqual(login_response.status_code, 200)
+        # self.assertEqual(login_response.status_code, 200)
+        self.assertEqual(json_res['status_code'], 200)
         self.assertTrue(json_res['access_token'])
 
 
