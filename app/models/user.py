@@ -5,8 +5,11 @@ such as user registration, user login, logout, reset password.
 
 """
 
+import os
 
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime, timedelta
+import jwt
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -37,6 +40,37 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.pwd_hash, password)
 
+    def generate_token(self, user_id):
+        """Generate access token."""
+
+        try:
+            payload = {
+                'exp': datetime.utcnow() + timedelta(minutes=5),
+                'iat': datetime.utcnow(),
+                'sub': user_id
+            }
+            jwt_string = jwt.encode(
+                payload, os.environ.get('SECRET_KEY'), algorithm='HS256'
+            )
+            return jwt_string
+
+        except Exception as e:
+            return str(e)
+
+    @staticmethod
+    def decode_token(token):
+        """Decode the access token from the Authorization header."""
+
+        try:
+            payload = jwt.decode(token, os.environ.get('SECRET_KEY'))
+
+            return payload['sub']
+        except jwt.ExpiredSignatureError:
+
+            return "The token is expired. Please login!"
+        except jwt.InvalidTokenError:
+
+            return "Invalid token. Please login!"
 
 # class User(object):
 #
