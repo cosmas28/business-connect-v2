@@ -4,7 +4,7 @@ This module provides API endpoints to register users, login users, and reset use
 
 """
 
-from flask import Blueprint,  request, Response
+from flask import Blueprint,  request, make_response, jsonify
 
 from flask_restful import (Resource, Api, reqparse)
 
@@ -145,49 +145,93 @@ class RegisterUser(Resource):
         return {'response_message': response_text}, status_code
 
 
-# class LoginUser(Resource):
-#
-#     """Illustrate API endpoints to login user.
-#
-#     Attributes:
-#         reqparse (object): A request parsing interface designed to access simple and uniform to
-#         variables on the flask.request object.
-#
-#     """
-#
-#     def __init__(self):
-#         self.reqparse = reqparse.RequestParser()
-#         self.reqparse.add_argument('username',
-#                                    required=True,
-#                                    help='Username is required!',
-#                                    location=['form', 'json']
-#                                    )
-#         self.reqparse.add_argument('password',
-#                                    required=True,
-#                                    help='Password is required!',
-#                                    location=['form', 'json']
-#                                    )
-#
-#     def post(self):
-#         """Login a user.
-#
-#         Returns:
-#             A success message to indicate successful login.
-#
-#         Raises:
-#             An username error when username does not exist exist.
-#             password error when the password is invalid.
-#
-#         """
-#         req_data = request.get_json()
-#         username = req_data['username']
-#         password = req_data['password']
-#
-#         save_response = user.login_user(username, password)
-#
-#         return save_response, 200
-#
-#
+class LoginUser(Resource):
+
+    """Illustrate API endpoints to login user.
+
+    Attributes:
+        reqparse (object): A request parsing interface designed to access simple and uniform to
+        variables on the flask.request object.
+
+    """
+
+    # def __init__(self):
+    #     self.reqparse = reqparse.RequestParser()
+    #     self.reqparse.add_argument('username',
+    #                                required=True,
+    #                                help='Username is required!',
+    #                                location=['form', 'json']
+    #                                )
+    #     self.reqparse.add_argument('password',
+    #                                required=True,
+    #                                help='Password is required!',
+    #                                location=['form', 'json']
+    #                                )
+
+    def post(self):
+        """Login a user.
+
+        Returns:
+            A success message to indicate successful login.
+
+        Raises:
+            An username error when username does not exist exist.
+            password error when the password is invalid.
+
+        """
+        req_data = request.get_json()
+        email = req_data['email']
+        password = req_data['password']
+
+        try:
+            user = User.query.filter_by(email=email).first()
+
+            if len(email) == 0 and len(password) == 0:
+                response = {
+                    'response_message': 'Email and password is required!'
+                }
+                return make_response(jsonify(response))
+            elif len(email) == 0:
+                response = {
+                    'response_message': 'Email is required!'
+                }
+                return make_response(jsonify(response))
+            elif len(password) == 0:
+                response = {
+                    'response_message': 'Password is required!'
+                }
+                return make_response(jsonify(response))
+            elif email_exist(email) is False:
+                response = {
+                    'response_message': 'Invalid email or password!',
+                    'status_code': 401
+                }
+                return make_response(jsonify(response))
+            elif not user.check_password(password):
+                response = {
+                    'response_message': 'Invalid email or password!',
+                    'status_code': 401
+                }
+                return make_response(jsonify(response))
+            else:
+                # Generate the access token. This will be used as the authorization header
+                access_token = user.generate_token(user.uid)
+                if access_token:
+                    response = {
+                        'response_message': 'You logged in successfully!',
+                        'status_code': 200,
+                        'access_token': access_token
+                    }
+                    return make_response(jsonify(response))
+
+        except Exception as e:
+            response = {
+                'response_message': str(e)
+            }
+
+            return make_response(jsonify(response))
+
+
 # class Logout(Resource):
 #
 #     """Illustrate API endpoints to logout user.
@@ -270,11 +314,11 @@ api.add_resource(
     '/register_user',
     endpoint='register_user'
 )
-# api.add_resource(
-#     LoginUser,
-#     '/login_user',
-#     endpoint='login_user'
-# )
+api.add_resource(
+    LoginUser,
+    '/login_user',
+    endpoint='login_user'
+)
 # api.add_resource(
 #     Logout,
 #     '/logout',
