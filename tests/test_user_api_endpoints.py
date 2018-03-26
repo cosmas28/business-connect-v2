@@ -175,6 +175,32 @@ class LoginUserTest(AbstractTest):
         json_res = json.loads(login_response.data.decode())
         self.assertEqual(json_res['response_message'], "Password is required!")
 
+    def test_user_no_existed_login_email(self):
+        """Test whether user have provided existed email."""
+
+        register_response = self.run_app.post('/api/v1/auth/register_user', data=self.user_data, headers=self.headers)
+        self.assertEqual(register_response.status_code, 201)
+
+        login_data = json.dumps({'email': 'not_registered@andela.com', 'password': 'andela2018'})
+        login_response = self.run_app.post('/api/v1/auth/login_user', data=login_data, headers=self.headers)
+
+        # get the response text in json format
+        json_res = json.loads(login_response.data.decode())
+        self.assertEqual(json_res['response_message'], "Invalid email or password!")
+
+    def test_user_login_wrong_password(self):
+        """Test whether user have provided a correct password."""
+
+        register_response = self.run_app.post('/api/v1/auth/register_user', data=self.user_data, headers=self.headers)
+        self.assertEqual(register_response.status_code, 201)
+
+        login_data = json.dumps({'email': 'test@andela.com', 'password': 'andela2017'})
+        login_response = self.run_app.post('/api/v1/auth/login_user', data=login_data, headers=self.headers)
+
+        # get the response text in json format
+        json_res = json.loads(login_response.data.decode())
+        self.assertEqual(json_res['response_message'], "Invalid email or password!")
+
     def test_user_can_login(self):
         """Test registered user can login."""
 
