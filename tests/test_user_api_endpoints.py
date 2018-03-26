@@ -24,11 +24,17 @@ class AbstractTest(unittest.TestCase):
         self.run_app = app.test_client()
         self.headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
+        self.user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
+                                     'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
+
     def tearDown(self):
         """Call after every test to remove the created table."""
 
         db.session.remove()
         db.drop_all()
+
+
+class RegisterUserTest(AbstractTest):
 
     def test_empty_email(self):
         """Test whether user have provided an email."""
@@ -125,6 +131,64 @@ class AbstractTest(unittest.TestCase):
                                 'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
         response = self.run_app.post('/api/v1/auth/register_user', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 201)
+
+
+class LoginUserTest(AbstractTest):
+    """Test case for the login api endpoint."""
+
+    def test_user_login_empty_email_password(self):
+        """Test whether user have provided an email and a password."""
+
+        register_response = self.run_app.post('/api/v1/auth/register_user', data=self.user_data, headers=self.headers)
+        self.assertEqual(register_response.status_code, 201)
+
+        login_data = json.dumps({'email': '', 'password': ''})
+        login_response = self.run_app.post('/api/v1/auth/login_user', data=login_data, headers=self.headers)
+
+        # get the response text in json format
+        json_res = json.loads(login_response.data.decode())
+        self.assertEqual(json_res['response_message'], "Email and password is required!")
+
+    def test_user_login_empty_email(self):
+        """Test whether user have provided an email."""
+
+        register_response = self.run_app.post('/api/v1/auth/register_user', data=self.user_data, headers=self.headers)
+        self.assertEqual(register_response.status_code, 201)
+
+        login_data = json.dumps({'email': '', 'password': 'andela2018'})
+        login_response = self.run_app.post('/api/v1/auth/login_user', data=login_data, headers=self.headers)
+
+        # get the response text in json format
+        json_res = json.loads(login_response.data.decode())
+        self.assertEqual(json_res['response_message'], "Email is required!")
+
+    def test_user_login_empty_password(self):
+        """Test whether user have provided a password."""
+
+        register_response = self.run_app.post('/api/v1/auth/register_user', data=self.user_data, headers=self.headers)
+        self.assertEqual(register_response.status_code, 201)
+
+        login_data = json.dumps({'email': 'test@andela.com', 'password': ''})
+        login_response = self.run_app.post('/api/v1/auth/login_user', data=login_data, headers=self.headers)
+
+        # get the response text in json format
+        json_res = json.loads(login_response.data.decode())
+        self.assertEqual(json_res['response_message'], "Password is required!")
+
+    def test_user_can_login(self):
+        """Test registered user can login."""
+
+        register_response = self.run_app.post('/api/v1/auth/register_user', data=self.user_data, headers=self.headers)
+        self.assertEqual(register_response.status_code, 201)
+
+        login_data = json.dumps({'email': 'test@andela.com', 'password': 'andela2018'})
+        login_response = self.run_app.post('/api/v1/auth/login_user', data=login_data, headers=self.headers)
+
+        # get the response text in json format
+        json_res = json.loads(login_response.data.decode())
+        self.assertEqual(json_res['response_message'], "You logged in successfully!")
+        self.assertEqual(login_response.status_code, 200)
+        self.assertTrue(json_res['access_token'])
 
 
 if __name__ == '__main__':
