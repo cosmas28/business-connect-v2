@@ -5,8 +5,10 @@ This module provides API endpoints to register users, login users, and reset use
 """
 
 from flask import Blueprint,  request, make_response, jsonify
-
 from flask_restful import (Resource, Api, reqparse)
+from flask_jwt_extended import (
+    create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity
+)
 
 from app.models.user import db, User
 
@@ -202,12 +204,14 @@ class LoginUser(Resource):
                 return make_response(jsonify(response))
             else:
                 # Generate the access token. This will be used as the authorization header
-                access_token = user.generate_token(user.uid)
+                # access_token = user.generate_token(user.uid)
+                access_token = create_access_token(identity=user.uid)
+                refresh_token = create_refresh_token(identity=user.uid)
                 if access_token:
                     response = {
                         'response_message': 'You logged in successfully!',
                         'status_code': 200,
-                        'access_token': access_token.decode()
+                        'access_token': access_token
                     }
                     return make_response(jsonify(response))
 
@@ -217,6 +221,21 @@ class LoginUser(Resource):
             }
 
             return make_response(jsonify(response))
+
+
+class TokenRefresh(Resource):
+    """Reissue access token with refresh token."""
+
+    @jwt_refresh_token_required
+    def post(self):
+        current_user = get_jwt_identity()
+        access_token = create_refresh_token(identity=current_user)
+
+        response = {
+            'access_token': access_token
+        }
+
+        return make_response(jsonify(response))
 
 
 # class Logout(Resource):
@@ -305,6 +324,11 @@ api.add_resource(
     LoginUser,
     '/login_user',
     endpoint='login_user'
+)
+api.add_resource(
+    TokenRefresh,
+    '/refresh_token',
+    endpoint='refresh_token'
 )
 # api.add_resource(
 #     Logout,
