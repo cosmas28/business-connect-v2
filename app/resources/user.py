@@ -5,6 +5,7 @@ This module provides API endpoints to register users, login users, and reset use
 """
 
 from flask import Blueprint,  request, make_response, jsonify
+from werkzeug.security import generate_password_hash
 from flask_restful import (Resource, Api, reqparse)
 from flask_jwt_extended import (
     create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt
@@ -303,45 +304,69 @@ class TokenRefresh(Resource):
         return make_response(jsonify(response))
 
 
-# class ResetPassword(Resource):
-#
-#     """Illustrate API endpoint to reset user password.
-#
-#     Attributes:
-#         reqparse (object): A request parsing interface designed to access simple and uniform to
-#         variables on the flask.request object.
-#
-#     """
-#
-#     def __init__(self):
-#         self.reqparse = reqparse.RequestParser()
-#         self.reqparse.add_argument('username',
-#                                    required=True,
-#                                    help='Username is required!',
-#                                    location=['form', 'json']
-#                                    )
-#         self.reqparse.add_argument('password',
-#                                    required=True,
-#                                    help='Password is required!',
-#                                    location=['form', 'json']
-#                                    )
-#
-#     def post(self):
-#         """Reset user password.
-#
-#         Returns:
-#             A success message to indicate successful logout.
-#             An error message if username does not exist.
-#             An error message if the password is less than 6 characters
-#
-#         """
-#         req_data = request.get_json()
-#         username = req_data['username']
-#         password = req_data['password']
-#
-#         save_response = user.reset_password(username, password)
-#
-#         return save_response, 201
+class ResetPassword(Resource):
+
+    """Illustrate API endpoint to reset user password."""
+
+    def post(self):
+        """Reset user password.
+
+        Returns:
+            A success message to indicate successful logout.
+            An error message if username does not exist.
+            An error message if no data is provided.
+            An error message if the password is less than 6 characters.
+
+        """
+        req_data = request.get_json()
+        email = req_data['email']
+        password = req_data['password']
+        confirm_password = req_data['confirm_password']
+
+        try:
+
+            if len(email) == 0 and len(password) == 0 and len(confirm_password) == 0:
+                response = {
+                    'response_message': 'Email and new password is required!'
+                }
+                return make_response(jsonify(response))
+            elif len(email) == 0:
+                response = {
+                    'response_message': 'Email is required!'
+                }
+                return make_response(jsonify(response))
+            elif len(password) == 0:
+                response = {
+                    'response_message': 'Password is required!'
+                }
+                return make_response(jsonify(response))
+            elif len(confirm_password) == 0:
+                response = {
+                    'response_message': 'Password confirmation is required!'
+                }
+                return make_response(jsonify(response))
+            elif email_exist(email) is False:
+                response = {
+                    'response_message': 'Email not registered',
+                    'status_code': 401
+                }
+                return make_response(jsonify(response))
+            else:
+                user = User.query.filter_by(email=email).update(dict(pwd_hash=generate_password_hash(password)))
+                db.session.commit()
+
+                response = {
+                    'response_message': 'Password reset successfully!',
+                    'status_code': 200
+                }
+                return make_response(jsonify(response))
+
+        except Exception as e:
+            response = {
+                'response_message': str(e)
+            }
+
+            return make_response(jsonify(response))
 
 
 user_api = Blueprint('resources.user', __name__)
@@ -371,13 +396,8 @@ api.add_resource(
     '/logout_refresh_token',
     endpoint='logout_refresh_token'
 )
-# api.add_resource(
-#     Logout,
-#     '/logout',
-#     endpoint='logout'
-# )
-# api.add_resource(
-#     ResetPassword,
-#     '/reset-password',
-#     endpoint='reset-password'
-# )
+api.add_resource(
+    ResetPassword,
+    '/reset_password',
+    endpoint='reset_password'
+)
