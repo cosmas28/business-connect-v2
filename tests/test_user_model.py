@@ -9,7 +9,7 @@ are expected from user model.
 import unittest
 
 from . import app
-from app.models.user import db, User
+from app.models.user import db, User, RevokedToken
 
 
 class AbstractTest(unittest.TestCase):
@@ -47,6 +47,31 @@ class UserModelTest(AbstractTest):
         db.session.commit()
 
         self.assertTrue(user.check_password('password'))
+
+
+class RevokedTokenModelTest(AbstractTest):
+
+    """Illustrate test cases to test expected behavior of revoked token model. """
+
+    def test_revoked_token_model(self):
+        """Test whether RevokedTokenModel instance works."""
+
+        revoked_token = RevokedToken('secret_token')
+        db.session.add(revoked_token)
+        db.session.commit()
+
+        query_res = RevokedToken.query.filter_by(jti='secret_token').first()
+
+        self.assertTrue(query_res)
+
+    def test_token_was_blacklisted(self):
+        """Test whether revoked token exists."""
+
+        revoked_token = RevokedToken('secret_token_blacklisted')
+        db.session.add(revoked_token)
+        db.session.commit()
+
+        self.assertTrue(RevokedToken.is_jti_blacklisted('secret_token_blacklisted'))
 
     # def test_empty_username(self):
     #     """Test empty username."""
