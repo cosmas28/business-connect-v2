@@ -7,10 +7,10 @@ This module provides API endpoints to register users, login users, and reset use
 from flask import Blueprint,  request, make_response, jsonify
 from flask_restful import (Resource, Api, reqparse)
 from flask_jwt_extended import (
-    create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity
+    create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt
 )
 
-from app.models.user import db, User
+from app.models.user import db, User, RevokedToken
 
 
 def email_exist(email):
@@ -211,7 +211,8 @@ class LoginUser(Resource):
                     response = {
                         'response_message': 'You logged in successfully!',
                         'status_code': 200,
-                        'access_token': access_token
+                        'access_token': access_token,
+                        'refresh_token': refresh_token
                     }
                     return make_response(jsonify(response))
 
@@ -220,6 +221,38 @@ class LoginUser(Resource):
                 'response_message': str(e)
             }
 
+            return make_response(jsonify(response))
+
+
+class UserLogoutAccess(Resource):
+    """Logout a user using JWT access_token.
+
+    Returns:
+        A success message to indicate whether token has been revoked.
+
+    Raises:
+        Error: when something went wrong on the server.
+
+    """
+
+    @jwt_required
+    def post(self):
+        jti = get_raw_jwt()['jti']
+
+        try:
+            revoked_token = RevokedToken(jti)
+            db.session.add(revoked_token)
+            db.session.commit()
+            response = {
+                'response_message': 'Log out has been successful!',
+                'status_code': 200
+            }
+            return make_response(jsonify(response))
+        except Exception as e:
+            response = {
+                'response_message': str(e),
+                'status_code': 500
+            }
             return make_response(jsonify(response))
 
 
@@ -238,40 +271,6 @@ class TokenRefresh(Resource):
         return make_response(jsonify(response))
 
 
-# class Logout(Resource):
-#
-#     """Illustrate API endpoints to logout user.
-#
-#     Attributes:
-#         reqparse (object): A request parsing interface designed to access simple and uniform to
-#         variables on the flask.request object.
-#
-#     """
-#
-#     def __init__(self):
-#         self.reqparse = reqparse.RequestParser()
-#         self.reqparse.add_argument('username',
-#                                    required=True,
-#                                    help='Username is required!',
-#                                    location=['form', 'json']
-#                                    )
-#
-#     def post(self):
-#         """logout a user.
-#
-#         Returns:
-#             A success message to indicate successful logout.
-#             A message when the user is not logged in.
-#
-#         """
-#         req_data = request.get_json()
-#         username = req_data['username']
-#
-#         save_response = user.logout_user(username)
-#
-#         return save_response, 200
-#
-#
 # class ResetPassword(Resource):
 #
 #     """Illustrate API endpoint to reset user password.
@@ -329,6 +328,11 @@ api.add_resource(
     TokenRefresh,
     '/refresh_token',
     endpoint='refresh_token'
+)
+api.add_resource(
+    UserLogoutAccess,
+    '/logout_access_token',
+    endpoint='logout_access_token'
 )
 # api.add_resource(
 #     Logout,
