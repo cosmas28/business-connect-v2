@@ -155,19 +155,6 @@ class LoginUser(Resource):
 
     """
 
-    # def __init__(self):
-    #     self.reqparse = reqparse.RequestParser()
-    #     self.reqparse.add_argument('username',
-    #                                required=True,
-    #                                help='Username is required!',
-    #                                location=['form', 'json']
-    #                                )
-    #     self.reqparse.add_argument('password',
-    #                                required=True,
-    #                                help='Password is required!',
-    #                                location=['form', 'json']
-    #                                )
-
     def post(self):
         """Login a user.
 
@@ -220,7 +207,7 @@ class LoginUser(Resource):
                     response = {
                         'response_message': 'You logged in successfully!',
                         'status_code': 200,
-                        'access_token': access_token
+                        'access_token': access_token.decode()
                     }
                     return make_response(jsonify(response))
 
