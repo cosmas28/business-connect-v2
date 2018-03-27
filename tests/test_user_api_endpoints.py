@@ -221,6 +221,23 @@ class LoginUserTest(AbstractTest):
         self.assertEqual(json_res['status_code'], 200)
         self.assertTrue(json_res['access_token'])
 
+    def test_token_refresh_can_reissue_token(self):
+        """Test reissue access token with refresh token."""
+
+        register_response = self.run_app.post('/api/v1/auth/register_user', data=self.user_data, headers=self.headers)
+        self.assertEqual(register_response.status_code, 201)
+
+        login_data = json.dumps({'email': 'test@andela.com', 'password': 'andela2018'})
+        login_response = self.run_app.post('/api/v1/auth/login_user', data=login_data, headers=self.headers)
+
+        # get the response text in json format
+        json_res = json.loads(login_response.data.decode())
+        self.assertEqual(json_res['status_code'], 200)
+
+        token_refresh = self.run_app.post('/api/v1/auth/refresh_token', headers=self.headers)
+        json_token_ref = json.loads(token_refresh.data.decode())
+        self.assertTrue(json_token_ref['access_token'])
+
 
 if __name__ == '__main__':
     unittest.main()
