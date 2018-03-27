@@ -11,9 +11,9 @@ import unittest
 from app.models.business import Business
 
 
-class CreateBusinessTest(unittest.TestCase):
+class BusinessModelTest(unittest.TestCase):
 
-    """Illustrate test cases to test expected behavior of business registration functionality. """
+    """Illustrate test cases to test expected behavior of business model. """
 
     def setUp(self):
         """Instantiate the Business class so that it can be reused by other test cases."""

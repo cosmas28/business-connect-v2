@@ -7,14 +7,14 @@ such as user registration, user login, logout, reset password.
 
 import os
 
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 import jwt
 from flask import current_app
 
 from werkzeug.security import generate_password_hash, check_password_hash
-
-db = SQLAlchemy()
+from . import db
+# db = SQLAlchemy()
 
 
 class User(db.Model):

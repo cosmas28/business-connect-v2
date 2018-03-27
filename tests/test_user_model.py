@@ -9,7 +9,8 @@ are expected from user model.
 import unittest
 
 from . import app
-from app.models.user import db, User, RevokedToken
+from app.models.user import User, RevokedToken
+from app.models import db
 
 
 class AbstractTest(unittest.TestCase):
