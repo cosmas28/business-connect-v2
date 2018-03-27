@@ -221,6 +221,23 @@ class LoginUserTest(AbstractTest):
         self.assertEqual(json_res['status_code'], 200)
         self.assertTrue(json_res['access_token'])
 
+    def test_user_can_logout_with_access_token(self):
+        """Test whether user can logout by revoking access token."""
+
+        register_response = self.run_app.post('/api/v1/auth/register_user', data=self.user_data,
+                                              headers=self.headers)
+        self.assertEqual(register_response.status_code, 201)
+
+        login_data = json.dumps({'email': 'test@andela.com', 'password': 'andela2018'})
+        login_response = self.run_app.post('/api/v1/auth/login_user', data=login_data, headers=self.headers)
+        access_token = json.loads(login_response.data.decode())['access_token']
+
+        logout_res = self.run_app.post(
+            '/api/v1/auth/logout_access_token',
+            headers=dict(Authorization="Bearer " + access_token))
+        self.assertEqual(json.loads(logout_res.data.decode())['status_code'], 200)
+        self.assertEqual(json.loads(logout_res.data.decode())['response_message'], 'Log out has been successful!')
+
     # def test_token_refresh_can_reissue_token(self):
     #     """Test reissue access token with refresh token."""
     #
