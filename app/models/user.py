@@ -73,6 +73,30 @@ class User(db.Model):
 
             return "Invalid token. Please login!"
 
+
+class RevokedToken(db.Model):
+    """Create revoked_tokens table."""
+
+    __tablename__ = 'revoked_tokens'
+    tid = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(120))
+
+    def __init__(self, jti):
+        self.jti = jti
+
+    @classmethod
+    def is_jti_blacklisted(cls, jti):
+        """Check if token was blacklisted.
+        Args:
+            jti(str): A unique identifier of the token.
+
+        Returns:
+            Boolean value.
+        """
+
+        query = cls.query.filter_by(jti=jti).first()
+        return bool(query)
+
 # class User(object):
 #
 #     """Illustrate methods to enable user authentication.
