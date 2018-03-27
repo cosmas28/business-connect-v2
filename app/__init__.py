@@ -8,7 +8,7 @@ from flask_jwt_extended import JWTManager
 from app.resources.user import user_api
 # from app.resources.reviews import reviews_api
 
-from app.models.user import db
+from app.models.user import db, RevokedToken
 
 
 def create_app(config_object):
@@ -29,6 +29,11 @@ def create_app(config_object):
 
     jwt = JWTManager(app)
 
+    @jwt.token_in_blacklist_loader
+    def check_if_token_in_blacklist(decrypted_token):
+        jti = decrypted_token['jti']
+
+        return RevokedToken.is_jti_blacklisted(jti)
     from app.models import user
 
     # app.register_blueprint(business_api, url_prefix='/api/v1')
