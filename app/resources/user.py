@@ -256,6 +256,38 @@ class UserLogoutAccess(Resource):
             return make_response(jsonify(response))
 
 
+class UserLogoutRefresh(Resource):
+    """Logout a user using JWT refresh_token.
+
+    Returns:
+        A success message to indicate whether token has been revoked.
+
+    Raises:
+        Error: when something went wrong on the server.
+
+    """
+
+    @jwt_refresh_token_required
+    def post(self):
+        jti = get_raw_jwt()['jti']
+
+        try:
+            revoked_token = RevokedToken(jti)
+            db.session.add(revoked_token)
+            db.session.commit()
+            response = {
+                'response_message': 'Log out has been successful!',
+                'status_code': 200
+            }
+            return make_response(jsonify(response))
+        except Exception as e:
+            response = {
+                'response_message': str(e),
+                'status_code': 500
+            }
+            return make_response(jsonify(response))
+
+
 class TokenRefresh(Resource):
     """Reissue access token with refresh token."""
 
@@ -333,6 +365,11 @@ api.add_resource(
     UserLogoutAccess,
     '/logout_access_token',
     endpoint='logout_access_token'
+)
+api.add_resource(
+    UserLogoutRefresh,
+    '/logout_refresh_token',
+    endpoint='logout_refresh_token'
 )
 # api.add_resource(
 #     Logout,
