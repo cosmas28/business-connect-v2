@@ -10,6 +10,7 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 import jwt
+from flask import current_app
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -50,7 +51,7 @@ class User(db.Model):
                 'sub': user_id
             }
             jwt_string = jwt.encode(
-                payload, os.environ.get('SECRET_KEY'), algorithm='HS256'
+                payload, current_app.config.get('SECRET_KEY'), algorithm='HS256'
             )
             return jwt_string
 
