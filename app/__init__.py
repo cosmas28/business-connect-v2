@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager
 
 # from app.resources.business import business_api
 from app.resources.user import user_api
@@ -25,6 +26,8 @@ def create_app(config_object):
     db.init_app(app)
 
     migrate = Migrate(app, db)
+
+    jwt = JWTManager(app)
 
     from app.models import user
 
