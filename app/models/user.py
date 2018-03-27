@@ -63,7 +63,7 @@ class User(db.Model):
         """Decode the access token from the Authorization header."""
 
         try:
-            payload = jwt.decode(token, os.environ.get('SECRET_KEY'))
+            payload = jwt.decode(token, current_app.config.get('SECRET_KEY'))
 
             return payload['sub']
         except jwt.ExpiredSignatureError:
