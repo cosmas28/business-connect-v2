@@ -5,6 +5,7 @@ click==6.7
 colorama==0.3.9
 coverage==4.5.1
 Flask==0.12.2
+Flask-JWT-Extended==3.7.2
 Flask-Migrate==2.1.1
 Flask-RESTful==0.3.6
 Flask-Script==2.0.6
