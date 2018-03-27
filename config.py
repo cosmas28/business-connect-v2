@@ -1,5 +1,7 @@
 class Config(object):
     DEBUG = True
+    JWT_BLACKLIST_ENABLED = True
+    JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
 
 
 class DevelopmentConfig(Config):
