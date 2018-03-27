@@ -273,5 +273,90 @@ class LoginUserTest(AbstractTest):
     #     self.assertTrue(json_token_ref['access_token'])
 
 
+class ResetPasswordTest(AbstractTest):
+    """Test case for the reset password api endpoint."""
+
+    def test_empty_email_password(self):
+        """Test whether user have provided an email and a password."""
+
+        register_response = self.run_app.post('/api/v1/auth/register_user', data=self.user_data, headers=self.headers)
+        self.assertEqual(register_response.status_code, 201)
+
+        new_data = json.dumps({'email': '', 'password': '', 'confirm_password': ''})
+        response = self.run_app.post('/api/v1/auth/reset_password', data=new_data, headers=self.headers)
+
+        # get the response text in json format
+        json_res = json.loads(response.data.decode())
+        self.assertEqual(json_res['response_message'], "Email and new password is required!")
+
+    def test_empty_email(self):
+        """Test whether user have provided an email."""
+
+        register_response = self.run_app.post('/api/v1/auth/register_user', data=self.user_data, headers=self.headers)
+        self.assertEqual(register_response.status_code, 201)
+
+        new_data = json.dumps({'email': '', 'password': 'andela2018', 'confirm_password': 'andela2018'})
+        response = self.run_app.post('/api/v1/auth/reset_password', data=new_data, headers=self.headers)
+
+        # get the response text in json format
+        json_res = json.loads(response.data.decode())
+        self.assertEqual(json_res['response_message'], "Email is required!")
+
+    def test_empty_password(self):
+        """Test whether user have provided a password."""
+
+        register_response = self.run_app.post('/api/v1/auth/register_user', data=self.user_data, headers=self.headers)
+        self.assertEqual(register_response.status_code, 201)
+
+        new_data = json.dumps({'email': 'test@andela.com', 'password': '', 'confirm_password': 'andela2018'})
+        response = self.run_app.post('/api/v1/auth/reset_password', data=new_data, headers=self.headers)
+
+        # get the response text in json format
+        json_res = json.loads(response.data.decode())
+        self.assertEqual(json_res['response_message'], "Password is required!")
+
+    def test_empty_password_confirm(self):
+        """Test whether user have provided confirmation password."""
+
+        register_response = self.run_app.post('/api/v1/auth/register_user', data=self.user_data, headers=self.headers)
+        self.assertEqual(register_response.status_code, 201)
+
+        new_data = json.dumps({'email': 'test@andela.com', 'password': 'andela2018', 'confirm_password': ''})
+        response = self.run_app.post('/api/v1/auth/reset_password', data=new_data, headers=self.headers)
+
+        # get the response text in json format
+        json_res = json.loads(response.data.decode())
+        self.assertEqual(json_res['response_message'], "Password confirmation is required!")
+
+    def test_user_non_existed_login_email(self):
+        """Test whether user have provided registered email."""
+
+        register_response = self.run_app.post('/api/v1/auth/register_user', data=self.user_data, headers=self.headers)
+        self.assertEqual(register_response.status_code, 201)
+
+        new_data = json.dumps({'email': 'not_registered@andela.com', 'password': 'andela2018',
+                                 'confirm_password': 'andela2018'})
+        response = self.run_app.post('/api/v1/auth/reset_password', data=new_data, headers=self.headers)
+
+        # get the response text in json format
+        json_res = json.loads(response.data.decode())
+        self.assertEqual(json_res['response_message'], "Email not registered")
+        self.assertEqual(json_res['status_code'], 401)
+
+    def test_user_reset_password(self):
+        """Test registered user can reset their passwords."""
+
+        register_response = self.run_app.post('/api/v1/auth/register_user', data=self.user_data, headers=self.headers)
+        self.assertEqual(register_response.status_code, 201)
+
+        new_data = json.dumps({'email': 'test@andela.com', 'password': 'andela2018', 'confirm_password': 'andela2018'})
+        response = self.run_app.post('/api/v1/auth/reset_password', data=new_data, headers=self.headers)
+
+        # get the response text in json format
+        json_res = json.loads(response.data.decode())
+        self.assertEqual(json_res['response_message'], "Password reset successfully!")
+        self.assertEqual(json_res['status_code'], 200)
+
+
 if __name__ == '__main__':
     unittest.main()
