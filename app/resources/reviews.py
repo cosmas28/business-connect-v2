@@ -4,21 +4,20 @@ This module provides API endpoints to add business reviews and view reviews fo a
 
 """
 
-import datetime
-from flask import Blueprint, abort, request
+from flask import Blueprint, request, make_response, jsonify
 
-from flask_restful import (Resource, Api, reqparse)
+from flask_restful import Resource, Api
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from app.models.reviews import Reviews
-
-
-reviews = Reviews()
+from app.models.user import Business, Reviews
+from app.models import db
 
 
 class BusinessReviews(Resource):
 
     """Illustrate API endpoints to add and view business reviews."""
 
+    @jwt_required
     def post(self, business_id):
         """Add a business review.
 
@@ -34,12 +33,44 @@ class BusinessReviews(Resource):
             Error message when no business id was provided.
 
         """
-        request_data = request.get_json()
+        request_data = request.get_json(force=True)
         business_review = request_data['review']
-        created_at = datetime.datetime.now().strftime("%y-%m-%d")
+        created_by = get_jwt_identity()
 
-        response = reviews.add_review(business_id, business_review, created_at)
-        return response, 201
+        try:
+            business = Business.query.filter_by(bid=business_id).first()
+
+            if len(str(business_id)) == 0:
+                response = {
+                    'response_message': 'Business id is required!'
+                }
+                return make_response(jsonify(response))
+            if business is None:
+                response = {
+                    'response_message': 'Business not registered!'
+                }
+                return make_response(jsonify(response))
+            if len(business_review) == 0:
+                response = {
+                    'response_message': 'Review value is empty!'
+                }
+                return make_response(jsonify(response))
+            else:
+                review = Reviews(business_review, business_id, created_by)
+                db.session.add(review)
+                db.session.commit()
+
+                response = {
+                    'response_message': 'Review has been added successfully!'
+                }
+
+                return make_response(jsonify(response))
+        except Exception as e:
+            response = {
+                'response_message': str(e)
+            }
+
+            return make_response(jsonify(response))
 
     def get(self, business_id):
         """View reviews for a business using business by id.

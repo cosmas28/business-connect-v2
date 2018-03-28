@@ -6,7 +6,7 @@ from flask_jwt_extended import JWTManager
 
 from app.resources.business import business_api
 from app.resources.user import user_api
-# from app.resources.reviews import reviews_api
+from app.resources.reviews import reviews_api
 
 from app.models.user import RevokedToken
 from app.models import db
@@ -39,6 +39,6 @@ def create_app(config_object):
 
     app.register_blueprint(user_api, url_prefix='/api/v1/auth')
     app.register_blueprint(business_api, url_prefix='/api/v1')
-    # app.register_blueprint(reviews_api, url_prefix='/api/v1')
+    app.register_blueprint(reviews_api, url_prefix='/api/v1')
 
     return app
