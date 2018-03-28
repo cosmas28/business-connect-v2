@@ -172,6 +172,7 @@ class SingleBusiness(Resource):
 
             return make_response(jsonify(response))
 
+    @jwt_required
     def put(self, business_id):
         """Update a registered businesses.
 
@@ -179,21 +180,51 @@ class SingleBusiness(Resource):
             business_id (int): business id parameter should be unique to identify each business.
 
         Returns:
-           A successful message when the business record is deleted.
+           A json object of the updated business.
 
         """
 
-        req_data = request.get_json()
-        business_owner = req_data['business_owner']
-        business_name = req_data['business_name']
-        business_category = req_data['business_category']
-        business_location = req_data['business_location']
-        business_summary = req_data['business_summary']
+        req_data = request.get_json(force=True)
+        business_name = req_data['name']
+        business_category = req_data['category']
+        business_location = req_data['location']
+        business_summary = req_data['summary']
 
-        response = business.update_business(business_id, business_owner, business_name, business_category,
-                                            business_location, business_summary)
+        try:
+            current_business = Business.query.filter_by(bid=business_id).first()
 
-        return response, 200
+            if current_business is None:
+                response = {
+                    'response_message': 'Business id is not registered!'
+                }
+                return make_response(jsonify(response))
+            else:
+                update_business = Business.query.filter_by(bid=business_id).update(dict(
+                    name=business_name,
+                    category=business_category,
+                    location=business_location,
+                    summary=business_summary
+                ))
+                db.session.commit()
+
+                new_business = Business.query.filter_by(bid=business_id).first()
+                business_object = {
+                    'id': new_business.bid,
+                    'name': new_business.name,
+                    'category': new_business.category,
+                    'location': new_business.location,
+                    'summary': new_business.summary,
+                    'created_by': new_business.created_by
+                }
+
+                return make_response(jsonify(business_object))
+
+        except Exception as e:
+            response = {
+                'response_message': str(e)
+            }
+
+            return make_response(jsonify(response))
 
     def delete(self, business_id):
         """Delete a registered businesses.
