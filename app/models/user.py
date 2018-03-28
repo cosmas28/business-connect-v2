@@ -27,6 +27,8 @@ class User(db.Model):
     first_name = db.Column(db.String(60))
     last_name = db.Column(db.String(60))
     pwd_hash = db.Column(db.String(120))
+    businesses = db.relationship(
+        'Business', order_by='Business.bid', cascade="all, delete-orphan")
 
     def __init__(self, email, username, first_name, last_name, password):
         self.email = email.lower()
@@ -96,6 +98,26 @@ class RevokedToken(db.Model):
 
         query = cls.query.filter_by(jti=jti).first()
         return bool(query)
+
+
+class Business(db.Model):
+    """Create business table."""
+
+    __tablename__ = 'business'
+
+    bid = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60))
+    category = db.Column(db.String(40))
+    location = db.Column(db.String(40))
+    summary = db.Column(db.Text)
+    created_by = db.Column(db.Integer, db.ForeignKey(User.uid))
+
+    def __init__(self, name, category, location, summary):
+        self.name = name
+        self.category = category
+        self.location = location
+        self.summary = summary
+        # self.created_by = created_by
 
 # class User(object):
 #
