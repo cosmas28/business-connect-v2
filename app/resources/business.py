@@ -8,7 +8,7 @@ businesses.
 from flask import Blueprint, abort, request, make_response, jsonify
 
 from flask_restful import (Resource, Api, reqparse)
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.models.user import Business
 from app.models import db
@@ -54,6 +54,7 @@ class Businesses(Resource):
         business_category = req_data['category']
         business_location = req_data['location']
         business_summary = req_data['summary']
+        created_by = get_jwt_identity()
 
         try:
 
@@ -83,7 +84,7 @@ class Businesses(Resource):
                 }
                 return make_response(jsonify(response))
             else:
-                business = Business(business_name, business_category, business_location, business_summary)
+                business = Business(business_name, business_category, business_location, business_summary, created_by)
                 db.session.add(business)
                 db.session.commit()
 
@@ -101,6 +102,7 @@ class Businesses(Resource):
 
             return make_response(jsonify(response))
 
+    @jwt_required
     def get(self):
         """View all registered businesses.
 
@@ -109,8 +111,28 @@ class Businesses(Resource):
 
         """
 
-        business_dict = business.view_all_businesses()
-        return business_dict, 200
+        try:
+            businesses = Business.query.all()
+            business_result = []
+
+            for business in businesses:
+                _object = {
+                    'id': business.bid,
+                    'name': business.name,
+                    'category': business.category,
+                    'location': business.location,
+                    'summary': business.summary,
+                    'created_by': business.created_by
+                }
+                business_result.append(_object)
+
+            return make_response(jsonify(business_list=business_result))
+        except Exception as e:
+            response = {
+                'response_message': str(e)
+            }
+
+            return make_response(jsonify(response))
 
 
 class OneBusinessRecord(Resource):
