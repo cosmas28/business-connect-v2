@@ -135,15 +135,11 @@ class Businesses(Resource):
             return make_response(jsonify(response))
 
 
-class OneBusinessRecord(Resource):
+class SingleBusiness(Resource):
 
-    """Illustrate API endpoints to manipulate business data.
+    """Illustrate API endpoints to manipulate single business."""
 
-       Attributes:
-           business (class): A class that implement business related methods.
-
-       """
-
+    @jwt_required
     def get(self, business_id):
         """View a registered business by id.
 
@@ -151,12 +147,30 @@ class OneBusinessRecord(Resource):
             A json record of the registered business.
 
         """
-        response = business.view_business_by_id(business_id)
+        try:
+            business = Business.query.filter_by(bid=business_id).first()
+            if business is None:
+                response = {
+                    'response_message': 'Business id is not registered!'
+                }
+                return make_response(jsonify(response))
+            else:
+                business_object= {
+                    'id': business.bid,
+                    'name': business.name,
+                    'category': business.category,
+                    'location': business.location,
+                    'summary': business.summary,
+                    'created_by': business.created_by
+                }
 
-        if response.get('message') == 'There is no registered business!':
-            return 'Business does not exist', abort(404)
+                return make_response(jsonify(business_object))
+        except Exception as e:
+            response = {
+                'response_message': str(e)
+            }
 
-        return response, 200
+            return make_response(jsonify(response))
 
     def put(self, business_id):
         """Update a registered businesses.
@@ -204,8 +218,8 @@ api.add_resource(
     '/businesses',
     endpoint='businesses'
 )
-# api.add_resource(
-#     OneBusinessRecord,
-#     '/businesses/<int:business_id>',
-#     endpoint='businesses'
-# )
+api.add_resource(
+    SingleBusiness,
+    '/business/<int:business_id>',
+    endpoint='business'
+)
