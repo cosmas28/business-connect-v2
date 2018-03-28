@@ -178,6 +178,24 @@ class CreateBusinessTest(AbstractTest):
 
         self.assertIn('Palmer Tech', str(response.data))
 
+    def test_user_can_update_business(self):
+        """Test whether a user can update a registered business."""
+
+        self.register_user()
+        login_response = self.login_user()
+        access_token = json.loads(login_response.data.decode())['access_token']
+
+        business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Mombasa',
+                                    'summary': 'IoT is transforming human security'})
+        self.run_app.post('/api/v1/businesses', data=business_data,
+                          headers=dict(Authorization="Bearer " + access_token))
+
+        new_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Nairobi',
+                                    'summary': 'IoT is transforming human security'})
+        response = self.run_app.put('/api/v1/business/1', data=new_data, headers=dict(Authorization="Bearer " + access_token))
+
+        self.assertIn('Nairobi', str(response.data))
+
 
 if __name__ == '__main__':
     unittest.main()
