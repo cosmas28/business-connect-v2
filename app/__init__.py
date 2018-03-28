@@ -4,7 +4,7 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 
-# from app.resources.business import business_api
+from app.resources.business import business_api
 from app.resources.user import user_api
 # from app.resources.reviews import reviews_api
 
@@ -37,8 +37,8 @@ def create_app(config_object):
         return RevokedToken.is_jti_blacklisted(jti)
     from app.models import user
 
-    # app.register_blueprint(business_api, url_prefix='/api/v1')
     app.register_blueprint(user_api, url_prefix='/api/v1/auth')
+    app.register_blueprint(business_api, url_prefix='/api/v1')
     # app.register_blueprint(reviews_api, url_prefix='/api/v1')
 
     return app
