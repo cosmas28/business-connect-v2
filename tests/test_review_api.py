@@ -72,6 +72,27 @@ class ReviewsTestCase(unittest.TestCase):
         self.assertEqual(json.loads(review_res.data.decode())['response_message'],
                          'Review has been added successfully!')
 
+    def test_user_can_view_business_review(self):
+        """Test whether user view a business reviews by business id."""
+
+        self.register_user()
+        login_response = self.login_user()
+        access_token = json.loads(login_response.data.decode())['access_token']
+
+        business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Nairobi',
+                                    'summary': 'AI is transforming human life'})
+        self.run_app.post('/api/v1/businesses', data=business_data,
+                          headers=dict(Authorization="Bearer " + access_token))
+
+        review = json.dumps({'review': 'The future of AI is very bright, mostly in security'})
+        self.run_app.post('/api/v1/businesses/1/reviews', data=review,
+                          headers=dict(Authorization="Bearer " + access_token))
+
+        response = self.run_app.get('/api/v1/businesses/1/reviews', data=review,
+                                    headers=dict(Authorization="Bearer " + access_token))
+
+        self.assertIn('The future of AI is very bright, mostly in security', str(response.data))
+
 
 if __name__ == '__main__':
     unittest.main()

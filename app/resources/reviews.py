@@ -72,6 +72,7 @@ class BusinessReviews(Resource):
 
             return make_response(jsonify(response))
 
+    @jwt_required
     def get(self, business_id):
         """View reviews for a business using business by id.
 
@@ -82,9 +83,42 @@ class BusinessReviews(Resource):
             A json record of the business reviews.
 
         """
-        response = reviews.view_business_reviews(business_id)
+        try:
+            business = Business.query.filter_by(bid=business_id).first()
+            business_reviews = Reviews.query.filter_by(review_for=business_id).all()
+            if len(str(business_id)) == 0:
+                response = {
+                    'response_message': 'Business id is required!'
+                }
+                return make_response(jsonify(response))
+            elif business is None:
+                response = {
+                    'response_message': 'Business id is not registered!'
+                }
+                return make_response(jsonify(response))
+            elif business_reviews is None:
+                response = {
+                    'response_message': 'Business have no reviews!'
+                }
+                return make_response(jsonify(response))
+            else:
+                _reviews = []
 
-        return response, 200
+                for _review in business_reviews:
+                    _object = {
+                        'id': _review.rid,
+                        'review': _review.review,
+                        'reviewed_by': _review.reviewed_by,
+                    }
+                    _reviews.append(_object)
+
+                return make_response(jsonify(reviews_list=_reviews))
+        except Exception as e:
+            response = {
+                'response_message': str(e)
+            }
+
+            return make_response(jsonify(response))
 
 
 reviews_api = Blueprint('resources.reviews', __name__)
