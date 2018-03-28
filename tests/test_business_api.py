@@ -31,7 +31,8 @@ class AbstractTest(unittest.TestCase):
 
     def register_business(self):
         self.register_user()
-        access_token = self.login_user()
+        login_response = self.login_user()
+        access_token = json.loads(login_response.data.decode())['access_token']
 
         business_data = json.dumps({'name': 'CosmasTech', 'category': 'Technology', 'location': 'Nairobi',
                                     'summary': 'AI is transforming human life'})
@@ -112,12 +113,16 @@ class CreateBusinessTest(AbstractTest):
     def test_duplicate_business_name(self):
         """Test whether user have not provided a unique business name."""
 
-        self.register_business()
         self.register_user()
         login_response = self.login_user()
         access_token = json.loads(login_response.data.decode())['access_token']
+        first_business_data = json.dumps({'name': 'CosmasTech', 'category': 'Technology', 'location': 'Nairobi',
+                                          'summary': 'AI is transforming human life'})
 
-        business_data = json.dumps({'name': 'Cosmas Tech', 'category': 'Technology', 'location': 'Mombasa',
+        self.run_app.post('/api/v1/businesses', data=first_business_data,
+                          headers=dict(Authorization="Bearer " + access_token))
+
+        business_data = json.dumps({'name': 'CosmasTech', 'category': 'Technology', 'location': 'Mombasa',
                                     'summary': 'IoT is transforming human security'})
 
         response = self.run_app.post('/api/v1/businesses', data=business_data,
