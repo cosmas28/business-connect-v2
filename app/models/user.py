@@ -112,12 +112,12 @@ class Business(db.Model):
     summary = db.Column(db.Text)
     created_by = db.Column(db.Integer, db.ForeignKey(User.uid))
 
-    def __init__(self, name, category, location, summary):
+    def __init__(self, name, category, location, summary, created_by):
         self.name = name
         self.category = category
         self.location = location
         self.summary = summary
-        # self.created_by = created_by
+        self.created_by = created_by
 
 # class User(object):
 #
