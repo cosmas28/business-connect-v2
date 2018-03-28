@@ -8,7 +8,7 @@ from app.resources.business import business_api
 from app.resources.user import user_api
 from app.resources.reviews import reviews_api
 
-from app.models.user import RevokedToken
+from app.models.models import RevokedToken
 from app.models import db
 
 
@@ -35,7 +35,7 @@ def create_app(config_object):
         jti = decrypted_token['jti']
 
         return RevokedToken.is_jti_blacklisted(jti)
-    from app.models import user
+    from app.models import models
 
     app.register_blueprint(user_api, url_prefix='/api/v1/auth')
     app.register_blueprint(business_api, url_prefix='/api/v1')

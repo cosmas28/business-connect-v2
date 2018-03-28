@@ -4,7 +4,7 @@ import unittest
 
 from flask import json
 from . import app
-from app.models.user import Business
+from app.models.models import Business
 from app.models import db
 
 

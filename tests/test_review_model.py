@@ -9,7 +9,7 @@ are expected from review model.
 import unittest
 
 from . import app
-from app.models.user import Reviews, User, Business
+from app.models.models import Reviews, User, Business
 from app.models import db
 
 

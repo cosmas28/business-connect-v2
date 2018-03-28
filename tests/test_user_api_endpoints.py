@@ -10,7 +10,7 @@ import unittest
 from flask import json
 
 from . import app
-from app.models.user import User
+from app.models.models import User
 from app.models import db
 
 

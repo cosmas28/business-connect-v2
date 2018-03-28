@@ -10,7 +10,7 @@ import unittest
 import os
 import json
 from . import app
-from app.models.user import User, Business
+from app.models.models import User, Business
 from app.models import db
 
 
