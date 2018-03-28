@@ -5,9 +5,9 @@ businesses.
 
 """
 
-from flask import Blueprint, abort, request, make_response, jsonify
+from flask import Blueprint, request, make_response, jsonify
 
-from flask_restful import (Resource, Api, reqparse)
+from flask_restful import Resource, Api
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.models.user import Business
@@ -226,6 +226,7 @@ class SingleBusiness(Resource):
 
             return make_response(jsonify(response))
 
+    @jwt_required
     def delete(self, business_id):
         """Delete a registered businesses.
 
@@ -237,9 +238,34 @@ class SingleBusiness(Resource):
 
         """
 
-        response = business.delete_business(business_id)
+        created_by = get_jwt_identity()
+        try:
+            business = Business.query.filter_by(bid=business_id).first()
 
-        return response, 200
+            if business is None:
+                response = {
+                    'response_message': 'Business id is not registered!'
+                }
+                return make_response(jsonify(response))
+            elif business.created_by != created_by:
+                response = {
+                    'response_message': 'Permission required to delete this business!'
+                }
+                return make_response(jsonify(response))
+            else:
+                db.session.delete(business)
+                db.session.commit()
+                response = {
+                    'response_message': 'Business has been deleted successfully!'
+                }
+
+                return make_response(jsonify(response))
+        except Exception as e:
+            response = {
+                'response_message': str(e)
+            }
+
+            return make_response(jsonify(response))
 
 
 business_api = Blueprint('resources.business', __name__)
