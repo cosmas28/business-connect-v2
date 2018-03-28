@@ -29,6 +29,8 @@ class User(db.Model):
     pwd_hash = db.Column(db.String(120))
     businesses = db.relationship(
         'Business', order_by='Business.bid', cascade="all, delete-orphan")
+    _reviews = db.relationship(
+        'Reviews', order_by='Reviews.rid', cascade="all, delete-orphan")
 
     def __init__(self, email, username, first_name, last_name, password):
         self.email = email.lower()
@@ -111,6 +113,8 @@ class Business(db.Model):
     location = db.Column(db.String(40))
     summary = db.Column(db.Text)
     created_by = db.Column(db.Integer, db.ForeignKey(User.uid))
+    _reviews = db.relationship(
+        'Reviews', order_by='Reviews.rid', cascade="all, delete-orphan")
 
     def __init__(self, name, category, location, summary, created_by):
         self.name = name
@@ -118,6 +122,22 @@ class Business(db.Model):
         self.location = location
         self.summary = summary
         self.created_by = created_by
+
+
+class Reviews(db.Model):
+    """Create reviews table."""
+
+    __tablename__ = 'reviews'
+
+    rid = db.Column(db.Integer, primary_key=True)
+    review = db.Column(db.Text)
+    review_for = db.Column(db.Integer, db.ForeignKey(Business.bid))
+    reviewed_by = db.Column(db.Integer, db.ForeignKey(User.uid))
+
+    def __init__(self, review, review_for, reviewed_by):
+        self.review = review
+        self.review_for = review_for
+        self.reviewed_by = reviewed_by
 
 # class User(object):
 #

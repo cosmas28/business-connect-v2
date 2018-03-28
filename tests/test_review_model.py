@@ -8,8 +8,9 @@ are expected from review model.
 
 import unittest
 
-from app import business
-from app.models.reviews import Reviews
+from . import app
+from app.models.user import Reviews, User, Business
+from app.models import db
 
 
 class AddReviewTest(unittest.TestCase):
@@ -17,75 +18,36 @@ class AddReviewTest(unittest.TestCase):
     """Illustrate test cases to test expected behavior of add reviews functionality. """
 
     def setUp(self):
-        """Instantiate the Review class so that it can be reused by other test cases."""
+        """Call this before every test."""
 
-        self.reviews = Reviews()
-        business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
-
-    def tearDown(self):
-        """Delete registered business records after every test case has run."""
-
-        del business.business_records[1]
-
-    def test_empty_business_id(self):
-        """Test whether business id is empty."""
-
-        self.assertEqual(self.reviews.add_review('', 'first review', '16-03-107'), 'Business id is required!')
-
-    def test_business_id_existence(self):
-        """Test if a KeyError will be raised when the business id does not exist."""
-
-        with self.assertRaises(KeyError):
-            self.reviews.add_review(2, 'first review', '16-03-107')
-
-    def test_empty_business_review(self):
-        """Test whether business review field is empty."""
-
-        self.assertEqual(self.reviews.add_review(1, '', '16-03-107'), 'Business review was not provided!')
-
-    def test_business_review_added_successfully(self):
-        """Test whether business review was successfully added."""
-
-        self.assertEqual(self.reviews.add_review(1, 'first review', '16-03-107'), 'Business review added successfully!')
-
-
-class ViewBusinessReviewsTest(unittest.TestCase):
-
-    """Illustrate test cases to test expected behavior of view business reviews functionality. """
-
-    def setUp(self):
-        """Instantiate the Reviews class so that it can be reused by other test cases."""
-
-        self.reviews = Reviews()
-        business.create_business(1, 'Cosmas', 'Cosma Tech', 'Nairobi', 'Technology', 'Masters of ecommerce')
+        db.app = app
+        db.create_all()
 
     def tearDown(self):
-        """Delete registered business records after every test case has run."""
+        """Call after every test to remove the created table."""
 
-        del business.business_records[1]
+        db.session.remove()
+        db.drop_all()
 
-    def test_empty_business_id(self):
-        """Test whether business id is empty."""
+    def test_reviews_model(self):
+        """Test whether review model is working."""
 
-        self.assertEqual(self.reviews.view_business_reviews(''), 'Business id is required!')
+        user = User('test@andela.com', 'testuser', 'first', 'last', 'password')
+        db.session.add(user)
+        db.session.commit()
+        query_user = User.query.filter_by(email='test@andela.com').first()
 
-    def test_business_id_existence(self):
-        """Test if a Error message will be raised when the business id does not exist."""
+        business = Business('CosmasTech', 'Technology', 'Nairobi', 'AI is transforming human life', query_user.uid)
+        db.session.add(business)
+        db.session.commit()
+        query_business = Business.query.filter_by(name='CosmasTech').first()
 
-        self.assertEqual(self.reviews.view_business_reviews(2), 'Business ID does not exist!')
+        business = Reviews('The business will really save the world!', query_business.bid, query_user.uid)
+        db.session.add(business)
+        db.session.commit()
+        query_reviews = Reviews.query.filter_by(rid=1).first()
 
-    def test_empty_business_reviews(self):
-        """Test whether business have no reviews."""
-
-        self.reviews.add_review(1, 'first review', '18-03-17')
-        business.create_business(2, 'Allan', 'Allan Tech', 'Kitale', 'Technology', 'Cryptocurrency')
-        self.assertEqual(self.reviews.view_business_reviews(2), 'Sorry! This business have no reviews at the moment.')
-
-    def test_view_business_reviews(self):
-        """Test whether view_business_reviews method returns reviews."""
-
-        self.reviews.add_review(1, 'first review', '18-03-17')
-        self.assertEqual(self.reviews.view_business_reviews(1), [{'review': 'first review', 'created_at': '18-03-17'}])
+        self.assertEqual(query_reviews.review, 'The business will really save the world!')
 
 
 if __name__ == '__main__':
