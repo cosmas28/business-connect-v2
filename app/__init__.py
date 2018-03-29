@@ -22,7 +22,7 @@ def create_app(config_object):
     else:
         app = Flask(__name__, instance_relative_config=True)
         app.config.from_object(config_object)
-        app.config.from_pyfile('config.py')
+        # app.config.from_pyfile('config.py')
 
     db.init_app(app)
 
