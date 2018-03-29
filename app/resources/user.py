@@ -35,46 +35,7 @@ def username_exist(user_name):
 
 class RegisterUser(Resource):
 
-    """Illustrate API endpoints to register user.
-
-    Attributes:
-        reqparse (object): A request parsing interface designed to access simple and uniform
-        variables on the flask.request object.
-
-    """
-
-    def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('email',
-                                   required=True,
-                                   help="Email is required!",
-                                   location=['form', 'json']
-                                   )
-        self.reqparse.add_argument('username',
-                                   required=True,
-                                   help="Username is required!",
-                                   location=['form', 'json']
-                                   )
-        self.reqparse.add_argument('first_name',
-                                   required=True,
-                                   help="First name is required!",
-                                   location=['form', 'json']
-                                   )
-        self.reqparse.add_argument('last_name',
-                                   required=True,
-                                   help="Last name is required!",
-                                   location=['form', 'json']
-                                   )
-        self.reqparse.add_argument('password',
-                                   required=True,
-                                   help="Password is required!",
-                                   location=['form', 'json']
-                                   )
-        self.reqparse.add_argument('confirm_password',
-                                   required=True,
-                                   help="Confirmation password is required!",
-                                   location=['form', 'json']
-                                   )
+    """Illustrate API endpoints to register user."""
 
     def post(self):
         """Register a new user.
@@ -145,19 +106,12 @@ class RegisterUser(Resource):
             response_text += 'You have successfully created an account!'
             status_code = 201
 
-        # return Response(response_text, mimetype='test/plain', status=status_code)
         return {'response_message': response_text}, status_code
 
 
 class LoginUser(Resource):
 
-    """Illustrate API endpoints to login user.
-
-    Attributes:
-        reqparse (object): A request parsing interface designed to access simple and uniform to
-        variables on the flask.request object.
-
-    """
+    """Illustrate API endpoints to login user."""
 
     def post(self):
         """Login a user.
@@ -205,8 +159,6 @@ class LoginUser(Resource):
                 }
                 return make_response(jsonify(response))
             else:
-                # Generate the access token. This will be used as the authorization header
-                # access_token = user.generate_token(user.uid)
                 access_token = create_access_token(identity=user.uid)
                 refresh_token = create_refresh_token(identity=user.uid)
                 if access_token:
