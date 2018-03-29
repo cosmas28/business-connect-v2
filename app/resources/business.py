@@ -366,8 +366,9 @@ class SearchBusiness(Resource):
         """
 
         user_request = request.args.get('q')
+        result_limit = request.args.get('limit')
         try:
-            businesses = Business.query.filter(Business.name.startswith(user_request)).all()
+            businesses = Business.query.filter(Business.name.startswith(user_request)).limit(result_limit)
             if businesses is None:
                 response = {
                     'response_message': 'Businesses not found!'
