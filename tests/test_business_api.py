@@ -213,6 +213,23 @@ class CreateBusinessTest(AbstractTest):
         self.assertEqual(json.loads(response.data.decode())['response_message'],
                          'Business has been deleted successfully!')
 
+    def test_user_can_filter_business_by_category(self):
+        """Test whether a user can filter a registered business using business category."""
+
+        self.register_user()
+        login_response = self.login_user()
+        access_token = json.loads(login_response.data.decode())['access_token']
+
+        business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Mombasa',
+                                    'summary': 'IoT is transforming human security'})
+        self.run_app.post('/api/v1/businesses', data=business_data,
+                          headers=dict(Authorization="Bearer " + access_token))
+
+        response = self.run_app.get('/api/v1/business/category/Technology',
+                                    headers=dict(Authorization="Bearer " + access_token))
+
+        self.assertIn('Palmer Tech', str(response.data))
+
 
 if __name__ == '__main__':
     unittest.main()
