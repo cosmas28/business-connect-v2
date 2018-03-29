@@ -270,11 +270,11 @@ class SingleBusiness(Resource):
 
 class BusinessCategory(Resource):
 
-    """Illustrate API endpoints to manipulate single business."""
+    """Illustrate API endpoints to view businesses with the same category."""
 
     @jwt_required
     def get(self, business_category):
-        """View a registered business based on category.
+        """View registered businesses based on category.
 
         Returns:
             A json record of the registered business.
@@ -282,6 +282,48 @@ class BusinessCategory(Resource):
         """
         try:
             businesses = Business.query.filter_by(category=business_category).all()
+            if businesses is None:
+                response = {
+                    'response_message': 'Businesses not found!'
+                }
+                return make_response(jsonify(response))
+            else:
+                business_result = []
+
+                for business in businesses:
+                    _object = {
+                        'id': business.bid,
+                        'name': business.name,
+                        'category': business.category,
+                        'location': business.location,
+                        'summary': business.summary,
+                        'created_by': business.created_by
+                    }
+                    business_result.append(_object)
+
+                return make_response(jsonify(business_list=business_result))
+        except Exception as e:
+            response = {
+                'response_message': str(e)
+            }
+
+            return make_response(jsonify(response))
+
+
+class BusinessLocation(Resource):
+
+    """Illustrate API endpoints to view businesses in the same location."""
+
+    @jwt_required
+    def get(self, business_location):
+        """View a registered business based in the same location.
+
+        Returns:
+            A json record of the registered business.
+
+        """
+        try:
+            businesses = Business.query.filter_by(location=business_location).all()
             if businesses is None:
                 response = {
                     'response_message': 'Businesses not found!'
@@ -326,5 +368,10 @@ api.add_resource(
     BusinessCategory,
     '/business/category/<business_category>',
     endpoint='category'
+)
+api.add_resource(
+    BusinessLocation,
+    '/business/location/<business_location>',
+    endpoint='location'
 )
 
