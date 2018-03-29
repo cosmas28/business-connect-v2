@@ -7,6 +7,6 @@ install:
 script:
   - cd  ./tests && nosetests
 branches:
-  only: master
+  only: develop
 after_success:
   - coveralls
