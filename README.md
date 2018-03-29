@@ -13,7 +13,7 @@ to write reviews about the businesses they have interacted with.
 $ git clone https://github.com/cosmas28/business-connect-v1.git
 ```
 
-* cd business-connect-v1/designs/UI
+* cd business-connect-v2/designs/UI
 * Run index.html in your browser
 * you can also view the page using this link [WeConnect](https://cosmas28.github.io/business-connect-v1/designs/UI/)
 
@@ -23,7 +23,7 @@ To set up WeConnect API, make sure that you have python 3.6, postman and pip ins
 * Clone the Repo into your local directory.
 
 ```bash
-$ git clone https://github.com/cosmas28/business-connect-v1.git
+$ git clone https://github.com/cosmas28/business-connect-v2.git
 ```
 
 * create a virtual environment.
@@ -37,7 +37,7 @@ $ virtualenv <your_virtualenv>
 Navigate to the API directory.
 
 ```bash
-$ cd business-connect-v1
+$ cd business-connect-v2
 ```
 
 To install the packages run pip install -r requirements.txt
@@ -70,6 +70,9 @@ DELETE `/api/v1/businesses/<int:business_id>` delete business by using business 
 PUT `/api/v1/businesses/<int:business_id>` update a registered business by using business ID
 POST `/api/v1/businesses/<int:business_id>/reviews` add business review using business ID
 GET `/api/v1/businesses/<int:business_id>/reviews` view business reviews using business ID
+GET `/api/v1/business/location/<business_location>` view businesses based on the same location
+GET `/api/v1/business/location/<business_category>` view businesses on the same category
+GET `/api/v1/business/search?q=<business_name>&limit=<number_of_results>` search a specified number of businesses
 
 ## Acknowledgements
 
