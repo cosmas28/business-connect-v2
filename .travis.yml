@@ -7,6 +7,6 @@ install:
 script:
   - cd  ./tests && nosetests
 branches:
-  only: challenge-two
+  only: master
 after_success:
   - coveralls
