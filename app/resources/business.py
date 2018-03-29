@@ -268,6 +268,48 @@ class SingleBusiness(Resource):
             return make_response(jsonify(response))
 
 
+class BusinessCategory(Resource):
+
+    """Illustrate API endpoints to manipulate single business."""
+
+    @jwt_required
+    def get(self, business_category):
+        """View a registered business based on category.
+
+        Returns:
+            A json record of the registered business.
+
+        """
+        try:
+            businesses = Business.query.filter_by(category=business_category).all()
+            if businesses is None:
+                response = {
+                    'response_message': 'Businesses not found!'
+                }
+                return make_response(jsonify(response))
+            else:
+                business_result = []
+
+                for business in businesses:
+                    _object = {
+                        'id': business.bid,
+                        'name': business.name,
+                        'category': business.category,
+                        'location': business.location,
+                        'summary': business.summary,
+                        'created_by': business.created_by
+                    }
+                    business_result.append(_object)
+
+                return make_response(jsonify(business_list=business_result))
+        except Exception as e:
+            response = {
+                'response_message': str(e)
+            }
+
+            return make_response(jsonify(response))
+
+
 business_api = Blueprint('resources.business', __name__)
 api = Api(business_api)
 api.add_resource(
@@ -280,3 +322,9 @@ api.add_resource(
     '/business/<int:business_id>',
     endpoint='business'
 )
+api.add_resource(
+    BusinessCategory,
+    '/business/category/<business_category>',
+    endpoint='category'
+)
+
