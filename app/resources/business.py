@@ -352,6 +352,50 @@ class BusinessLocation(Resource):
             return make_response(jsonify(response))
 
 
+class SearchBusiness(Resource):
+
+    """Illustrate API endpoints to search businesses."""
+
+    @jwt_required
+    def get(self):
+        """Search a registered business.
+
+        Returns:
+            A json record of the registered business.
+
+        """
+
+        user_request = request.args.get('q')
+        try:
+            businesses = Business.query.filter(Business.name.startswith(user_request)).all()
+            if businesses is None:
+                response = {
+                    'response_message': 'Businesses not found!'
+                }
+                return make_response(jsonify(response))
+            else:
+                business_result = []
+
+                for business in businesses:
+                    _object = {
+                        'id': business.bid,
+                        'name': business.name,
+                        'category': business.category,
+                        'location': business.location,
+                        'summary': business.summary,
+                        'created_by': business.created_by
+                    }
+                    business_result.append(_object)
+
+                return make_response(jsonify(business_list=business_result))
+        except Exception as e:
+            response = {
+                'response_message': str(e)
+            }
+
+            return make_response(jsonify(response))
+
+
 business_api = Blueprint('resources.business', __name__)
 api = Api(business_api)
 api.add_resource(
@@ -373,5 +417,10 @@ api.add_resource(
     BusinessLocation,
     '/business/location/<business_location>',
     endpoint='location'
+)
+api.add_resource(
+    SearchBusiness,
+    '/business/search',
+    endpoint='search'
 )
 
