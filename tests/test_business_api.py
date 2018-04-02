@@ -225,7 +225,7 @@ class CreateBusinessTest(AbstractTest):
         self.run_app.post('/api/v1/businesses', data=business_data,
                           headers=dict(Authorization="Bearer " + access_token))
 
-        response = self.run_app.get('/api/v1/business/category/Technology',
+        response = self.run_app.get('/api/v1/business/category?q=Technology&start=1&limit=2',
                                     headers=dict(Authorization="Bearer " + access_token))
 
         self.assertIn('Palmer Tech', str(response.data))

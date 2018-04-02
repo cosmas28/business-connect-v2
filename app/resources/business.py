@@ -273,22 +273,26 @@ class BusinessCategory(Resource):
     """Illustrate API endpoints to view businesses with the same category."""
 
     @jwt_required
-    def get(self, business_category):
+    def get(self):
         """View registered businesses based on category.
 
         Returns:
             A json record of the registered business.
 
         """
+
+        user_request = request.args.get('q')
+        result_start = int(request.args.get('start'))
+        result_limit = int(request.args.get('limit'))
         try:
-            businesses = Business.query.filter_by(category=business_category).all()
+            businesses = Business.query.filter_by(category=user_request).all()
             if businesses is None:
                 response = {
                     'response_message': 'Businesses not found!'
                 }
                 return make_response(jsonify(response))
             else:
-                business_result = []
+                business_list = []
 
                 for business in businesses:
                     _object = {
@@ -299,9 +303,11 @@ class BusinessCategory(Resource):
                         'summary': business.summary,
                         'created_by': business.created_by
                     }
-                    business_result.append(_object)
+                    business_list.append(_object)
 
-                return make_response(jsonify(business_list=business_result))
+                pagination_res = get_paginated_list(business_list, '/api/v1/business/search',
+                                                    result_start, result_limit)
+                return make_response(jsonify(pagination_res))
         except Exception as e:
             response = {
                 'response_message': str(e)
@@ -347,7 +353,6 @@ class BusinessLocation(Resource):
                     }
                     business_list.append(_object)
 
-                # return make_response(jsonify(business_list=business_result))
                 pagination_res = get_paginated_list(business_list, '/api/v1/business/search',
                                                     result_start, result_limit)
                 return make_response(jsonify(pagination_res))
@@ -445,7 +450,7 @@ api.add_resource(
 )
 api.add_resource(
     BusinessCategory,
-    '/business/category/<business_category>',
+    '/business/category',
     endpoint='category'
 )
 api.add_resource(
