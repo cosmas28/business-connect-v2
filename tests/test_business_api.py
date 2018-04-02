@@ -242,7 +242,7 @@ class CreateBusinessTest(AbstractTest):
         self.run_app.post('/api/v1/businesses', data=business_data,
                           headers=dict(Authorization="Bearer " + access_token))
 
-        response = self.run_app.get('/api/v1/business/location/Mombasa',
+        response = self.run_app.get('/api/v1/business/location?q=Mombasa&start=1&limit=2',
                                     headers=dict(Authorization="Bearer " + access_token))
 
         self.assertIn('Palmer Tech', str(response.data))
@@ -305,29 +305,6 @@ class CreateBusinessTest(AbstractTest):
                                     headers=dict(Authorization="Bearer " + access_token))
 
         self.assertEqual(len(json.loads(response.data.decode()).get('business_list')), 2)
-
-        def get_paginated_list(business_list, url, start, limit):
-            count = len(business_list)
-            _object = dict()
-            _object['start'] = start
-            _object['limit'] = limit
-            _object['count'] = count
-
-            if start == 1:
-                _object['previous'] = ''
-            else:
-                start_copy = max(1, start - limit)
-                limit_copy = start - 1
-                _object['previous'] = url + '?start=%d&limit=%d' % (start_copy, limit_copy)
-
-            if start + limit > count:
-                _object['next'] = ''
-            else:
-                start_copy = start + limit
-                _object['next'] = url + '?start=%d&limit=%d' % (start_copy, limit)
-            _object['business_list'] = business_list[(start - 1):(start - 1 + limit)]
-
-            return _object
 
 
 if __name__ == '__main__':
