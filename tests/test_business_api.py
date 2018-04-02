@@ -259,7 +259,7 @@ class CreateBusinessTest(AbstractTest):
         self.run_app.post('/api/v1/businesses', data=business_data,
                           headers=dict(Authorization="Bearer " + access_token))
 
-        response = self.run_app.get('/api/v1/business/search?q=PalmerTech',
+        response = self.run_app.get('/api/v1/business/search?q=PalmerTech&start=1&limit=2',
                                     headers=dict(Authorization="Bearer " + access_token))
 
         self.assertIn('PalmerTech', str(response.data))
@@ -276,10 +276,58 @@ class CreateBusinessTest(AbstractTest):
         self.run_app.post('/api/v1/businesses', data=business_data,
                           headers=dict(Authorization="Bearer " + access_token))
 
-        response = self.run_app.get('/api/v1/business/search?q=PalmerTech&limit=1',
+        response = self.run_app.get('/api/v1/business/search?q=PalmerTech&start=1&limit=2',
                                     headers=dict(Authorization="Bearer " + access_token))
 
         self.assertIn('PalmerTech', str(response.data))
+
+    def test_pagination_api(self):
+        """Test whether a user can view a specified number of business search results."""
+
+        self.register_user()
+        login_response = self.login_user()
+        access_token = json.loads(login_response.data.decode())['access_token']
+
+        first_business = json.dumps({'name': 'TechRunch', 'category': 'Technology', 'location': 'Mombasa',
+                                    'summary': 'IoT is transforming human security'})
+        self.run_app.post('/api/v1/businesses', data=first_business,
+                          headers=dict(Authorization="Bearer " + access_token))
+        second_business = json.dumps({'name': 'TechBusiness', 'category': 'Technology', 'location': 'Nairobi',
+                                     'summary': 'A network of different businesses'})
+        self.run_app.post('/api/v1/businesses', data=second_business,
+                          headers=dict(Authorization="Bearer " + access_token))
+        third_business = json.dumps({'name': 'TechSchool', 'category': 'Technology', 'location': 'Dar es Salaam',
+                                     'summary': 'A network students across the world.'})
+        self.run_app.post('/api/v1/businesses', data=third_business,
+                          headers=dict(Authorization="Bearer " + access_token))
+
+        response = self.run_app.get('/api/v1/business/search?q=Tech&start=1&limit=2',
+                                    headers=dict(Authorization="Bearer " + access_token))
+
+        self.assertEqual(len(json.loads(response.data.decode()).get('business_list')), 2)
+
+        def get_paginated_list(business_list, url, start, limit):
+            count = len(business_list)
+            _object = dict()
+            _object['start'] = start
+            _object['limit'] = limit
+            _object['count'] = count
+
+            if start == 1:
+                _object['previous'] = ''
+            else:
+                start_copy = max(1, start - limit)
+                limit_copy = start - 1
+                _object['previous'] = url + '?start=%d&limit=%d' % (start_copy, limit_copy)
+
+            if start + limit > count:
+                _object['next'] = ''
+            else:
+                start_copy = start + limit
+                _object['next'] = url + '?start=%d&limit=%d' % (start_copy, limit)
+            _object['business_list'] = business_list[(start - 1):(start - 1 + limit)]
+
+            return _object
 
 
 if __name__ == '__main__':

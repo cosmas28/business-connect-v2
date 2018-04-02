@@ -366,16 +366,17 @@ class SearchBusiness(Resource):
         """
 
         user_request = request.args.get('q')
-        result_limit = request.args.get('limit')
+        result_start = int(request.args.get('start'))
+        result_limit = int(request.args.get('limit'))
         try:
-            businesses = Business.query.filter(Business.name.startswith(user_request)).limit(result_limit)
+            businesses = Business.query.filter(Business.name.startswith(user_request)).all()
             if businesses is None:
                 response = {
                     'response_message': 'Businesses not found!'
                 }
                 return make_response(jsonify(response))
             else:
-                business_result = []
+                business_list = []
 
                 for business in businesses:
                     _object = {
@@ -386,15 +387,41 @@ class SearchBusiness(Resource):
                         'summary': business.summary,
                         'created_by': business.created_by
                     }
-                    business_result.append(_object)
+                    business_list.append(_object)
 
-                return make_response(jsonify(business_list=business_result))
+                pagination_res = get_paginated_list(business_list, '/api/v1/business/search',
+                                                    result_start, result_limit)
+                return make_response(jsonify(pagination_res))
         except Exception as e:
             response = {
                 'response_message': str(e)
             }
 
             return make_response(jsonify(response))
+
+
+def get_paginated_list(business_list, url, start, limit):
+    count = len(business_list)
+    _object = {}
+    _object['start'] = start
+    _object['limit'] = limit
+    _object['count'] = count
+
+    if start == 1:
+        _object['previous'] = ''
+    else:
+        start_copy = max(1, start - limit)
+        limit_copy = start - 1
+        _object['previous'] = url + '?start=%d&limit=%d' % (start_copy, limit_copy)
+
+    if start + limit > count:
+        _object['next'] = ''
+    else:
+        start_copy = start + limit
+        _object['next'] = url + '?start=%d&limit=%d' % (start_copy, limit)
+    _object['business_list'] = business_list[(start - 1):(start - 1 + limit)]
+
+    return _object
 
 
 business_api = Blueprint('resources.business', __name__)
