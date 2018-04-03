@@ -39,22 +39,27 @@ class RegisterUser(Resource):
 
     def post(self):
         """Register a new user.
-
-        Returns:
-            A success message to indicate successful registration.
-
-        Raises:
-            An username error when username already exist.
-            Password error when the password is too short.
-            Password error if the password does not much confirmation password.
-            Error message if email is empty.
-            Error message if username is empty.
-            Error message if first name is empty.
-            Error message if last name is empty.
-            Error message if password is empty.
-            Error message if password confirmation is empty.
-
+        ---
+        tags:
+            - User authentication and authorization
+        parameters:
+            -   in: body
+                name: body
+                schema:
+                    $ref: '#/definitions/User'
+        responses:
+            201:
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                response_message:
+                                    type: string
+                                    description: response message to show successful registration
         """
+
         req_data = request.get_json()
         email = req_data['email']
         username = req_data['username']
@@ -115,13 +120,34 @@ class LoginUser(Resource):
 
     def post(self):
         """Login a user.
-
-        Returns:
-            A success message to indicate successful login.
-
-        Raises:
-            An username error when username does not exist exist.
-            password error when the password is invalid.
+        ---
+        tags:
+            -   User authentication and authorization
+        parameters:
+            -   in: body
+                name: body
+                schema:
+                    $ref: '#/definitions/User'
+        responses:
+            200:
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                response_message:
+                                    type: string
+                                    description: message to show successful login
+                                status_code:
+                                    type: integer
+                                    description: HTTP status code
+                                access_token:
+                                    type: string
+                                    description: JSON token for user authorization
+                                refresh_token:
+                                    type: string
+                                    description: refreshed JSON token for user authorization
 
         """
         req_data = request.get_json()
@@ -179,18 +205,31 @@ class LoginUser(Resource):
 
 
 class UserLogoutAccess(Resource):
-    """Logout a user using JWT access_token.
-
-    Returns:
-        A success message to indicate whether token has been revoked.
-
-    Raises:
-        Error: when something went wrong on the server.
-
-    """
+    """Illustrate API endpoints to logout user using access-token."""
 
     @jwt_required
     def post(self):
+        """Logout a user using JWT access-token.
+        ---
+        tags:
+            - User authentication and authorization
+        security:
+            $ref: '#/components/securitySchemes/BearAuth'
+        responses:
+            200:
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                response_message:
+                                    type: string
+                                    description: response message to show successful logout
+                                status_code:
+                                    type: integer
+                                    description: HTTP status code
+        """
         jti = get_raw_jwt()['jti']
 
         try:
@@ -211,18 +250,31 @@ class UserLogoutAccess(Resource):
 
 
 class UserLogoutRefresh(Resource):
-    """Logout a user using JWT refresh_token.
-
-    Returns:
-        A success message to indicate whether token has been revoked.
-
-    Raises:
-        Error: when something went wrong on the server.
-
-    """
+    """Illustrate API endpoints to logout user using refresh-token."""
 
     @jwt_refresh_token_required
     def post(self):
+        """Logout a user using JWT refresh_token.
+        ---
+        tags:
+            - User authentication and authorization
+        security:
+            $ref: '#/components/securitySchemes/BearAuth'
+        responses:
+            200:
+                description: Log out has been successful!
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                response_message:
+                                    type: string
+                                    description: response message to show successful logout
+                                status_code:
+                                    type: integer
+                                    description: HTTP status code
+        """
         jti = get_raw_jwt()['jti']
 
         try:
@@ -247,6 +299,25 @@ class TokenRefresh(Resource):
 
     @jwt_refresh_token_required
     def post(self):
+        """refresh access-token.
+        ---
+        tags:
+            -   User authentication and authorization
+        security:
+            $ref: '#/components/securitySchemes/BearAuth'
+        responses:
+            200:
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                access_token:
+                                    type: string
+                                    description: JSON token for user authorization
+        """
+
         current_user = get_jwt_identity()
         access_token = create_refresh_token(identity=current_user)
 
@@ -263,13 +334,25 @@ class ResetPassword(Resource):
 
     def post(self):
         """Reset user password.
-
-        Returns:
-            A success message to indicate successful logout.
-            An error message if username does not exist.
-            An error message if no data is provided.
-            An error message if the password is less than 6 characters.
-
+        ---
+        tags:
+            - User authentication and authorization
+        parameters:
+            -   in: body
+                name: body
+                schema:
+                    $ref: '#/definitions/User'
+        responses:
+            200:
+                description: Password reset successfully
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                response_message:
+                                    type: string
+                                    description: response message to show password has been reset successful
         """
         req_data = request.get_json()
         email = req_data['email']

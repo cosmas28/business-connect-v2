@@ -1,7 +1,9 @@
+from flasgger import Swagger
+
 from app import create_app
 
 app = create_app('config.DevelopmentConfig')
-
+swagger = Swagger(app)
 
 @app.route('/')
 def index():

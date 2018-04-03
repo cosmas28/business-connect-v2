@@ -37,17 +37,30 @@ class Businesses(Resource):
     @jwt_required
     def post(self):
         """Register a business.
-
-        Returns:
-            A success message to indicate successful registration.
-
-        Raises:
-            Error message when business name is empty.
-            Error message when business category is empty.
-            Error message when business location is empty.
-            Error message when business summary is empty.
-            Error message when business name is already registered.
-
+        ---
+        tags:
+            -   businesses
+        parameters:
+            -   in: body
+                name: body
+                schema:
+                    $ref: '#/definitions/User'
+        security:
+            $ref: '#/components/securitySchemes/BearAuth'
+        responses:
+            201:
+                description: Business has been registered successfully!
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                response_message:
+                                    type: string
+                                    description: message to show successful business registration
+                                status_code:
+                                    type: integer
+                                    description: HTTP status code
         """
         req_data = request.get_json(force=True)
         business_name = req_data['name']
@@ -105,9 +118,65 @@ class Businesses(Resource):
     @jwt_required
     def get(self):
         """View all registered businesses.
-
-        Returns:
-            A json format records of the registered businesses.
+        ---
+        tags:
+            -   businesses
+        security:
+            $ref: '#/components/securitySchemes/BearAuth'
+        responses:
+            200:
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schema/Business'
+        components:
+            schema:
+                Business:
+                    type: object
+                    properties:
+                        id:
+                            type: integer
+                            description: a unique business id
+                        name:
+                            type: string
+                            description: a unique business name
+                        category:
+                            type: string
+                            description: business category used to group businesses
+                        location:
+                            type: string
+                            description: describes where the business is located
+                        summary:
+                            type: string
+                            description: business description
+                        created_by:
+                            type: integer
+                            description: describes the id of the business owner
+            parameters:
+                Path:
+                    schema:
+                        required: true
+                        type: integer
+                        description: a unique business id
+            parameters:
+                IntQueryString:
+                    schema:
+                        required: true
+                        type: integer
+                        description: numeric number to limit search results
+            parameters:
+                StrQueryString:
+                    schema:
+                        required: true
+                        type: string
+                        description: search criteria
+            security:
+                BearAuth:
+                    securitySchemes:
+                        type: http
+                        scheme: bearer
+                        bearerFormat: JWT
 
         """
 
@@ -141,11 +210,24 @@ class SingleBusiness(Resource):
 
     @jwt_required
     def get(self, business_id):
-        """View a registered business by id.
-
-        Returns:
-            A json record of the registered business.
-
+        """view a registered business by id.
+        ---
+        tags:
+            -   businesses
+        parameters:
+            -   in: path
+                name: business_id
+                schema:
+                    $ref: '#/components/parameters/Path'
+        security:
+            $ref: '#/components/securitySchemes/BearAuth'
+        responses:
+            200:
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schema/Business'
         """
         try:
             business = Business.query.filter_by(bid=business_id).first()
@@ -174,14 +256,24 @@ class SingleBusiness(Resource):
 
     @jwt_required
     def put(self, business_id):
-        """Update a registered businesses.
-
-        Args:
-            business_id (int): business id parameter should be unique to identify each business.
-
-        Returns:
-           A json object of the updated business.
-
+        """Update a registered business.
+        ---
+        tags:
+            -   businesses
+        parameters:
+            -   in: path
+                name: business_id
+                schema:
+                    $ref: '#/components/parameters/Path'
+        security:
+            $ref: '#/components/securitySchemes/BearAuth'
+        responses:
+            200:
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schema/Business'
         """
 
         req_data = request.get_json(force=True)
@@ -228,14 +320,28 @@ class SingleBusiness(Resource):
 
     @jwt_required
     def delete(self, business_id):
-        """Delete a registered businesses.
-
-        Args:
-            business_id (int): business id parameter should be unique to identify each business.
-
-        Returns:
-           A successful message when the business record is deleted.
-
+        """Delete a registered business.
+        ---
+        tags:
+            -   businesses
+        parameters:
+            -   in: path
+                name: business_id
+                schema:
+                    $ref: '#/components/parameters/Path'
+        security:
+            $ref: '#/components/securitySchemes/BearAuth'
+        responses:
+            204:
+                description: No Content
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                response_message:
+                                    type: string
+                                    description: successful delete message
         """
 
         created_by = get_jwt_identity()
@@ -275,10 +381,31 @@ class BusinessCategory(Resource):
     @jwt_required
     def get(self):
         """View registered businesses based on category.
-
-        Returns:
-            A json record of the registered business.
-
+        ---
+        tags:
+            -   businesses
+        parameters:
+            -   in: query
+                name: q
+                schema:
+                    $ref: '#/components/schema/StrQueryString'
+            -   in: query
+                name: start
+                schema:
+                    $ref: '#/components/schema/IntQueryString'
+            -   in: query
+                name: limit
+                schema:
+                    $ref: '#/components/schema/IntQueryString'
+        security:
+            $ref: '#/components/securitySchemes/BearAuth'
+        responses:
+            200:
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schema/Business'
         """
 
         user_request = request.args.get('q')
@@ -322,11 +449,32 @@ class BusinessLocation(Resource):
 
     @jwt_required
     def get(self):
-        """View a registered business based in the same location.
-
-        Returns:
-            A json record of the registered business.
-
+        """View registered businesses based on location.
+        ---
+        tags:
+            -   businesses
+        parameters:
+            -   in: query
+                name: q
+                schema:
+                    $ref: '#/components/schema/StrQueryString'
+            -   in: query
+                name: start
+                schema:
+                    $ref: '#/components/schema/IntQueryString'
+            -   in: query
+                name: limit
+                schema:
+                    $ref: '#/components/schema/IntQueryString'
+        security:
+            $ref: '#/components/securitySchemes/BearAuth'
+        responses:
+            200:
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schema/Business'
         """
 
         user_request = request.args.get('q')
@@ -371,10 +519,31 @@ class SearchBusiness(Resource):
     @jwt_required
     def get(self):
         """Search a registered business.
-
-        Returns:
-            A json record of the registered business.
-
+        ---
+        tags:
+            -   businesses
+        parameters:
+            -   in: query
+                name: q
+                schema:
+                    $ref: '#/components/schema/StrQueryString'
+            -   in: query
+                name: start
+                schema:
+                    $ref: '#/components/schema/IntQueryString'
+            -   in: query
+                name: limit
+                schema:
+                    $ref: '#/components/schema/IntQueryString'
+        security:
+            $ref: '#/components/securitySchemes/BearAuth'
+        responses:
+            200:
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schema/Business'
         """
 
         user_request = request.args.get('q')

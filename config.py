@@ -8,6 +8,7 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     SQLALCHEMY_ECHO = True
+    SWAGGER = {'title': 'WeConnect v2.0', 'uiversion': 2}
 
 
 class ProductionConfig(Config):

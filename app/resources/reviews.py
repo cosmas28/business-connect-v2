@@ -20,18 +20,27 @@ class BusinessReviews(Resource):
     @jwt_required
     def post(self, business_id):
         """Add a business review.
-
-        Args:
-            business_id (int): business id parameter should be unique to identify each business.
-
-        Returns:
-            A success message to indicate review was added successfully.
-
-        Raises:
-            KeyError when the business id does not exist.
-            Error message when business review is empty.
-            Error message when no business id was provided.
-
+        ---
+        tags:
+            -   business reviews
+        parameters:
+            -   in: body
+                name: body
+                schema:
+                    $ref: '#/definitions/User'
+        security:
+            $ref: '#/components/securitySchemes/BearAuth'
+        responses:
+            201:
+                description: Created
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                response_message:
+                                    type: string
+                                    description: message to show review has been added successfully
         """
         request_data = request.get_json(force=True)
         business_review = request_data['review']
@@ -74,13 +83,35 @@ class BusinessReviews(Resource):
 
     @jwt_required
     def get(self, business_id):
-        """View reviews for a business using business by id.
-
-        Args:
-            business_id (int): business id parameter should be unique to identify each business.
-
-        Returns:
-            A json record of the business reviews.
+        """View reviews for a business.
+        ---
+        tags:
+            -   business reviews
+        parameters:
+            -   in: path
+                name: business_id
+                required: true
+                type: integer
+                description: a unique business id
+        security:
+            $ref: '#/components/securitySchemes/BearAuth'
+        responses:
+            200:
+                description: OK
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                id:
+                                    type: integer
+                                    description: a unique business id
+                                review:
+                                    type: string
+                                    description: review description
+                                reviewed_by:
+                                    type: integer
+                                    description: describes the id of the user who reviewed
 
         """
         try:
