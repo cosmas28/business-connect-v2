@@ -148,7 +148,7 @@ class LoginUserTest(AbstractTest):
 
         # get the response text in json format
         json_res = json.loads(login_response.data.decode())
-        self.assertEqual(json_res['response_message'], "Email and password is required!")
+        self.assertEqual(json_res['response_message'], 'Email and password is required!')
 
     def test_user_login_empty_email(self):
         """Test whether user have provided an email."""
@@ -161,7 +161,7 @@ class LoginUserTest(AbstractTest):
 
         # get the response text in json format
         json_res = json.loads(login_response.data.decode())
-        self.assertEqual(json_res['response_message'], "Email is required!")
+        self.assertEqual(json_res['response_message'], 'Email is required!')
 
     def test_user_login_empty_password(self):
         """Test whether user have provided a password."""
@@ -174,7 +174,7 @@ class LoginUserTest(AbstractTest):
 
         # get the response text in json format
         json_res = json.loads(login_response.data.decode())
-        self.assertEqual(json_res['response_message'], "Password is required!")
+        self.assertEqual(json_res['response_message'], 'Password is required!')
 
     def test_user_no_existed_login_email(self):
         """Test whether user have provided existed email."""
@@ -187,7 +187,7 @@ class LoginUserTest(AbstractTest):
 
         # get the response text in json format
         json_res = json.loads(login_response.data.decode())
-        self.assertEqual(json_res['response_message'], "Invalid email or password!")
+        self.assertEqual(json_res['response_message'], 'Invalid email or password!')
         # self.assertEqual(login_response.status_code, 401)
         self.assertEqual(json_res['status_code'], 401)
 
@@ -202,7 +202,7 @@ class LoginUserTest(AbstractTest):
 
         # get the response text in json format
         json_res = json.loads(login_response.data.decode())
-        self.assertEqual(json_res['response_message'], "Invalid email or password!")
+        self.assertEqual(json_res['response_message'], 'Invalid email or password!')
         # self.assertEqual(login_response.status_code, 401)
         self.assertEqual(json_res['status_code'], 401)
 
@@ -217,7 +217,7 @@ class LoginUserTest(AbstractTest):
 
         # get the response text in json format
         json_res = json.loads(login_response.data.decode())
-        self.assertEqual(json_res['response_message'], "You logged in successfully!")
+        self.assertEqual(json_res['response_message'], 'You logged in successfully!')
         # self.assertEqual(login_response.status_code, 200)
         self.assertEqual(json_res['status_code'], 200)
         self.assertTrue(json_res['access_token'])
@@ -235,7 +235,7 @@ class LoginUserTest(AbstractTest):
 
         logout_res = self.run_app.post(
             '/api/v1/auth/logout_access_token',
-            headers=dict(Authorization="Bearer " + access_token))
+            headers=dict(Authorization='Bearer ' + access_token))
         self.assertEqual(json.loads(logout_res.data.decode())['status_code'], 200)
         self.assertEqual(json.loads(logout_res.data.decode())['response_message'], 'Log out has been successful!')
 
@@ -252,7 +252,7 @@ class LoginUserTest(AbstractTest):
 
         logout_res = self.run_app.post(
             '/api/v1/auth/logout_refresh_token',
-            headers=dict(Authorization="Bearer " + refresh_token))
+            headers=dict(Authorization='Bearer ' + refresh_token))
         self.assertEqual(json.loads(logout_res.data.decode())['status_code'], 200)
         self.assertEqual(json.loads(logout_res.data.decode())['response_message'], 'Log out has been successful!')
 
@@ -288,7 +288,7 @@ class ResetPasswordTest(AbstractTest):
 
         # get the response text in json format
         json_res = json.loads(response.data.decode())
-        self.assertEqual(json_res['response_message'], "Email and new password is required!")
+        self.assertEqual(json_res['response_message'], 'Email and new password is required!')
 
     def test_empty_email(self):
         """Test whether user have provided an email."""
@@ -301,7 +301,7 @@ class ResetPasswordTest(AbstractTest):
 
         # get the response text in json format
         json_res = json.loads(response.data.decode())
-        self.assertEqual(json_res['response_message'], "Email is required!")
+        self.assertEqual(json_res['response_message'], 'Email is required!')
 
     def test_empty_password(self):
         """Test whether user have provided a password."""
@@ -314,7 +314,7 @@ class ResetPasswordTest(AbstractTest):
 
         # get the response text in json format
         json_res = json.loads(response.data.decode())
-        self.assertEqual(json_res['response_message'], "Password is required!")
+        self.assertEqual(json_res['response_message'], 'Password is required!')
 
     def test_empty_password_confirm(self):
         """Test whether user have provided confirmation password."""
@@ -327,7 +327,7 @@ class ResetPasswordTest(AbstractTest):
 
         # get the response text in json format
         json_res = json.loads(response.data.decode())
-        self.assertEqual(json_res['response_message'], "Password confirmation is required!")
+        self.assertEqual(json_res['response_message'], 'Password confirmation is required!')
 
     def test_user_non_existed_login_email(self):
         """Test whether user have provided registered email."""
@@ -341,7 +341,7 @@ class ResetPasswordTest(AbstractTest):
 
         # get the response text in json format
         json_res = json.loads(response.data.decode())
-        self.assertEqual(json_res['response_message'], "Email not registered")
+        self.assertEqual(json_res['response_message'], 'Email not registered')
         self.assertEqual(json_res['status_code'], 401)
 
     def test_user_reset_password(self):
@@ -355,7 +355,7 @@ class ResetPasswordTest(AbstractTest):
 
         # get the response text in json format
         json_res = json.loads(response.data.decode())
-        self.assertEqual(json_res['response_message'], "Password reset successfully!")
+        self.assertEqual(json_res['response_message'], 'Password reset successfully!')
         self.assertEqual(json_res['status_code'], 200)
 
 

@@ -5,7 +5,7 @@ app = create_app('config.DevelopmentConfig')
 
 @app.route('/')
 def index():
-    return "<h1>Hello, world</>"
+    return '<h1>Hello, world</>'
 
 
 if __name__ == '__main__':

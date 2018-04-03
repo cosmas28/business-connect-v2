@@ -15,9 +15,9 @@ class User(db.Model):
     last_name = db.Column(db.String(60))
     pwd_hash = db.Column(db.String(120))
     businesses = db.relationship(
-        'Business', order_by='Business.bid', cascade="all, delete-orphan")
+        'Business', order_by='Business.bid', cascade='all, delete-orphan')
     _reviews = db.relationship(
-        'Reviews', order_by='Reviews.rid', cascade="all, delete-orphan")
+        'Reviews', order_by='Reviews.rid', cascade='all, delete-orphan')
 
     def __init__(self, email, username, first_name, last_name, password):
         self.email = email.lower()
@@ -69,7 +69,7 @@ class Business(db.Model):
     summary = db.Column(db.Text)
     created_by = db.Column(db.Integer, db.ForeignKey(User.uid))
     _reviews = db.relationship(
-        'Reviews', order_by='Reviews.rid', cascade="all, delete-orphan")
+        'Reviews', order_by='Reviews.rid', cascade='all, delete-orphan')
 
     def __init__(self, name, category, location, summary, created_by):
         self.name = name

@@ -45,11 +45,11 @@ class ReviewsTestCase(unittest.TestCase):
         business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Nairobi',
                                     'summary': 'AI is transforming human life'})
         self.run_app.post('/api/v1/businesses', data=business_data,
-                          headers=dict(Authorization="Bearer " + access_token))
+                          headers=dict(Authorization='Bearer ' + access_token))
 
         review = json.dumps({'review': ''})
         review_res = self.run_app.post('/api/v1/businesses/1/reviews', data=review,
-                                       headers=dict(Authorization="Bearer " + access_token))
+                                       headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertEqual(json.loads(review_res.data.decode())['response_message'], 'Review value is empty!')
 
@@ -63,11 +63,11 @@ class ReviewsTestCase(unittest.TestCase):
         business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Nairobi',
                                     'summary': 'AI is transforming human life'})
         self.run_app.post('/api/v1/businesses', data=business_data,
-                          headers=dict(Authorization="Bearer " + access_token))
+                          headers=dict(Authorization='Bearer ' + access_token))
 
         review = json.dumps({'review': 'The future of AI is very bright, mostly in security'})
         review_res = self.run_app.post('/api/v1/businesses/1/reviews', data=review,
-                                       headers=dict(Authorization="Bearer " + access_token))
+                                       headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertEqual(json.loads(review_res.data.decode())['response_message'],
                          'Review has been added successfully!')
@@ -82,14 +82,14 @@ class ReviewsTestCase(unittest.TestCase):
         business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Nairobi',
                                     'summary': 'AI is transforming human life'})
         self.run_app.post('/api/v1/businesses', data=business_data,
-                          headers=dict(Authorization="Bearer " + access_token))
+                          headers=dict(Authorization='Bearer ' + access_token))
 
         review = json.dumps({'review': 'The future of AI is very bright, mostly in security'})
         self.run_app.post('/api/v1/businesses/1/reviews', data=review,
-                          headers=dict(Authorization="Bearer " + access_token))
+                          headers=dict(Authorization='Bearer ' + access_token))
 
         response = self.run_app.get('/api/v1/businesses/1/reviews', data=review,
-                                    headers=dict(Authorization="Bearer " + access_token))
+                                    headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertIn('The future of AI is very bright, mostly in security', str(response.data))
 
