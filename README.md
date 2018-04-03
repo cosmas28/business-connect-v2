@@ -57,22 +57,25 @@ Run the test using bash
 $ pytest
 ```
 
-Run the API endpoints using the following endpoints
+Run the API endpoints using the following URLs
 
-POST `/api/v1/register` Register a user account
-POST `/api/v1/login_user` log in users
-POST `/api/v1/logout_user` logout users
-POST `/api/v1/reset-password` Reset users passwords
-POST `/api/v1/business` Registers business
-GET `/api/v1/business` View all businesses
-GET `/api/v1/businesses/<int:business_id>` view business by using business ID
-DELETE `/api/v1/businesses/<int:business_id>` delete business by using business ID
-PUT `/api/v1/businesses/<int:business_id>` update a registered business by using business ID
-POST `/api/v1/businesses/<int:business_id>/reviews` add business review using business ID
-GET `/api/v1/businesses/<int:business_id>/reviews` view business reviews using business ID
-GET `/api/v1/business/location/<business_location>` view businesses based on the same location
-GET `/api/v1/business/location/<business_category>` view businesses on the same category
-GET `/api/v1/business/search?q=<business_name>&limit=<number_of_results>` search a specified number of businesses
+* POST `/api/v2/register` Register a user account
+* POST `/api/v2/login_user` log in users
+* POST `/api/v2/logout_user` logout users
+* POST `/api/v2/reset-password` Reset users passwords
+* POST `/api/v2/business` Registers business
+* GET `/api/v2/business` View all businesses
+* GET `/api/v2/businesses/<int:business_id>` view business by using business ID
+* DELETE `/api/v2/businesses/<int:business_id>` delete business by using business ID
+* PUT `/api/v2/businesses/<int:business_id>` update a registered business by using business ID
+* POST `/api/v2/businesses/<int:business_id>/reviews` add business review using business ID
+* GET `/api/v2/businesses/<int:business_id>/reviews` view business reviews using business ID
+* GET `/api/v2/business/location?q=<business_location>&start=<starting_number>&limit=<number_of_results>`
+ view businesses based on the same location
+* GET `/api/v2/business/category?q=<business_category>&start=<starting_number>&limit=<number_of_results>`
+view businesses on the same category
+* GET `/api/v2/business/search?q=<business_name>&start=<starting_number>&limit=<number_of_results>`
+ search a specified number of businesses
 
 ## Acknowledgements
 

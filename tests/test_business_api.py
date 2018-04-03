@@ -22,12 +22,12 @@ class AbstractTest(unittest.TestCase):
     def register_user(self):
         user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
                                 'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
-        return self.run_app.post('/api/v1/auth/register_user', data=user_data, headers=self.headers)
+        return self.run_app.post('/api/v2/auth/register_user', data=user_data, headers=self.headers)
 
     def login_user(self):
         login_data = json.dumps({'email': 'test@andela.com', 'password': 'andela2018'})
 
-        return self.run_app.post('/api/v1/auth/login_user', data=login_data, headers=self.headers)
+        return self.run_app.post('/api/v2/auth/login_user', data=login_data, headers=self.headers)
 
     def register_business(self):
         self.register_user()
@@ -37,7 +37,7 @@ class AbstractTest(unittest.TestCase):
         business_data = json.dumps({'name': 'CosmasTech', 'category': 'Technology', 'location': 'Nairobi',
                                     'summary': 'AI is transforming human life'})
 
-        return self.run_app.post('/api/v1/businesses', data=business_data,
+        return self.run_app.post('/api/v2/businesses', data=business_data,
                                  headers=dict(Authorization='Bearer ' + access_token))
 
     def tearDown(self):
@@ -60,7 +60,7 @@ class CreateBusinessTest(AbstractTest):
         business_data = json.dumps({'name': '', 'category': 'Technology', 'location': 'Nairobi',
                                     'summary': 'AI is transforming human life'})
 
-        response = self.run_app.post('/api/v1/businesses', data=business_data,
+        response = self.run_app.post('/api/v2/businesses', data=business_data,
                                      headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertEqual(json.loads(response.data.decode())['response_message'], 'Business name is required!')
@@ -75,7 +75,7 @@ class CreateBusinessTest(AbstractTest):
         business_data = json.dumps({'name': 'Cosmas Tech', 'category': '', 'location': 'Nairobi',
                                     'summary': 'AI is transforming human life'})
 
-        response = self.run_app.post('/api/v1/businesses', data=business_data,
+        response = self.run_app.post('/api/v2/businesses', data=business_data,
                                      headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertEqual(json.loads(response.data.decode())['response_message'], 'Business category is required!')
@@ -90,7 +90,7 @@ class CreateBusinessTest(AbstractTest):
         business_data = json.dumps({'name': 'Cosmas Tech', 'category': 'Technology', 'location': '',
                                     'summary': 'AI is transforming human life'})
 
-        response = self.run_app.post('/api/v1/businesses', data=business_data,
+        response = self.run_app.post('/api/v2/businesses', data=business_data,
                                      headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertEqual(json.loads(response.data.decode())['response_message'], 'Business location is required!')
@@ -105,7 +105,7 @@ class CreateBusinessTest(AbstractTest):
         business_data = json.dumps({'name': 'Cosmas Tech', 'category': 'Technology', 'location': 'Nairobi',
                                     'summary': ''})
 
-        response = self.run_app.post('/api/v1/businesses', data=business_data,
+        response = self.run_app.post('/api/v2/businesses', data=business_data,
                                      headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertEqual(json.loads(response.data.decode())['response_message'], 'Business summary is required!')
@@ -119,13 +119,13 @@ class CreateBusinessTest(AbstractTest):
         first_business_data = json.dumps({'name': 'CosmasTech', 'category': 'Technology', 'location': 'Nairobi',
                                           'summary': 'AI is transforming human life'})
 
-        self.run_app.post('/api/v1/businesses', data=first_business_data,
+        self.run_app.post('/api/v2/businesses', data=first_business_data,
                           headers=dict(Authorization='Bearer ' + access_token))
 
         business_data = json.dumps({'name': 'CosmasTech', 'category': 'Technology', 'location': 'Mombasa',
                                     'summary': 'IoT is transforming human security'})
 
-        response = self.run_app.post('/api/v1/businesses', data=business_data,
+        response = self.run_app.post('/api/v2/businesses', data=business_data,
                                      headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertEqual(json.loads(response.data.decode())['response_message'], 'Business name already registered!')
@@ -140,7 +140,7 @@ class CreateBusinessTest(AbstractTest):
         business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Mombasa',
                                     'summary': 'IoT is transforming human security'})
 
-        response = self.run_app.post('/api/v1/businesses', data=business_data,
+        response = self.run_app.post('/api/v2/businesses', data=business_data,
                                      headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertEqual(json.loads(response.data.decode())['response_message'],
@@ -155,10 +155,10 @@ class CreateBusinessTest(AbstractTest):
 
         business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Mombasa',
                                     'summary': 'IoT is transforming human security'})
-        self.run_app.post('/api/v1/businesses', data=business_data,
+        self.run_app.post('/api/v2/businesses', data=business_data,
                           headers=dict(Authorization='Bearer ' + access_token))
 
-        response = self.run_app.get('/api/v1/businesses', headers=dict(Authorization='Bearer ' + access_token))
+        response = self.run_app.get('/api/v2/businesses', headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertIn('Palmer Tech', str(response.data))
 
@@ -171,10 +171,10 @@ class CreateBusinessTest(AbstractTest):
 
         business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Mombasa',
                                     'summary': 'IoT is transforming human security'})
-        self.run_app.post('/api/v1/businesses', data=business_data,
+        self.run_app.post('/api/v2/businesses', data=business_data,
                           headers=dict(Authorization='Bearer ' + access_token))
 
-        response = self.run_app.get('/api/v1/business/1', headers=dict(Authorization='Bearer ' + access_token))
+        response = self.run_app.get('/api/v2/business/1', headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertIn('Palmer Tech', str(response.data))
 
@@ -187,12 +187,12 @@ class CreateBusinessTest(AbstractTest):
 
         business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Mombasa',
                                     'summary': 'IoT is transforming human security'})
-        self.run_app.post('/api/v1/businesses', data=business_data,
+        self.run_app.post('/api/v2/businesses', data=business_data,
                           headers=dict(Authorization='Bearer ' + access_token))
 
         new_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Nairobi',
                                     'summary': 'IoT is transforming human security'})
-        response = self.run_app.put('/api/v1/business/1', data=new_data, headers=dict(Authorization='Bearer ' + access_token))
+        response = self.run_app.put('/api/v2/business/1', data=new_data, headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertIn('Nairobi', str(response.data))
 
@@ -205,10 +205,10 @@ class CreateBusinessTest(AbstractTest):
 
         business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Mombasa',
                                     'summary': 'IoT is transforming human security'})
-        self.run_app.post('/api/v1/businesses', data=business_data,
+        self.run_app.post('/api/v2/businesses', data=business_data,
                           headers=dict(Authorization='Bearer ' + access_token))
 
-        response = self.run_app.delete('/api/v1/business/1', headers=dict(Authorization='Bearer ' + access_token))
+        response = self.run_app.delete('/api/v2/business/1', headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertEqual(json.loads(response.data.decode())['response_message'],
                          'Business has been deleted successfully!')
@@ -222,10 +222,10 @@ class CreateBusinessTest(AbstractTest):
 
         business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Mombasa',
                                     'summary': 'IoT is transforming human security'})
-        self.run_app.post('/api/v1/businesses', data=business_data,
+        self.run_app.post('/api/v2/businesses', data=business_data,
                           headers=dict(Authorization='Bearer ' + access_token))
 
-        response = self.run_app.get('/api/v1/business/category?q=Technology&start=1&limit=2',
+        response = self.run_app.get('/api/v2/business/category?q=Technology&start=1&limit=2',
                                     headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertIn('Palmer Tech', str(response.data))
@@ -239,10 +239,10 @@ class CreateBusinessTest(AbstractTest):
 
         business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Mombasa',
                                     'summary': 'IoT is transforming human security'})
-        self.run_app.post('/api/v1/businesses', data=business_data,
+        self.run_app.post('/api/v2/businesses', data=business_data,
                           headers=dict(Authorization='Bearer ' + access_token))
 
-        response = self.run_app.get('/api/v1/business/location?q=Mombasa&start=1&limit=2',
+        response = self.run_app.get('/api/v2/business/location?q=Mombasa&start=1&limit=2',
                                     headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertIn('Palmer Tech', str(response.data))
@@ -256,10 +256,10 @@ class CreateBusinessTest(AbstractTest):
 
         business_data = json.dumps({'name': 'PalmerTech', 'category': 'Technology', 'location': 'Mombasa',
                                     'summary': 'IoT is transforming human security'})
-        self.run_app.post('/api/v1/businesses', data=business_data,
+        self.run_app.post('/api/v2/businesses', data=business_data,
                           headers=dict(Authorization='Bearer ' + access_token))
 
-        response = self.run_app.get('/api/v1/business/search?q=PalmerTech&start=1&limit=2',
+        response = self.run_app.get('/api/v2/business/search?q=PalmerTech&start=1&limit=2',
                                     headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertIn('PalmerTech', str(response.data))
@@ -273,10 +273,10 @@ class CreateBusinessTest(AbstractTest):
 
         business_data = json.dumps({'name': 'PalmerTech', 'category': 'Technology', 'location': 'Mombasa',
                                     'summary': 'IoT is transforming human security'})
-        self.run_app.post('/api/v1/businesses', data=business_data,
+        self.run_app.post('/api/v2/businesses', data=business_data,
                           headers=dict(Authorization='Bearer ' + access_token))
 
-        response = self.run_app.get('/api/v1/business/search?q=PalmerTech&start=1&limit=2',
+        response = self.run_app.get('/api/v2/business/search?q=PalmerTech&start=1&limit=2',
                                     headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertIn('PalmerTech', str(response.data))
@@ -290,18 +290,18 @@ class CreateBusinessTest(AbstractTest):
 
         first_business = json.dumps({'name': 'TechRunch', 'category': 'Technology', 'location': 'Mombasa',
                                     'summary': 'IoT is transforming human security'})
-        self.run_app.post('/api/v1/businesses', data=first_business,
+        self.run_app.post('/api/v2/businesses', data=first_business,
                           headers=dict(Authorization='Bearer ' + access_token))
         second_business = json.dumps({'name': 'TechBusiness', 'category': 'Technology', 'location': 'Nairobi',
                                      'summary': 'A network of different businesses'})
-        self.run_app.post('/api/v1/businesses', data=second_business,
+        self.run_app.post('/api/v2/businesses', data=second_business,
                           headers=dict(Authorization='Bearer ' + access_token))
         third_business = json.dumps({'name': 'TechSchool', 'category': 'Technology', 'location': 'Dar es Salaam',
                                      'summary': 'A network students across the world.'})
-        self.run_app.post('/api/v1/businesses', data=third_business,
+        self.run_app.post('/api/v2/businesses', data=third_business,
                           headers=dict(Authorization='Bearer ' + access_token))
 
-        response = self.run_app.get('/api/v1/business/search?q=Tech&start=1&limit=2',
+        response = self.run_app.get('/api/v2/business/search?q=Tech&start=1&limit=2',
                                     headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertEqual(len(json.loads(response.data.decode()).get('business_list')), 2)

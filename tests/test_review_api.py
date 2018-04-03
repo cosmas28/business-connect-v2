@@ -22,12 +22,12 @@ class ReviewsTestCase(unittest.TestCase):
     def register_user(self):
         user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
                                 'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
-        return self.run_app.post('/api/v1/auth/register_user', data=user_data, headers=self.headers)
+        return self.run_app.post('/api/v2/auth/register_user', data=user_data, headers=self.headers)
 
     def login_user(self):
         login_data = json.dumps({'email': 'test@andela.com', 'password': 'andela2018'})
 
-        return self.run_app.post('/api/v1/auth/login_user', data=login_data, headers=self.headers)
+        return self.run_app.post('/api/v2/auth/login_user', data=login_data, headers=self.headers)
 
     def tearDown(self):
         """Call after every test to remove the created table."""
@@ -44,11 +44,11 @@ class ReviewsTestCase(unittest.TestCase):
 
         business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Nairobi',
                                     'summary': 'AI is transforming human life'})
-        self.run_app.post('/api/v1/businesses', data=business_data,
+        self.run_app.post('/api/v2/businesses', data=business_data,
                           headers=dict(Authorization='Bearer ' + access_token))
 
         review = json.dumps({'review': ''})
-        review_res = self.run_app.post('/api/v1/businesses/1/reviews', data=review,
+        review_res = self.run_app.post('/api/v2/businesses/1/reviews', data=review,
                                        headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertEqual(json.loads(review_res.data.decode())['response_message'], 'Review value is empty!')
@@ -62,11 +62,11 @@ class ReviewsTestCase(unittest.TestCase):
 
         business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Nairobi',
                                     'summary': 'AI is transforming human life'})
-        self.run_app.post('/api/v1/businesses', data=business_data,
+        self.run_app.post('/api/v2/businesses', data=business_data,
                           headers=dict(Authorization='Bearer ' + access_token))
 
         review = json.dumps({'review': 'The future of AI is very bright, mostly in security'})
-        review_res = self.run_app.post('/api/v1/businesses/1/reviews', data=review,
+        review_res = self.run_app.post('/api/v2/businesses/1/reviews', data=review,
                                        headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertEqual(json.loads(review_res.data.decode())['response_message'],
@@ -81,14 +81,14 @@ class ReviewsTestCase(unittest.TestCase):
 
         business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Nairobi',
                                     'summary': 'AI is transforming human life'})
-        self.run_app.post('/api/v1/businesses', data=business_data,
+        self.run_app.post('/api/v2/businesses', data=business_data,
                           headers=dict(Authorization='Bearer ' + access_token))
 
         review = json.dumps({'review': 'The future of AI is very bright, mostly in security'})
-        self.run_app.post('/api/v1/businesses/1/reviews', data=review,
+        self.run_app.post('/api/v2/businesses/1/reviews', data=review,
                           headers=dict(Authorization='Bearer ' + access_token))
 
-        response = self.run_app.get('/api/v1/businesses/1/reviews', data=review,
+        response = self.run_app.get('/api/v2/businesses/1/reviews', data=review,
                                     headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertIn('The future of AI is very bright, mostly in security', str(response.data))
