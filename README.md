@@ -59,8 +59,13 @@ To install the packages run pip install -r requirements.txt
 ## Usage
 
 ```bash
-$ python run.py
+$ python manage.py runserver
 ```
+
+## How to view API documentation
+
+* Run the server `$ python manage.py runserver`
+* Browse http://localhost:5000/apidocs/
 
 Run the endpoints on Postman
 
