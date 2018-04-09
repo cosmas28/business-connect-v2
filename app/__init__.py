@@ -13,15 +13,9 @@ from app.models import db
 
 
 def create_app(config_object):
-    if os.environ.get('FLASK_CONFIG') == 'production':
-        app = Flask(__name__)
-        app.config.update(
-            SECRET_KEY=os.environ.get('SECRET_KEY'),
-            SQLALCHEMY_DATABASE_URI=os.environ.get('SQLALCHEMY_DATABASE_URI')
-        )
-    else:
-        app = Flask(__name__, instance_relative_config=True)
-        app.config.from_object(config_object)
+
+    app = Flask(__name__, instance_relative_config=True)
+    app.config.from_object(config_object)
 
     db.init_app(app)
 
