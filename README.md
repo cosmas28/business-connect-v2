@@ -86,9 +86,9 @@ DELETE | /api/v2/businesses/<int:business_id> | Remove a business
 PUT | /api/v2/businesses/<int:business_id> | Update a business profile
 POST | /api/v2/businesses/<int:business_id>/reviews | Add a review for a business
 GET | /api/v2/businesses/<int:business_id>/reviews | Get all reviews for a business
-GET | /api/v2/businesses/location?q=<location>&start=<int:start>&limit=<int:limit> | Filter businesses based on location
-GET | /api/v2/businesses/location?q=<category>&start=<int:start>&limit=<int:limit> | Filter businesses based on category
-GET | /api/v2/businesses/search?q=<business_name>&start=<int:start>&limit=<int:limit> | Search for a business
+GET | /api/v2/businesses/location?q=<location>&start=<start>&limit=<limit> | Filter businesses based on location
+GET | /api/v2/businesses/location?q=<category>&start=<start>&limit=<limit> | Filter businesses based on category
+GET | /api/v2/businesses/search?q=<business_name>&start=<start>&limit=<limit> | Search for a business
 
 ## Acknowledgements
 
