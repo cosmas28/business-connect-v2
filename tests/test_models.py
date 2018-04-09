@@ -8,9 +8,9 @@ are expected from business model.
 
 import unittest
 
-from . import app
-from app.models.models import User, Business, Reviews, RevokedToken
+from app.models import User, Business, Reviews, RevokedToken
 from app.models import db
+from . import app
 
 
 class ModelsTestCase(unittest.TestCase):

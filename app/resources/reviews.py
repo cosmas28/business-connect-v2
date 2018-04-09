@@ -5,11 +5,10 @@ This module provides API endpoints to add business reviews and view reviews fo a
 """
 
 from flask import Blueprint, request, make_response, jsonify
-
-from flask_restful import Resource, Api
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_restful import Resource, Api
 
-from app.models.models import Business, Reviews
+from app.models import Business, Reviews
 from app.models import db
 
 

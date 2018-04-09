@@ -9,9 +9,9 @@ import unittest
 
 from flask import json
 
-from . import app
-from app.models.models import User
+from app.models import User
 from app.models import db
+from . import app
 
 
 class AbstractTest(unittest.TestCase):

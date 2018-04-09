@@ -1,15 +1,12 @@
-import os
-
 from flask import Flask
-from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
+from flask_migrate import Migrate
 
-from app.resources.business import business_api
-from app.resources.user import user_api
-from app.resources.reviews import reviews_api
-
-from app.models.models import RevokedToken
+from app.models import RevokedToken
 from app.models import db
+from app.resources.business import business_api
+from app.resources.reviews import reviews_api
+from app.resources.user import user_api
 
 
 def create_app(config_object):
@@ -28,7 +25,8 @@ def create_app(config_object):
         jti = decrypted_token['jti']
 
         return RevokedToken.is_jti_blacklisted(jti)
-    from app.models import models
+
+    from app import models
 
     app.register_blueprint(user_api, url_prefix='/api/v2/auth')
     app.register_blueprint(business_api, url_prefix='/api/v2')
