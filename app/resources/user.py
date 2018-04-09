@@ -185,8 +185,8 @@ class LoginUser(Resource):
                 }
                 return make_response(jsonify(response))
             else:
-                access_token = create_access_token(identity=user.uid)
-                refresh_token = create_refresh_token(identity=user.uid)
+                access_token = create_access_token(identity=user.id)
+                refresh_token = create_refresh_token(identity=user.id)
                 if access_token:
                     response = {
                         'response_message': 'You logged in successfully!',

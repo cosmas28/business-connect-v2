@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 7847daf3f078
-Revises: 147bb8bfc55d
-Create Date: 2018-03-29 23:17:19.245747
+Revision ID: e30052b7a727
+Revises: 
+Create Date: 2018-04-09 17:49:22.386563
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7847daf3f078'
-down_revision = '147bb8bfc55d'
+revision = 'e30052b7a727'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -24,32 +24,32 @@ def upgrade():
     sa.PrimaryKeyConstraint('tid')
     )
     op.create_table('users',
-    sa.Column('uid', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=60), nullable=True),
     sa.Column('username', sa.String(length=60), nullable=True),
     sa.Column('first_name', sa.String(length=60), nullable=True),
     sa.Column('last_name', sa.String(length=60), nullable=True),
     sa.Column('pwd_hash', sa.String(length=120), nullable=True),
-    sa.PrimaryKeyConstraint('uid')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('business',
-    sa.Column('bid', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=60), nullable=True),
     sa.Column('category', sa.String(length=40), nullable=True),
     sa.Column('location', sa.String(length=40), nullable=True),
     sa.Column('summary', sa.Text(), nullable=True),
     sa.Column('created_by', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['created_by'], ['users.uid'], ),
-    sa.PrimaryKeyConstraint('bid')
+    sa.ForeignKeyConstraint(['created_by'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('reviews',
-    sa.Column('rid', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('review', sa.Text(), nullable=True),
     sa.Column('review_for', sa.Integer(), nullable=True),
     sa.Column('reviewed_by', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['review_for'], ['business.bid'], ),
-    sa.ForeignKeyConstraint(['reviewed_by'], ['users.uid'], ),
-    sa.PrimaryKeyConstraint('rid')
+    sa.ForeignKeyConstraint(['review_for'], ['business.id'], ),
+    sa.ForeignKeyConstraint(['reviewed_by'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
 

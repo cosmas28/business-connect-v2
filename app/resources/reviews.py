@@ -46,7 +46,7 @@ class BusinessReviews(Resource):
         created_by = get_jwt_identity()
 
         try:
-            business = Business.query.filter_by(bid=business_id).first()
+            business = Business.query.filter_by(id=business_id).first()
 
             if len(str(business_id)) == 0:
                 response = {
@@ -114,7 +114,7 @@ class BusinessReviews(Resource):
 
         """
         try:
-            business = Business.query.filter_by(bid=business_id).first()
+            business = Business.query.filter_by(id=business_id).first()
             business_reviews = Reviews.query.filter_by(review_for=business_id).all()
             if len(str(business_id)) == 0:
                 response = {
@@ -136,7 +136,7 @@ class BusinessReviews(Resource):
 
                 for _review in business_reviews:
                     _object = {
-                        'id': _review.rid,
+                        'id': _review.id,
                         'review': _review.review,
                         'reviewed_by': _review.reviewed_by,
                     }

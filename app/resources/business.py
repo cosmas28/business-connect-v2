@@ -185,7 +185,7 @@ class Businesses(Resource):
 
             for business in businesses:
                 _object = {
-                    'id': business.bid,
+                    'id': business.id,
                     'name': business.name,
                     'category': business.category,
                     'location': business.location,
@@ -229,7 +229,7 @@ class SingleBusiness(Resource):
                             $ref: '#/components/schema/Business'
         """
         try:
-            business = Business.query.filter_by(bid=business_id).first()
+            business = Business.query.filter_by(id=business_id).first()
             if business is None:
                 response = {
                     'response_message': 'Business id is not registered!'
@@ -237,7 +237,7 @@ class SingleBusiness(Resource):
                 return make_response(jsonify(response))
             else:
                 business_object= {
-                    'id': business.bid,
+                    'id': business.id,
                     'name': business.name,
                     'category': business.category,
                     'location': business.location,
@@ -282,7 +282,7 @@ class SingleBusiness(Resource):
         business_summary = req_data['summary']
 
         try:
-            current_business = Business.query.filter_by(bid=business_id).first()
+            current_business = Business.query.filter_by(id=business_id).first()
 
             if current_business is None:
                 response = {
@@ -290,7 +290,7 @@ class SingleBusiness(Resource):
                 }
                 return make_response(jsonify(response))
             else:
-                update_business = Business.query.filter_by(bid=business_id).update(dict(
+                update_business = Business.query.filter_by(id=business_id).update(dict(
                     name=business_name,
                     category=business_category,
                     location=business_location,
@@ -298,9 +298,9 @@ class SingleBusiness(Resource):
                 ))
                 db.session.commit()
 
-                new_business = Business.query.filter_by(bid=business_id).first()
+                new_business = Business.query.filter_by(id=business_id).first()
                 business_object = {
-                    'id': new_business.bid,
+                    'id': new_business.id,
                     'name': new_business.name,
                     'category': new_business.category,
                     'location': new_business.location,
@@ -345,7 +345,7 @@ class SingleBusiness(Resource):
 
         created_by = get_jwt_identity()
         try:
-            business = Business.query.filter_by(bid=business_id).first()
+            business = Business.query.filter_by(id=business_id).first()
 
             if business is None:
                 response = {
@@ -422,7 +422,7 @@ class BusinessCategory(Resource):
 
                 for business in businesses:
                     _object = {
-                        'id': business.bid,
+                        'id': business.id,
                         'name': business.name,
                         'category': business.category,
                         'location': business.location,
@@ -491,7 +491,7 @@ class BusinessLocation(Resource):
 
                 for business in businesses:
                     _object = {
-                        'id': business.bid,
+                        'id': business.id,
                         'name': business.name,
                         'category': business.category,
                         'location': business.location,
@@ -560,7 +560,7 @@ class SearchBusiness(Resource):
 
                 for business in businesses:
                     _object = {
-                        'id': business.bid,
+                        'id': business.id,
                         'name': business.name,
                         'category': business.category,
                         'location': business.location,

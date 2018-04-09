@@ -11,16 +11,16 @@ class User(db.Model):
     """Create users table."""
 
     __tablename__ = 'users'
-    uid = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(60))
     username = db.Column(db.String(60))
     first_name = db.Column(db.String(60))
     last_name = db.Column(db.String(60))
     pwd_hash = db.Column(db.String(120))
     businesses = db.relationship(
-        'Business', order_by='Business.bid', cascade='all, delete-orphan')
+        'Business', order_by='Business.id', cascade='all, delete-orphan')
     _reviews = db.relationship(
-        'Reviews', order_by='Reviews.rid', cascade='all, delete-orphan')
+        'Reviews', order_by='Reviews.id', cascade='all, delete-orphan')
 
     def __init__(self, email, username, first_name, last_name, password):
         self.email = email.lower()
@@ -65,14 +65,14 @@ class Business(db.Model):
 
     __tablename__ = 'business'
 
-    bid = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(60))
     category = db.Column(db.String(40))
     location = db.Column(db.String(40))
     summary = db.Column(db.Text)
-    created_by = db.Column(db.Integer, db.ForeignKey(User.uid))
+    created_by = db.Column(db.Integer, db.ForeignKey(User.id))
     _reviews = db.relationship(
-        'Reviews', order_by='Reviews.rid', cascade='all, delete-orphan')
+        'Reviews', order_by='Reviews.id', cascade='all, delete-orphan')
 
     def __init__(self, name, category, location, summary, created_by):
         self.name = name
@@ -87,10 +87,10 @@ class Reviews(db.Model):
 
     __tablename__ = 'reviews'
 
-    rid = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     review = db.Column(db.Text)
-    review_for = db.Column(db.Integer, db.ForeignKey(Business.bid))
-    reviewed_by = db.Column(db.Integer, db.ForeignKey(User.uid))
+    review_for = db.Column(db.Integer, db.ForeignKey(Business.id))
+    reviewed_by = db.Column(db.Integer, db.ForeignKey(User.id))
 
     def __init__(self, review, review_for, reviewed_by):
         self.review = review

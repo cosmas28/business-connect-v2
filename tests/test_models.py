@@ -74,11 +74,11 @@ class ModelsTestCase(unittest.TestCase):
         db.session.commit()
         query_user = User.query.filter_by(email='test@andela.com').first()
 
-        business = Business('CosmasTech', 'Technology', 'Nairobi', 'AI is transforming human life', query_user.uid)
+        business = Business('CosmasTech', 'Technology', 'Nairobi', 'AI is transforming human life', query_user.id)
         db.session.add(business)
         db.session.commit()
 
-        query_res = Business.query.filter_by(bid=1).first()
+        query_res = Business.query.filter_by(id=1).first()
         self.assertEqual(query_res.name, 'CosmasTech')
 
     def test_reviews_model(self):
@@ -89,15 +89,15 @@ class ModelsTestCase(unittest.TestCase):
         db.session.commit()
         query_user = User.query.filter_by(email='test@andela.com').first()
 
-        business = Business('CosmasTech', 'Technology', 'Nairobi', 'AI is transforming human life', query_user.uid)
+        business = Business('CosmasTech', 'Technology', 'Nairobi', 'AI is transforming human life', query_user.id)
         db.session.add(business)
         db.session.commit()
         query_business = Business.query.filter_by(name='CosmasTech').first()
 
-        business = Reviews('The business will really save the world!', query_business.bid, query_user.uid)
+        business = Reviews('The business will really save the world!', query_business.id, query_user.id)
         db.session.add(business)
         db.session.commit()
-        query_reviews = Reviews.query.filter_by(rid=1).first()
+        query_reviews = Reviews.query.filter_by(id=1).first()
 
         self.assertEqual(query_reviews.review, 'The business will really save the world!')
 
