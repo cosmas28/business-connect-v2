@@ -614,22 +614,22 @@ api.add_resource(
 )
 api.add_resource(
     SingleBusiness,
-    '/business/<int:business_id>',
+    '/businesses/<int:business_id>',
     endpoint='business'
 )
 api.add_resource(
     BusinessCategory,
-    '/business/category',
+    '/businesses/category',
     endpoint='category'
 )
 api.add_resource(
     BusinessLocation,
-    '/business/location',
+    '/businesses/location',
     endpoint='location'
 )
 api.add_resource(
     SearchBusiness,
-    '/business/search',
+    '/businesses/search',
     endpoint='search'
 )
 

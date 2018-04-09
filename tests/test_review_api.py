@@ -22,12 +22,12 @@ class ReviewsTestCase(unittest.TestCase):
     def register_user(self):
         user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
                                 'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
-        return self.run_app.post('/api/v2/auth/register_user', data=user_data, headers=self.headers)
+        return self.run_app.post('/api/v2/auth/register', data=user_data, headers=self.headers)
 
     def login_user(self):
         login_data = json.dumps({'email': 'test@andela.com', 'password': 'andela2018'})
 
-        return self.run_app.post('/api/v2/auth/login_user', data=login_data, headers=self.headers)
+        return self.run_app.post('/api/v2/auth/login', data=login_data, headers=self.headers)
 
     def tearDown(self):
         """Call after every test to remove the created table."""

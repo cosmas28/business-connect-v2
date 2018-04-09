@@ -79,15 +79,15 @@ POST | /api/v2/auth/register | Creates a new user account
 POST | /api/v2/auth/login | logs in a user
 POST | /api/v2/auth/logout | logs in a user
 POST | /api/v2/auth/reset-password | Password Reset
-POST | /api/v2/auth/businesses | Registers a business
+POST | /api/v2/businesses | Registers a business
 GET | /api/v2/businesses | Retrieves all businesses
 GET | /api/v2/businesses/<int:business_id> | get a business
 DELETE | /api/v2/businesses/<int:business_id> | Remove a business
 PUT | /api/v2/businesses/<int:business_id> | Update a business profile
 POST | /api/v2/businesses/<int:business_id>/reviews | Add a review for a business
 GET | /api/v2/businesses/<int:business_id>/reviews | Get all reviews for a business
-GET | /api/v2/businesses/location?q=<location>&start=<int:start>&limit=<int:limit> | Retrieves all businesses based on location
-GET | /api/v2/businesses/location?q=<category>&start=<int:start>&limit=<int:limit> | Retrieves all businesses based on category
+GET | /api/v2/businesses/location?q=<location>&start=<int:start>&limit=<int:limit> | Filter businesses based on location
+GET | /api/v2/businesses/location?q=<category>&start=<int:start>&limit=<int:limit> | Filter businesses based on category
 GET | /api/v2/businesses/search?q=<business_name>&start=<int:start>&limit=<int:limit> | Search for a business
 
 ## Acknowledgements

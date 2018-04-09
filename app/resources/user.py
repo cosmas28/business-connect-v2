@@ -409,13 +409,13 @@ user_api = Blueprint('resources.user', __name__)
 api = Api(user_api)
 api.add_resource(
     RegisterUser,
-    '/register_user',
-    endpoint='register_user'
+    '/register',
+    endpoint='register'
 )
 api.add_resource(
     LoginUser,
-    '/login_user',
-    endpoint='login_user'
+    '/login',
+    endpoint='login'
 )
 api.add_resource(
     TokenRefresh,
@@ -424,8 +424,8 @@ api.add_resource(
 )
 api.add_resource(
     UserLogoutAccess,
-    '/logout_access_token',
-    endpoint='logout_access_token'
+    '/logout',
+    endpoint='logout'
 )
 api.add_resource(
     UserLogoutRefresh,
