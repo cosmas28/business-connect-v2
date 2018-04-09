@@ -42,6 +42,20 @@ $ cd business-connect-v2
 
 To install the packages run pip install -r requirements.txt
 
+## Database setup instructions
+
+* Install PostgreSQL.
+* Create a new database.
+* Change Database configuration at `SQLALCHEMY_DATABASE_URI` environment variable to include your database name, password
+    and user name i.e `SQLALCHEMY_DATABASE_URI = 'postgresql://<username>:<password>@localhost/database_name'`
+
+## How to make migrations
+
+* Run migrations initialization using this command `$ python manage.py db init`
+* Run actual migrations using `$ python manage.py db migrate`
+* Finally apply migrations using `$ python manage.py db upgrade`
+* Then each time the database models change repeat the migrate and upgrade commands.
+
 ## Usage
 
 ```bash
@@ -59,23 +73,22 @@ $ pytest
 
 Run the API endpoints using the following URLs
 
-* POST `/api/v2/register` Register a user account
-* POST `/api/v2/login_user` log in users
-* POST `/api/v2/logout_user` logout users
-* POST `/api/v2/reset-password` Reset users passwords
-* POST `/api/v2/business` Registers business
-* GET `/api/v2/business` View all businesses
-* GET `/api/v2/businesses/<int:business_id>` view business by using business ID
-* DELETE `/api/v2/businesses/<int:business_id>` delete business by using business ID
-* PUT `/api/v2/businesses/<int:business_id>` update a registered business by using business ID
-* POST `/api/v2/businesses/<int:business_id>/reviews` add business review using business ID
-* GET `/api/v2/businesses/<int:business_id>/reviews` view business reviews using business ID
-* GET `/api/v2/business/location?q=<business_location>&start=<starting_number>&limit=<number_of_results>`
- view businesses based on the same location
-* GET `/api/v2/business/category?q=<business_category>&start=<starting_number>&limit=<number_of_results>`
-view businesses on the same category
-* GET `/api/v2/business/search?q=<business_name>&start=<starting_number>&limit=<number_of_results>`
- search a specified number of businesses
+HTTP Method | URL | Functionality
+----------- | --- | -------------
+POST | /api/v2/auth/register | Creates a new user account
+POST | /api/v2/auth/login | logs in a user
+POST | /api/v2/auth/logout | logs in a user
+POST | /api/v2/auth/reset-password | Password Reset
+POST | /api/v2/auth/businesses | Registers a business
+GET | /api/v2/businesses | Retrieves all businesses
+GET | /api/v2/businesses/<int:business_id> | get a business
+DELETE | /api/v2/businesses/<int:business_id> | Remove a business
+PUT | /api/v2/businesses/<int:business_id> | Update a business profile
+POST | /api/v2/businesses/<int:business_id>/reviews | Add a review for a business
+GET | /api/v2/businesses/<int:business_id>/reviews | Get all reviews for a business
+GET | /api/v2/businesses/location?q=<location>&start=<int:start>&limit=<int:limit> | Retrieves all businesses based on location
+GET | /api/v2/businesses/location?q=<category>&start=<int:start>&limit=<int:limit> | Retrieves all businesses based on category
+GET | /api/v2/businesses/search?q=<business_name>&start=<int:start>&limit=<int:limit> | Search for a business
 
 ## Acknowledgements
 
