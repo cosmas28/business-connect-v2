@@ -1,26 +1,44 @@
+# config.py
+
+import os
+
 class Config(object):
-    DEBUG = True
-    SECRET_KEY = '21%hbba7&njb#ggj@'
-    JWT_SECRET_KEY = 'jwt_secret_string'
+    """Parent configuration class."""
+    DEBUG = False
+    JWT_SECRET_KEY = os.getenv('SECRET_KEY')
     JWT_BLACKLIST_ENABLED = True
     JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
+    SWAGGER = {'title': 'WeConnect v2.0', 'uiversion': 2}
 
 
 class DevelopmentConfig(Config):
+    """Configuration for Development."""
+    DEBUG = True
+    CSRF_ENABLED = True
     SQLALCHEMY_ECHO = True
-    SWAGGER = {'title': 'WeConnect v2.0', 'uiversion': 2}
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL_DEV')
+
+
+class TestingConfig(Config):
+    DEBUG = True
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL_TEST')
+
+
+class StagingConfig(Config):
+    """Configurations for Staging."""
+
+    DEBUG = True
 
 
 class ProductionConfig(Config):
     DEBUG = False
+    TESTING = False
 
 
-class TestingConfig(Config):
-    TESTING = True
-
-
-config = {
+app_config = {
     'development': DevelopmentConfig,
-    'production': ProductionConfig,
-    'testing': TestingConfig
+    'testing': TestingConfig,
+    'staging': StagingConfig,
+    'production': ProductionConfig
 }

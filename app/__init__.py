@@ -8,11 +8,15 @@ from app.resources.business import business_api
 from app.resources.reviews import reviews_api
 from app.resources.user import user_api
 
+from config import app_config
+
 
 def create_app(config_object):
 
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_object(config_object)
+    app.config.from_object(app_config[config_object])
+    app.config.from_pyfile("config.py")
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
 
