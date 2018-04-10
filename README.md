@@ -1,21 +1,8 @@
 [![Build Status](https://travis-ci.org/cosmas28/business-connect-v2.svg?branch=develop)](https://travis-ci.org/cosmas28/business-connect-v2)
-[![Coverage Status](https://coveralls.io/repos/github/cosmas28/business-connect-v1/badge.svg?branch=masterchallenge-two)](https://coveralls.io/github/cosmas28/business-connect-v1?challenge-two)# business-connect-v1
-
+[![Coverage Status](https://coveralls.io/repos/github/cosmas28/business-connect-v2/badge.svg?branch=develop)](https://coveralls.io/github/cosmas28/business-connect-v2?branch=develop)
 WeConnect provides a platform that brings businesses and individuals together.
 This platform creates awareness for businesses and gives the users the ability
 to write reviews about the businesses they have interacted with.
-
-## HTML templates installation
-
-* Clone the master branch into your local directory.
-
-```bash
-$ git clone https://github.com/cosmas28/business-connect-v1.git
-```
-
-* cd business-connect-v2/designs/UI
-* Run index.html in your browser
-* you can also view the page using this link [WeConnect](https://cosmas28.github.io/business-connect-v1/designs/UI/)
 
 ### API installation
 To set up WeConnect API, make sure that you have python 3.6, postman and pip installed.
