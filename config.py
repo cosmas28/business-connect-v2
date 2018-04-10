@@ -22,7 +22,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     DEBUG = True
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL_TEST')
+    SQLALCHEMY_DATABASE_URI = "postgresql://test_user:default@localhost/test_db"
 
 
 class StagingConfig(Config):
