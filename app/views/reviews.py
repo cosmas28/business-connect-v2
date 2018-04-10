@@ -151,7 +151,7 @@ class BusinessReviews(Resource):
             return make_response(jsonify(response))
 
 
-reviews_api = Blueprint('resources.reviews', __name__)
+reviews_api = Blueprint('views.reviews', __name__)
 api = Api(reviews_api)
 api.add_resource(
     BusinessReviews,

@@ -604,7 +604,7 @@ def get_paginated_list(business_list, url, start, limit):
     return _object
 
 
-business_api = Blueprint('resources.business', __name__)
+business_api = Blueprint('views.business', __name__)
 api = Api(business_api)
 api.add_resource(
     Businesses,

@@ -4,9 +4,9 @@ from flask_migrate import Migrate
 
 from app.models import RevokedToken
 from app.models import db
-from app.resources.business import business_api
-from app.resources.reviews import reviews_api
-from app.resources.user import user_api
+from app.views.business import business_api
+from app.views.reviews import reviews_api
+from app.views.user import user_api
 
 from config import app_config
 

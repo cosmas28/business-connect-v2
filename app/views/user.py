@@ -405,7 +405,7 @@ class ResetPassword(Resource):
             return make_response(jsonify(response))
 
 
-user_api = Blueprint('resources.user', __name__)
+user_api = Blueprint('views.user', __name__)
 api = Api(user_api)
 api.add_resource(
     RegisterUser,
