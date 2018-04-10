@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/cosmas28/business-connect-v1.svg?branch=challenge-two)](https://travis-ci.org/cosmas28/business-connect-v1)
+[![Build Status](https://travis-ci.org/cosmas28/business-connect-v2.svg?branch=develop)](https://travis-ci.org/cosmas28/business-connect-v2)
 [![Coverage Status](https://coveralls.io/repos/github/cosmas28/business-connect-v1/badge.svg?branch=masterchallenge-two)](https://coveralls.io/github/cosmas28/business-connect-v1?challenge-two)# business-connect-v1
 
 WeConnect provides a platform that brings businesses and individuals together.
