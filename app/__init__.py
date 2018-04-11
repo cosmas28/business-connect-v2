@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
-from flask_migrate import Migrate
 
 from app.models import RevokedToken
 from app.models import db
@@ -19,8 +18,6 @@ def create_app(config_object):
 
     db.init_app(app)
 
-    migrate = Migrate(app, db)
-
     jwt = JWTManager(app)
 
     @jwt.token_in_blacklist_loader
@@ -28,8 +25,6 @@ def create_app(config_object):
         jti = decrypted_token['jti']
 
         return RevokedToken.is_jti_blacklisted(jti)
-
-    from app import models
 
     app.register_blueprint(user_api, url_prefix='/api/v2/auth')
     app.register_blueprint(business_api, url_prefix='/api/v2')
