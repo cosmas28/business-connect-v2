@@ -7,6 +7,7 @@ This module provides API endpoints to add business reviews and view reviews fo a
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, Api
+from sqlalchemy import exc
 
 from app.models import Business, Reviews
 from app.models import db
@@ -49,18 +50,10 @@ class BusinessReviews(Resource):
             business = Business.query.filter_by(id=business_id).first()
 
             if len(str(business_id)) == 0:
-                response = {
-                    'response_message': 'Business id is required!'
-                }
-                return make_response(jsonify(response))
+                return 404
             if business is None:
                 response = {
                     'response_message': 'Business not registered!'
-                }
-                return make_response(jsonify(response))
-            if len(business_review) == 0:
-                response = {
-                    'response_message': 'Review value is empty!'
                 }
                 return make_response(jsonify(response))
             else:
@@ -73,12 +66,9 @@ class BusinessReviews(Resource):
                 }
 
                 return make_response(jsonify(response))
-        except Exception as e:
-            response = {
-                'response_message': str(e)
-            }
-
-            return make_response(jsonify(response))
+        except exc.IntegrityError:
+            response_text = 'Review field is required!'
+            return {'response_message': response_text}, 406
 
     @jwt_required
     def get(self, business_id):
@@ -117,10 +107,7 @@ class BusinessReviews(Resource):
             business = Business.query.filter_by(id=business_id).first()
             business_reviews = Reviews.query.filter_by(review_for=business_id).all()
             if len(str(business_id)) == 0:
-                response = {
-                    'response_message': 'Business id is required!'
-                }
-                return make_response(jsonify(response))
+                return 404
             elif business is None:
                 response = {
                     'response_message': 'Business id is not registered!'
