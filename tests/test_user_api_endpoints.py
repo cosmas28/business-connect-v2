@@ -25,8 +25,8 @@ class AbstractTest(unittest.TestCase):
         self.run_app = app.test_client()
         self.headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
-        self.user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
-                                     'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
+        self.user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'password': 'andela2018',
+                                     'confirm_password': 'andela2018'})
 
     def tearDown(self):
         """Call after every test to remove the created table."""
@@ -40,48 +40,32 @@ class RegisterUserTest(AbstractTest):
     def test_empty_email(self):
         """Test whether user have provided an email."""
 
-        user_data = json.dumps({'email': '', 'username': 'cosmas', 'first_name': 'first',
-                                'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
+        user_data = json.dumps({'email': '', 'username': 'cosmas', 'password': 'andela2018',
+                                'confirm_password': 'andela2018'})
         response = self.run_app.post('/api/v2/auth/register', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 406)
 
     def test_empty_username(self):
         """Test whether user have not provided a username."""
 
-        user_data = json.dumps({'email': 'test@andela.com', 'username': '', 'first_name': 'first',
-                                'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
-        response = self.run_app.post('/api/v2/auth/register', data=user_data, headers=self.headers)
-        self.assertEqual(response.status_code, 406)
-
-    def test_empty_firstname(self):
-        """Test whether user have provided first name."""
-
-        user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': '',
-                                'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
-        response = self.run_app.post('/api/v2/auth/register', data=user_data, headers=self.headers)
-        self.assertEqual(response.status_code, 406)
-
-    def test_empty_lastname(self):
-        """Test whether user have provided last name."""
-
-        user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
-                                'last_name': '', 'password': 'andela2018', 'confirm_password': 'andela2018'})
+        user_data = json.dumps({'email': 'test@andela.com', 'username': '', 'password': 'andela2018',
+                                'confirm_password': 'andela2018'})
         response = self.run_app.post('/api/v2/auth/register', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 406)
 
     def test_empty_password(self):
         """Test whether user have provided password."""
 
-        user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
-                                'last_name': 'last', 'password': '', 'confirm_password': 'andela2018'})
+        user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'password': '',
+                                'confirm_password': 'andela2018'})
         response = self.run_app.post('/api/v2/auth/register', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 406)
 
     def test_empty_password_confirm(self):
         """Test whether user have provided confirmation password."""
 
-        user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
-                                'last_name': 'last', 'password': 'andela2018', 'confirm_password': ''})
+        user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'password': 'andela2018',
+                                'confirm_password': ''})
         response = self.run_app.post('/api/v2/auth/register', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 406)
 
@@ -92,8 +76,8 @@ class RegisterUserTest(AbstractTest):
         db.session.add(user)
         db.session.commit()
 
-        user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
-                                'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
+        user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'password': 'andela2018',
+                                'confirm_password': 'andela2018'})
         response = self.run_app.post('/api/v2/auth/register', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 406)
 
@@ -104,32 +88,32 @@ class RegisterUserTest(AbstractTest):
         db.session.add(user)
         db.session.commit()
 
-        user_data = json.dumps({'email': 'test2@andela.com', 'username': 'testuser', 'first_name': 'first',
-                                'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
+        user_data = json.dumps({'email': 'test2@andela.com', 'username': 'testuser', 'password': 'andela2018',
+                                'confirm_password': 'andela2018'})
         response = self.run_app.post('/api/v2/auth/register', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 406)
 
     def test_password_length(self):
         """Test user password to be more than 6 characters."""
 
-        user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
-                                'last_name': 'last', 'password': 'a2018', 'confirm_password': 'a2018'})
+        user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'password': 'a2018',
+                                'confirm_password': 'a2018'})
         response = self.run_app.post('/api/v2/auth/register', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 406)
 
     def test_password_confirmation(self):
         """Test user password match confirmation password."""
 
-        user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
-                                'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2017'})
+        user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'password': 'andela2018',
+                                'confirm_password': 'andela2017'})
         response = self.run_app.post('/api/v2/auth/register', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 406)
 
     def test_user_can_create_account(self):
         """Test registerUser API endpoint can register a new user with POST request."""
 
-        user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'first_name': 'first',
-                                'last_name': 'last', 'password': 'andela2018', 'confirm_password': 'andela2018'})
+        user_data = json.dumps({'email': 'test@andela.com', 'username': 'cosmas', 'password': 'andela2018',
+                                'confirm_password': 'andela2018'})
         response = self.run_app.post('/api/v2/auth/register', data=user_data, headers=self.headers)
         self.assertEqual(response.status_code, 201)
 

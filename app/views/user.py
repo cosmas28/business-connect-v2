@@ -63,8 +63,6 @@ class RegisterUser(Resource):
         req_data = request.get_json()
         email = req_data.get('email')
         username = req_data.get('username')
-        first_name = req_data.get('first_name')
-        last_name = req_data.get('last_name')
         password = req_data.get('password')
         confirm_password = req_data.get('confirm_password')
 
@@ -78,12 +76,6 @@ class RegisterUser(Resource):
             status_code = 406
         elif len(username) == 0:
             response_text += 'Username is required!'
-            status_code = 406
-        elif len(first_name) == 0:
-            response_text += 'First name is required!'
-            status_code = 406
-        elif len(last_name) == 0:
-            response_text += 'Last name is required!'
             status_code = 406
         elif len(password) == 0:
             response_text += 'Password is required!'
@@ -104,7 +96,7 @@ class RegisterUser(Resource):
             response_text += 'Password does not match the confirmation password!'
             status_code = 406
         else:
-            user = User(email, username, first_name, last_name, password)
+            user = User(email, username, '', '', password)
             db.session.add(user)
             db.session.commit()
 
