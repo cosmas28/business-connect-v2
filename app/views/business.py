@@ -8,6 +8,7 @@ businesses.
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, Api
+from sqlalchemy import exc
 
 from app.models import Business
 from app.models import db
@@ -69,28 +70,7 @@ class Businesses(Resource):
         created_by = get_jwt_identity()
 
         try:
-
-            if len(business_name) == 0:
-                response = {
-                    'response_message': 'Business name is required!'
-                }
-                return make_response(jsonify(response))
-            elif len(business_category) == 0:
-                response = {
-                    'response_message': 'Business category is required!'
-                }
-                return make_response(jsonify(response))
-            elif len(business_location) == 0:
-                response = {
-                    'response_message': 'Business location is required!'
-                }
-                return make_response(jsonify(response))
-            elif len(business_summary) == 0:
-                response = {
-                    'response_message': 'Business summary is required!'
-                }
-                return make_response(jsonify(response))
-            elif business_name_registered(business_name):
+            if business_name_registered(business_name):
                 response = {
                     'response_message': 'Business name already registered!'
                 }
@@ -107,12 +87,9 @@ class Businesses(Resource):
 
                 return make_response(jsonify(response))
 
-        except Exception as e:
-            response = {
-                'response_message': str(e)
-            }
-
-            return make_response(jsonify(response))
+        except exc.IntegrityError:
+            response = {'response_message': 'All business data is required!'}
+            return response, 406
 
     @jwt_required
     def get(self):

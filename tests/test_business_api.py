@@ -63,7 +63,7 @@ class CreateBusinessTest(AbstractTest):
         response = self.run_app.post('/api/v2/businesses', data=business_data,
                                      headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(json.loads(response.data.decode())['response_message'], 'Business name is required!')
+        self.assertEqual(response.status_code, 406)
 
     def test_empty_business_category(self):
         """Test whether user have not provided a business category."""
@@ -78,7 +78,7 @@ class CreateBusinessTest(AbstractTest):
         response = self.run_app.post('/api/v2/businesses', data=business_data,
                                      headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(json.loads(response.data.decode())['response_message'], 'Business category is required!')
+        self.assertEqual(response.status_code, 406)
 
     def test_empty_business_location(self):
         """Test whether user have not provided a business location."""
@@ -93,7 +93,7 @@ class CreateBusinessTest(AbstractTest):
         response = self.run_app.post('/api/v2/businesses', data=business_data,
                                      headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(json.loads(response.data.decode())['response_message'], 'Business location is required!')
+        self.assertEqual(response.status_code, 406)
 
     def test_empty_business_summary(self):
         """Test whether user have not provided a business summary."""
@@ -108,7 +108,7 @@ class CreateBusinessTest(AbstractTest):
         response = self.run_app.post('/api/v2/businesses', data=business_data,
                                      headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(json.loads(response.data.decode())['response_message'], 'Business summary is required!')
+        self.assertEqual(response.status_code, 406)
 
     def test_duplicate_business_name(self):
         """Test whether user have not provided a unique business name."""

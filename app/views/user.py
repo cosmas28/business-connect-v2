@@ -75,6 +75,12 @@ class RegisterUser(Resource):
             if validation_res is not True:
                 response_text = {'response_message': validation_res}
                 return response_text, 406
+            elif email_exist(email):
+                response_text = {'response_message': 'Email already exists. Please use a unique email!'}
+                return response_text, 406
+            elif username_exist(username):
+                response_text = {'response_message': 'Username already exists. Please use a unique username!'}
+                return response_text, 406
             else:
                 user = User(email, username, '', '', password, confirm_password)
                 db.session.add(user)
