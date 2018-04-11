@@ -23,6 +23,8 @@ class ModelsTestCase(unittest.TestCase):
         db.app = app
         db.create_all()
 
+        self.user = User('test@andela.com', 'testuser', 'first', 'last', 'password', 'second_password')
+
     def tearDown(self):
         """Call after every test to remove the created table."""
 
@@ -32,19 +34,17 @@ class ModelsTestCase(unittest.TestCase):
     def test_user_model_can_register_users(self):
         """Test whether user model can register users."""
 
-        user = User('test@andela.com', 'testuser', 'first', 'last', 'password')
-        db.session.add(user)
+        db.session.add(self.user)
         db.session.commit()
         self.assertEqual(User.query.count(), 1)
 
     def test_user_password(self):
         """Test whether user password matches hashed password."""
 
-        user = User('test@andela.com', 'testuser', 'first', 'last', 'password')
-        db.session.add(user)
+        db.session.add(self.user)
         db.session.commit()
 
-        self.assertTrue(user.check_password('password'))
+        self.assertTrue(self.user.check_password('password'))
 
     def test_revoked_token_model(self):
         """Test whether RevokedTokenModel instance works."""
@@ -69,8 +69,7 @@ class ModelsTestCase(unittest.TestCase):
     def test_business_model(self):
         """Test whether business model is working."""
 
-        user = User('test@andela.com', 'testuser', 'first', 'last', 'password')
-        db.session.add(user)
+        db.session.add(self.user)
         db.session.commit()
         query_user = User.query.filter_by(email='test@andela.com').first()
 
@@ -84,8 +83,7 @@ class ModelsTestCase(unittest.TestCase):
     def test_reviews_model(self):
         """Test whether review model is working."""
 
-        user = User('test@andela.com', 'testuser', 'first', 'last', 'password')
-        db.session.add(user)
+        db.session.add(self.user)
         db.session.commit()
         query_user = User.query.filter_by(email='test@andela.com').first()
 
