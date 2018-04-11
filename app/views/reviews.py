@@ -42,7 +42,7 @@ class BusinessReviews(Resource):
                                     description: message to show review has been added successfully
         """
         request_data = request.get_json(force=True)
-        business_review = request_data['review']
+        business_review = request_data.get('review')
         created_by = get_jwt_identity()
 
         try:

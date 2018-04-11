@@ -62,10 +62,10 @@ class Businesses(Resource):
                                     description: HTTP status code
         """
         req_data = request.get_json(force=True)
-        business_name = req_data['name']
-        business_category = req_data['category']
-        business_location = req_data['location']
-        business_summary = req_data['summary']
+        business_name = req_data.get('name')
+        business_category = req_data.get('category')
+        business_location = req_data.get('location')
+        business_summary = req_data.get('summary')
         created_by = get_jwt_identity()
 
         try:
@@ -276,10 +276,10 @@ class SingleBusiness(Resource):
         """
 
         req_data = request.get_json(force=True)
-        business_name = req_data['name']
-        business_category = req_data['category']
-        business_location = req_data['location']
-        business_summary = req_data['summary']
+        business_name = req_data.get('name')
+        business_category = req_data.get('category')
+        business_location = req_data.get('location')
+        business_summary = req_data.get('summary')
 
         try:
             current_business = Business.query.filter_by(id=business_id).first()

@@ -61,12 +61,12 @@ class RegisterUser(Resource):
         """
 
         req_data = request.get_json()
-        email = req_data['email']
-        username = req_data['username']
-        first_name = req_data['first_name']
-        last_name = req_data['last_name']
-        password = req_data['password']
-        confirm_password = req_data['confirm_password']
+        email = req_data.get('email')
+        username = req_data.get('username')
+        first_name = req_data.get('first_name')
+        last_name = req_data.get('last_name')
+        password = req_data.get('password')
+        confirm_password = req_data.get('confirm_password')
 
         db.create_all()
         db.session.commit()
@@ -151,8 +151,8 @@ class LoginUser(Resource):
 
         """
         req_data = request.get_json()
-        email = req_data['email']
-        password = req_data['password']
+        email = req_data.get('email')
+        password = req_data.get('password')
 
         try:
             user = User.query.filter_by(email=email).first()
@@ -355,9 +355,9 @@ class ResetPassword(Resource):
                                     description: response message to show password has been reset successful
         """
         req_data = request.get_json()
-        email = req_data['email']
-        password = req_data['password']
-        confirm_password = req_data['confirm_password']
+        email = req_data.get('email')
+        password = req_data.get('password')
+        confirm_password = req_data.get('confirm_password')
 
         try:
 
@@ -388,7 +388,7 @@ class ResetPassword(Resource):
                 }
                 return make_response(jsonify(response))
             else:
-                user = User.query.filter_by(email=email).update(dict(pwd_hash=generate_password_hash(password)))
+                user = User.query.filter_by(email=email).update(dict(password=generate_password_hash(password)))
                 db.session.commit()
 
                 response = {
