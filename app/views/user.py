@@ -407,33 +407,9 @@ class ResetPassword(Resource):
 
 user_api = Blueprint('views.user', __name__)
 api = Api(user_api)
-api.add_resource(
-    RegisterUser,
-    '/register',
-    endpoint='register'
-)
-api.add_resource(
-    LoginUser,
-    '/login',
-    endpoint='login'
-)
-api.add_resource(
-    TokenRefresh,
-    '/refresh_token',
-    endpoint='refresh_token'
-)
-api.add_resource(
-    UserLogoutAccess,
-    '/logout',
-    endpoint='logout'
-)
-api.add_resource(
-    UserLogoutRefresh,
-    '/logout_refresh_token',
-    endpoint='logout_refresh_token'
-)
-api.add_resource(
-    ResetPassword,
-    '/reset_password',
-    endpoint='reset_password'
-)
+api.add_resource(RegisterUser, '/register', endpoint='register')
+api.add_resource(LoginUser, '/login', endpoint='login')
+api.add_resource(TokenRefresh, '/refresh_token', endpoint='refresh_token')
+api.add_resource(UserLogoutAccess, '/logout', endpoint='logout')
+api.add_resource(UserLogoutRefresh,'/logout_refresh_token', endpoint='logout_refresh_token')
+api.add_resource(ResetPassword, '/reset_password', endpoint='reset_password')

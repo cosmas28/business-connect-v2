@@ -153,8 +153,4 @@ class BusinessReviews(Resource):
 
 reviews_api = Blueprint('views.reviews', __name__)
 api = Api(reviews_api)
-api.add_resource(
-    BusinessReviews,
-    '/businesses/<int:business_id>/reviews',
-    endpoint='reviews'
-)
+api.add_resource(BusinessReviews, '/businesses/<int:business_id>/reviews', endpoint='reviews')

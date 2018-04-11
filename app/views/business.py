@@ -606,29 +606,8 @@ def get_paginated_list(business_list, url, start, limit):
 
 business_api = Blueprint('views.business', __name__)
 api = Api(business_api)
-api.add_resource(
-    Businesses,
-    '/businesses',
-    endpoint='businesses'
-)
-api.add_resource(
-    SingleBusiness,
-    '/businesses/<int:business_id>',
-    endpoint='business'
-)
-api.add_resource(
-    BusinessCategory,
-    '/businesses/category',
-    endpoint='category'
-)
-api.add_resource(
-    BusinessLocation,
-    '/businesses/location',
-    endpoint='location'
-)
-api.add_resource(
-    SearchBusiness,
-    '/businesses/search',
-    endpoint='search'
-)
-
+api.add_resource(Businesses, '/businesses', endpoint='businesses')
+api.add_resource(SingleBusiness, '/businesses/<int:business_id>', endpoint='business')
+api.add_resource(BusinessCategory, '/businesses/category', endpoint='category')
+api.add_resource(BusinessLocation, '/businesses/location', endpoint='location')
+api.add_resource(SearchBusiness, '/businesses/search', endpoint='search')
