@@ -10,6 +10,7 @@ from flask_jwt_extended import (
 )
 from flask_restful import (Resource, Api)
 from werkzeug.security import generate_password_hash
+from sqlalchemy import exc
 
 from app.models import User, RevokedToken
 from app.models import db
@@ -69,41 +70,21 @@ class RegisterUser(Resource):
         db.create_all()
         db.session.commit()
 
-        response_text = ''
+        validation_res = User.valid_password(password, confirm_password)
+        try:
+            if validation_res is not True:
+                response_text = {'response_message': validation_res}
+                return response_text, 406
+            else:
+                user = User(email, username, '', '', password, confirm_password)
+                db.session.add(user)
+                db.session.commit()
+                response_text = 'You have successfully created an account!'
 
-        if len(email) == 0:
-            response_text += 'Email is required!'
-            status_code = 406
-        elif len(username) == 0:
-            response_text += 'Username is required!'
-            status_code = 406
-        elif len(password) == 0:
-            response_text += 'Password is required!'
-            status_code = 406
-        elif len(confirm_password) == 0:
-            response_text += 'Confirmation password is required!'
-            status_code = 406
-        elif email_exist(email):
-            response_text += 'Email already exists. Please use a unique email!'
-            status_code = 406
-        elif username_exist(username):
-            response_text += 'Username already exists. Please use a unique username!'
-            status_code = 406
-        elif len(password) <= 6:
-            response_text += 'Password must be more than 6 characters!'
-            status_code = 406
-        elif password != confirm_password:
-            response_text += 'Password does not match the confirmation password!'
-            status_code = 406
-        else:
-            user = User(email, username, '', '', password)
-            db.session.add(user)
-            db.session.commit()
-
-            response_text += 'You have successfully created an account!'
-            status_code = 201
-
-        return {'response_message': response_text}, status_code
+                return {'response_message': response_text}, 201
+        except exc.IntegrityError:
+            response_text = 'All fields are required!'
+            return {'response_message': response_text}, 406
 
 
 class LoginUser(Resource):
