@@ -129,22 +129,10 @@ class LoginUser(Resource):
 
         try:
             user = User.query.filter_by(email=email).first()
+            validation_res = User.validate_login_data(email, password)
 
-            if len(email) == 0 and len(password) == 0:
-                response = {
-                    'response_message': 'Email and password is required!'
-                }
-                return make_response(jsonify(response))
-            elif len(email) == 0:
-                response = {
-                    'response_message': 'Email is required!'
-                }
-                return make_response(jsonify(response))
-            elif len(password) == 0:
-                response = {
-                    'response_message': 'Password is required!'
-                }
-                return make_response(jsonify(response))
+            if validation_res is not True:
+                return make_response(jsonify(validation_res))
             elif email_exist(email) is False:
                 response = {
                     'response_message': 'Invalid email or password!',
@@ -333,27 +321,9 @@ class ResetPassword(Resource):
         confirm_password = req_data.get('confirm_password')
 
         try:
-
-            if len(email) == 0 and len(password) == 0 and len(confirm_password) == 0:
-                response = {
-                    'response_message': 'Email and new password is required!'
-                }
-                return make_response(jsonify(response))
-            elif len(email) == 0:
-                response = {
-                    'response_message': 'Email is required!'
-                }
-                return make_response(jsonify(response))
-            elif len(password) == 0:
-                response = {
-                    'response_message': 'Password is required!'
-                }
-                return make_response(jsonify(response))
-            elif len(confirm_password) == 0:
-                response = {
-                    'response_message': 'Password confirmation is required!'
-                }
-                return make_response(jsonify(response))
+            validation_res = User.validate_password_reset_data(email, password, confirm_password)
+            if validation_res is not True:
+                return make_response(jsonify(validation_res))
             elif email_exist(email) is False:
                 response = {
                     'response_message': 'Email not registered',
