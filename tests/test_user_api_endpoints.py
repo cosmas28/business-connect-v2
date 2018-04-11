@@ -72,7 +72,7 @@ class RegisterUserTest(AbstractTest):
     def test_duplicate_email(self):
         """Test whether the email address exist."""
 
-        user = User('test@andela.com', 'testuser', 'first', 'last', 'password')
+        user = User('test@andela.com', 'testuser', 'first', 'last', 'password', 'second_password')
         db.session.add(user)
         db.session.commit()
 
@@ -84,7 +84,7 @@ class RegisterUserTest(AbstractTest):
     def test_duplicate_username(self):
         """Test whether the username exist."""
 
-        user = User('test@andela.com', 'testuser', 'first', 'last', 'password')
+        user = User('test@andela.com', 'testuser', 'first', 'last', 'password', 'second_password')
         db.session.add(user)
         db.session.commit()
 
