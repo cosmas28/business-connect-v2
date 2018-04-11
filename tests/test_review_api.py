@@ -35,6 +35,24 @@ class ReviewsTestCase(unittest.TestCase):
         db.session.remove()
         db.drop_all()
 
+    def test_empty_business_id(self):
+        """Test whether user have provided a business id to be reviewed."""
+
+        self.register_user()
+        login_response = self.login_user()
+        access_token = json.loads(login_response.data.decode())['access_token']
+
+        business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Nairobi',
+                                    'summary': 'AI is transforming human life'})
+        self.run_app.post('/api/v2/businesses', data=business_data,
+                          headers=dict(Authorization='Bearer ' + access_token))
+
+        review = json.dumps({'review': 'The future of AI is very bright, mostly in security'})
+        review_res = self.run_app.post('/api/v2/businesses/reviews', data=review,
+                                       headers=dict(Authorization='Bearer ' + access_token))
+
+        self.assertEqual(review_res.status_code, 404)
+
     def test_empty_review(self):
         """Test whether user have provided a business review."""
 
@@ -51,7 +69,7 @@ class ReviewsTestCase(unittest.TestCase):
         review_res = self.run_app.post('/api/v2/businesses/1/reviews', data=review,
                                        headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(json.loads(review_res.data.decode())['response_message'], 'Review value is empty!')
+        self.assertEqual(review_res.status_code, 406)
 
     def test_user_can_add_review(self):
         """Test whether user add a business review."""
@@ -71,6 +89,24 @@ class ReviewsTestCase(unittest.TestCase):
 
         self.assertEqual(json.loads(review_res.data.decode())['response_message'],
                          'Review has been added successfully!')
+
+    def test_404_when_get_request_using_empty_id(self):
+        """Test whether user have provided a business id."""
+
+        self.register_user()
+        login_response = self.login_user()
+        access_token = json.loads(login_response.data.decode())['access_token']
+
+        business_data = json.dumps({'name': 'Palmer Tech', 'category': 'Technology', 'location': 'Nairobi',
+                                    'summary': 'AI is transforming human life'})
+        self.run_app.post('/api/v2/businesses', data=business_data,
+                          headers=dict(Authorization='Bearer ' + access_token))
+
+        review = json.dumps({'review': 'The future of AI is very bright, mostly in security'})
+        review_res = self.run_app.get('/api/v2/businesses/reviews', data=review,
+                                       headers=dict(Authorization='Bearer ' + access_token))
+
+        self.assertEqual(review_res.status_code, 404)
 
     def test_user_can_view_business_review(self):
         """Test whether user view a business reviews by business id."""
