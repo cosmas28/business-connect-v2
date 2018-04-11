@@ -12,28 +12,28 @@ class User(db.Model):
 
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(60))
-    username = db.Column(db.String(60))
+    email = db.Column(db.String(60), unique=True, nullable=False)
+    username = db.Column(db.String(60), unique=True, nullable=False)
     first_name = db.Column(db.String(60))
     last_name = db.Column(db.String(60))
-    pwd_hash = db.Column(db.String(120))
+    password = db.Column(db.String(120))
     businesses = db.relationship(
         'Business', order_by='Business.id', cascade='all, delete-orphan')
     _reviews = db.relationship(
         'Reviews', order_by='Reviews.id', cascade='all, delete-orphan')
 
-    def __init__(self, email, username, first_name, last_name, password):
+    def __init__(self, email, username, first_name, last_name, _password):
         self.email = email.lower()
         self.username = username.lower()
         self.first_name = first_name.capitalize()
         self.last_name = last_name.capitalize()
-        self.set_password(password)
+        self.set_password(_password)
 
-    def set_password(self, password):
-        self.pwd_hash = generate_password_hash(password)
+    def set_password(self, _password):
+        self.password = generate_password_hash(_password)
 
-    def check_password(self, password):
-        return check_password_hash(self.pwd_hash, password)
+    def check_password(self, _password):
+        return check_password_hash(self.password, _password)
 
 
 class RevokedToken(db.Model):
@@ -66,7 +66,7 @@ class Business(db.Model):
     __tablename__ = 'business'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(60))
+    name = db.Column(db.String(60), unique=True, nullable=False)
     category = db.Column(db.String(40))
     location = db.Column(db.String(40))
     summary = db.Column(db.Text)
