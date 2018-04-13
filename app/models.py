@@ -89,6 +89,10 @@ class Business(db.Model):
         self.summary = summary
         self.created_by = created_by
 
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
 
 class Reviews(db.Model):
     """Create reviews table."""
