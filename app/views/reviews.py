@@ -60,8 +60,7 @@ class BusinessReviews(Resource):
         if business:
             try:
                 review = Reviews(business_review, business_id, created_by)
-                db.session.add(review)
-                db.session.commit()
+                review.save()
 
                 response = {
                     'response_message': 'Review has been added successfully!'

@@ -108,3 +108,7 @@ class Reviews(db.Model):
         self.review = review
         self.review_for = review_for
         self.reviewed_by = reviewed_by
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
