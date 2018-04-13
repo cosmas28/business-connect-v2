@@ -1,16 +1,15 @@
 """Demonstrate all business reviews related API endpoints.
 
-This module provides API endpoints to add business reviews and view reviews fo a single business.
+This module provides API endpoints to add business
+reviews and view reviews fo a single business.
 
 """
 
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, Api
-from sqlalchemy import exc
 
 from app.models import Business, Reviews
-from app.models import db
 
 
 class BusinessReviews(Resource):
@@ -117,7 +116,8 @@ class BusinessReviews(Resource):
                 'response_message': 'Business id is not registered!'
             }
             return make_response(jsonify(response))
-        business_reviews = Reviews.query.filter_by(review_for=business_id).all()
+        business_reviews = Reviews.query.filter_by(
+            review_for=business_id).all()
 
         if business_reviews:
             try:
@@ -147,4 +147,5 @@ class BusinessReviews(Resource):
 
 reviews_api = Blueprint('views.reviews', __name__)
 api = Api(reviews_api)
-api.add_resource(BusinessReviews, '/businesses/<int:business_id>/reviews', endpoint='reviews')
+api.add_resource(BusinessReviews,
+                 '/businesses/<int:business_id>/reviews', endpoint='reviews')

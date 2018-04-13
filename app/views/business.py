@@ -1,14 +1,13 @@
 """Demonstrate all business related API endpoints.
 
-This module provides API endpoints to register business, view a single business, view all
-businesses.
+This module provides API endpoints to register business,
+view a single business, view all businesses.
 
 """
 
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, Api
-from sqlalchemy import exc
 
 from app.models import Business
 from app.models import db
@@ -66,11 +65,14 @@ class Businesses(Resource):
             return response, 406
         if not business_name_registered(business_name):
             try:
-                business = Business(business_name, business_category, business_location, business_summary, created_by)
+                business = Business(business_name, business_category,
+                                    business_location,
+                                    business_summary, created_by)
                 business.save()
 
                 response = {
-                    'response_message': 'Business has been registered successfully!',
+                    'response_message':
+                        'Business has been registered successfully!',
                     'status_code': 201
                 }
 
@@ -173,7 +175,7 @@ class Businesses(Resource):
             return make_response(jsonify(response))
 
 
-class SingleBusiness(Resource):
+class OneBusiness(Resource):
 
     """Illustrate API endpoints to manipulate single business."""
 
@@ -198,15 +200,11 @@ class SingleBusiness(Resource):
                         schema:
                             $ref: '#/components/schema/Business'
         """
-        try:
-            business = Business.query.filter_by(id=business_id).first()
-            if business is None:
-                response = {
-                    'response_message': 'Business id is not registered!'
-                }
-                return make_response(jsonify(response))
-            else:
-                business_object= {
+
+        business = Business.query.filter_by(id=business_id).first()
+        if business:
+            try:
+                business_object = {
                     'id': business.id,
                     'name': business.name,
                     'category': business.category,
@@ -216,12 +214,17 @@ class SingleBusiness(Resource):
                 }
 
                 return make_response(jsonify(business_object))
-        except Exception as e:
-            response = {
-                'response_message': str(e)
-            }
+            except Exception as e:
+                response = {
+                    'response_message': str(e)
+                }
 
-            return make_response(jsonify(response))
+                return make_response(jsonify(response))
+        else:
+            response = {
+                'response_message': 'Business id is not registered!'
+            }
+            return response, 404
 
     @jwt_required
     def put(self, business_id):
@@ -251,7 +254,8 @@ class SingleBusiness(Resource):
         business_location = req_data.get('location')
         business_summary = req_data.get('summary')
 
-        business_is_registered = Business.query.filter_by(id=business_id).first()
+        business_is_registered = Business.query.filter_by(
+            id=business_id).first()
         if business_is_registered:
             try:
                 Business.query.filter_by(id=business_id).update(dict(
@@ -317,7 +321,7 @@ class SingleBusiness(Resource):
             response = {
                 'response_message': 'Business id is not registered!'
             }
-            return make_response(jsonify(response)), 404
+            return response, 404
 
         if business.created_by == created_by:
             try:
@@ -326,7 +330,8 @@ class SingleBusiness(Resource):
                 db.session.delete(business)
                 db.session.commit()
                 response = {
-                    'response_message': 'Business has been deleted successfully!'
+                    'response_message':
+                        'Business has been deleted successfully!'
                 }
 
                 return make_response(jsonify(response))
@@ -338,7 +343,8 @@ class SingleBusiness(Resource):
                 return make_response(jsonify(response))
         else:
             response = {
-                'response_message': 'Permission required to delete this business!'
+                'response_message':
+                    'Permission required to delete this business!'
             }
             return response, 401
 
@@ -397,7 +403,8 @@ class BusinessCategory(Resource):
                     }
                     business_list.append(_object)
 
-                pagination_res = get_paginated_list(business_list, '/api/v1/business/search',
+                pagination_res = get_paginated_list(business_list,
+                                                    '/api/v1/business/search',
                                                     result_start, result_limit)
                 return make_response(jsonify(pagination_res))
             except Exception as e:
@@ -467,7 +474,8 @@ class BusinessLocation(Resource):
                     }
                     business_list.append(_object)
 
-                pagination_res = get_paginated_list(business_list, '/api/v1/business/search',
+                pagination_res = get_paginated_list(business_list,
+                                                    '/api/v1/business/search',
                                                     result_start, result_limit)
                 return make_response(jsonify(pagination_res))
             except Exception as e:
@@ -520,7 +528,8 @@ class SearchBusiness(Resource):
         user_request = request.args.get('q')
         result_start = int(request.args.get('start'))
         result_limit = int(request.args.get('limit'))
-        businesses = Business.query.filter(Business.name.startswith(user_request)).all()
+        businesses = Business.query.filter(
+            Business.name.startswith(user_request)).all()
         if businesses:
             try:
                 business_list = []
@@ -536,7 +545,8 @@ class SearchBusiness(Resource):
                     }
                     business_list.append(_object)
 
-                pagination_res = get_paginated_list(business_list, '/api/v1/business/search',
+                pagination_res = get_paginated_list(business_list,
+                                                    '/api/v1/business/search',
                                                     result_start, result_limit)
                 return make_response(jsonify(pagination_res))
             except Exception as e:
@@ -555,7 +565,8 @@ class SearchBusiness(Resource):
 business_api = Blueprint('views.business', __name__)
 api = Api(business_api)
 api.add_resource(Businesses, '/businesses', endpoint='businesses')
-api.add_resource(SingleBusiness, '/businesses/<int:business_id>', endpoint='business')
+api.add_resource(OneBusiness,
+                 '/businesses/<int:business_id>', endpoint='business')
 api.add_resource(BusinessCategory, '/businesses/category', endpoint='category')
 api.add_resource(BusinessLocation, '/businesses/location', endpoint='location')
 api.add_resource(SearchBusiness, '/businesses/search', endpoint='search')
