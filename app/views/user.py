@@ -1,37 +1,21 @@
 """Demonstrate all user authentication API endpoints.
 
-This module provides API endpoints to register users, login users, and reset user passwords.
+This module provides API endpoints to register users,
+ login users, and reset user passwords.
 
 """
 
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import (
-    create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt
+    create_access_token, create_refresh_token, jwt_required,
+    jwt_refresh_token_required, get_jwt_identity, get_raw_jwt
 )
 from flask_restful import (Resource, Api)
 from werkzeug.security import generate_password_hash
-from sqlalchemy import exc
 
 from app.models import User, RevokedToken
 from app.models import db
-
-
-def email_exist(email):
-    exists = User.query.filter_by(email=email).first()
-
-    if exists is None:
-        return False
-    else:
-        return True
-
-
-def username_exist(user_name):
-    exists = User.query.filter_by(username=user_name.lower()).first()
-
-    if exists is None:
-        return False
-    else:
-        return True
+from app.helper_functions import email_exist, username_exist, valid_password
 
 
 class RegisterUser(Resource):
@@ -64,33 +48,40 @@ class RegisterUser(Resource):
         req_data = request.get_json()
         email = req_data.get('email')
         username = req_data.get('username')
+        first_name = req_data.get('first_name')
+        last_name = req_data.get('last_name')
         password = req_data.get('password')
         confirm_password = req_data.get('confirm_password')
 
-        db.create_all()
-        db.session.commit()
+        not_valid_password = valid_password(password, confirm_password)
+        registered = username_exist(username) or email_exist(email)
+        if not email or not username:
+            response_message = {'message': 'Email and Username are required!'}
+            return make_response(jsonify(response_message))
+        elif not password or not confirm_password:
+            response_message = {
+                'message': 'Password and Confirmation password are required!'
+            }
+            return make_response(jsonify(response_message))
+        elif not_valid_password:
+            return make_response(jsonify(not_valid_password))
+        if not registered:
+            try:
+                user = User(email=email, username=username,
+                            first_name=first_name, last_name=last_name,
+                            password=password)
+                user.save()
+                response_message = {
+                    'message': 'You have successfully created an account!'
+                }
 
-        validation_res = User.valid_password(password, confirm_password)
-        try:
-            if validation_res is not True:
-                response_text = {'response_message': validation_res}
-                return response_text, 406
-            elif email_exist(email):
-                response_text = {'response_message': 'Email already exists. Please use a unique email!'}
-                return response_text, 406
-            elif username_exist(username):
-                response_text = {'response_message': 'Username already exists. Please use a unique username!'}
-                return response_text, 406
-            else:
-                user = User(email, username, '', '', password, confirm_password)
-                db.session.add(user)
-                db.session.commit()
-                response_text = 'You have successfully created an account!'
-
-                return {'response_message': response_text}, 201
-        except exc.IntegrityError:
-            response_text = 'All fields are required!'
-            return {'response_message': response_text}, 406
+                return make_response(jsonify(response_message))
+            except Exception as error:
+                response_message = {'message': str(error)}
+                return make_response(jsonify(response_message))
+        else:
+            response_message = {'message': 'User already exists. Sign in!'}
+            return make_response(jsonify(response_message))
 
 
 class LoginUser(Resource):
@@ -133,25 +124,16 @@ class LoginUser(Resource):
         email = req_data.get('email')
         password = req_data.get('password')
 
-        try:
-            user = User.query.filter_by(email=email).first()
-            validation_res = User.validate_login_data(email, password)
+        if not email_exist(email):
+            response = {
+                'response_message': 'Invalid email!',
+                'status_code': 401
+            }
+            return make_response(jsonify(response))
 
-            if validation_res is not True:
-                return make_response(jsonify(validation_res))
-            elif email_exist(email) is False:
-                response = {
-                    'response_message': 'Invalid email or password!',
-                    'status_code': 401
-                }
-                return make_response(jsonify(response))
-            elif not user.check_password(password):
-                response = {
-                    'response_message': 'Invalid email or password!',
-                    'status_code': 401
-                }
-                return make_response(jsonify(response))
-            else:
+        user = User.query.filter_by(email=email).first()
+        if email_exist(email) and user.check_password(password):
+            try:
                 access_token = create_access_token(identity=user.id)
                 refresh_token = create_refresh_token(identity=user.id)
                 if access_token:
@@ -162,13 +144,17 @@ class LoginUser(Resource):
                         'refresh_token': refresh_token
                     }
                     return make_response(jsonify(response))
+            except Exception as error:
+                response = {
+                    'response_message': str(error)
+                }
 
-        except Exception as e:
-            response = {
-                'response_message': str(e)
-            }
-
-            return make_response(jsonify(response))
+                return make_response(jsonify(response))
+        response = {
+            'response_message': 'Invalid email or password!',
+            'status_code': 401
+        }
+        return make_response(jsonify(response))
 
 
 class UserLogoutAccess(Resource):
@@ -201,16 +187,15 @@ class UserLogoutAccess(Resource):
 
         try:
             revoked_token = RevokedToken(jti)
-            db.session.add(revoked_token)
-            db.session.commit()
+            revoked_token.save()
             response = {
                 'response_message': 'Log out has been successful!',
                 'status_code': 200
             }
             return make_response(jsonify(response))
-        except Exception as e:
+        except Exception as error:
             response = {
-                'response_message': str(e),
+                'response_message': str(error),
                 'status_code': 500
             }
             return make_response(jsonify(response))
@@ -246,16 +231,15 @@ class UserLogoutRefresh(Resource):
 
         try:
             revoked_token = RevokedToken(jti)
-            db.session.add(revoked_token)
-            db.session.commit()
+            revoked_token.save()
             response = {
                 'response_message': 'Log out has been successful!',
                 'status_code': 200
             }
             return make_response(jsonify(response))
-        except Exception as e:
+        except Exception as error:
             response = {
-                'response_message': str(e),
+                'response_message': str(error),
                 'status_code': 500
             }
             return make_response(jsonify(response))
@@ -326,18 +310,19 @@ class ResetPassword(Resource):
         password = req_data.get('password')
         confirm_password = req_data.get('confirm_password')
 
-        try:
-            validation_res = User.validate_password_reset_data(email, password, confirm_password)
-            if validation_res is not True:
-                return make_response(jsonify(validation_res))
-            elif email_exist(email) is False:
-                response = {
-                    'response_message': 'Email not registered',
-                    'status_code': 401
-                }
-                return make_response(jsonify(response))
-            else:
-                user = User.query.filter_by(email=email).update(dict(password=generate_password_hash(password)))
+        not_valid_password = valid_password(password, confirm_password)
+        if not email:
+            response_message = {'response_message': 'Email is required!'}
+            return make_response(jsonify(response_message))
+        elif not password or not confirm_password:
+            response_message = {'response_message': 'Password is required!'}
+            return make_response(jsonify(response_message))
+        elif not_valid_password:
+            return make_response(jsonify(not_valid_password))
+        if email_exist(email):
+            try:
+                User.query.filter_by(email=email).update(dict(
+                    password=generate_password_hash(password)))
                 db.session.commit()
 
                 response = {
@@ -345,13 +330,12 @@ class ResetPassword(Resource):
                     'status_code': 200
                 }
                 return make_response(jsonify(response))
-
-        except Exception as e:
-            response = {
-                'response_message': str(e)
-            }
-
-            return make_response(jsonify(response))
+            except Exception as error:
+                response_message = {'message': str(error)}
+                return make_response(jsonify(response_message))
+        else:
+            response_message = {'response_message': 'Email not registered'}
+            return make_response(jsonify(response_message))
 
 
 user_api = Blueprint('views.user', __name__)
@@ -360,5 +344,6 @@ api.add_resource(RegisterUser, '/register', endpoint='register')
 api.add_resource(LoginUser, '/login', endpoint='login')
 api.add_resource(TokenRefresh, '/refresh_token', endpoint='refresh_token')
 api.add_resource(UserLogoutAccess, '/logout', endpoint='logout')
-api.add_resource(UserLogoutRefresh,'/logout_refresh_token', endpoint='logout_refresh_token')
+api.add_resource(UserLogoutRefresh,
+                 '/logout_refresh_token', endpoint='logout_refresh_token')
 api.add_resource(ResetPassword, '/reset_password', endpoint='reset_password')

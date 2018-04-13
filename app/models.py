@@ -22,79 +22,22 @@ class User(db.Model):
     _reviews = db.relationship(
         'Reviews', order_by='Reviews.id', cascade='all, delete-orphan')
 
-    def __init__(self, email, username, first_name, last_name, _password, confirm_password):
+    def __init__(self, email, username, first_name, last_name, password):
         self.email = email.lower()
         self.username = username.lower()
         self.first_name = first_name.capitalize()
         self.last_name = last_name.capitalize()
-        self.password = self.set_password(_password)
-        self.confirm_password = self.set_password(confirm_password)
+        self.password = self.set_password(password)
 
-    def set_password(self, _password):
-        return generate_password_hash(_password)
+    def set_password(self, password):
+        return generate_password_hash(password)
 
-    def check_password(self, _password):
-        return check_password_hash(self.password, _password)
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
 
-    @staticmethod
-    def valid_password(password, confirm_password):
-        """Check whether the password have more than 6 characters."""
-
-        if len(password) <= 6:
-            return 'Password must be more than 6 characters!'
-        elif password != confirm_password:
-            return 'Password does not match the confirmation password!'
-        else:
-            return True
-
-    @staticmethod
-    def validate_login_data(email, password):
-        """Check whether user have entered the required data to login."""
-
-        if len(email) == 0 and len(password) == 0:
-            response = {
-                'response_message': 'Email and password is required!'
-            }
-            return response
-        elif len(email) == 0:
-            response = {
-                'response_message': 'Email is required!'
-            }
-            return response
-        elif len(password) == 0:
-            response = {
-                'response_message': 'Password is required!'
-            }
-            return response
-        else:
-            return True
-
-    @staticmethod
-    def validate_password_reset_data(email, password, confirm_password):
-        """Check whether user have entered the required data to reset password."""
-
-        if len(email) == 0 and len(password) == 0 and len(confirm_password) == 0:
-            response = {
-                'response_message': 'Email and new password is required!'
-            }
-            return response
-        elif len(email) == 0:
-            response = {
-                'response_message': 'Email is required!'
-            }
-            return response
-        elif len(password) == 0:
-            response = {
-                'response_message': 'Password is required!'
-            }
-            return response
-        elif len(confirm_password) == 0:
-            response = {
-                'response_message': 'Password confirmation is required!'
-            }
-            return response
-        else:
-            return True
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
 
 class RevokedToken(db.Model):
@@ -119,6 +62,10 @@ class RevokedToken(db.Model):
 
         query = cls.query.filter_by(jti=jti).first()
         return bool(query)
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
 
 class Business(db.Model):
