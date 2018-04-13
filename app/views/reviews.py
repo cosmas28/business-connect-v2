@@ -46,17 +46,19 @@ class BusinessReviews(Resource):
         business_review = request_data.get('review')
         created_by = get_jwt_identity()
 
-        try:
-            business = Business.query.filter_by(id=business_id).first()
+        if not business_id:
+            response = {
+                'response_message': 'Business not registered!'
+            }
+            return make_response(jsonify(response)), 404
+        if not business_review:
+            response_text = 'Review field is required!'
+            return {'response_message': response_text}, 406
 
-            if len(str(business_id)) == 0:
-                return 404
-            if business is None:
-                response = {
-                    'response_message': 'Business not registered!'
-                }
-                return make_response(jsonify(response))
-            else:
+        business = Business.query.filter_by(id=business_id).first()
+
+        if business:
+            try:
                 review = Reviews(business_review, business_id, created_by)
                 db.session.add(review)
                 db.session.commit()
@@ -66,9 +68,14 @@ class BusinessReviews(Resource):
                 }
 
                 return make_response(jsonify(response))
-        except exc.IntegrityError:
-            response_text = 'Review field is required!'
-            return {'response_message': response_text}, 406
+            except Exception as error:
+                response_message = {'response_message': str(error)}
+                return make_response(jsonify(response_message))
+        else:
+            response = {
+                'response_message': 'Business not registered!'
+            }
+            return make_response(jsonify(response))
 
     @jwt_required
     def get(self, business_id):
@@ -103,22 +110,18 @@ class BusinessReviews(Resource):
                                     description: describes the id of the user who reviewed
 
         """
-        try:
-            business = Business.query.filter_by(id=business_id).first()
-            business_reviews = Reviews.query.filter_by(review_for=business_id).all()
-            if len(str(business_id)) == 0:
-                return 404
-            elif business is None:
-                response = {
-                    'response_message': 'Business id is not registered!'
-                }
-                return make_response(jsonify(response))
-            elif business_reviews is None:
-                response = {
-                    'response_message': 'Business have no reviews!'
-                }
-                return make_response(jsonify(response))
-            else:
+        if not business_id:
+            return 404
+        business = Business.query.filter_by(id=business_id).first()
+        if business is None:
+            response = {
+                'response_message': 'Business id is not registered!'
+            }
+            return make_response(jsonify(response))
+        business_reviews = Reviews.query.filter_by(review_for=business_id).all()
+
+        if business_reviews:
+            try:
                 _reviews = []
 
                 for _review in business_reviews:
@@ -130,11 +133,16 @@ class BusinessReviews(Resource):
                     _reviews.append(_object)
 
                 return make_response(jsonify(reviews_list=_reviews))
-        except Exception as e:
-            response = {
-                'response_message': str(e)
-            }
+            except Exception as e:
+                response = {
+                    'response_message': str(e)
+                }
 
+                return make_response(jsonify(response))
+        else:
+            response = {
+                'response_message': 'Business have no reviews!'
+            }
             return make_response(jsonify(response))
 
 
