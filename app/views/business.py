@@ -312,20 +312,17 @@ class SingleBusiness(Resource):
         """
 
         created_by = get_jwt_identity()
-        try:
-            business = Business.query.filter_by(id=business_id).first()
+        business = Business.query.filter_by(id=business_id).first()
+        if business is None:
+            response = {
+                'response_message': 'Business id is not registered!'
+            }
+            return make_response(jsonify(response)), 404
 
-            if business is None:
-                response = {
-                    'response_message': 'Business id is not registered!'
-                }
-                return make_response(jsonify(response))
-            elif business.created_by != created_by:
-                response = {
-                    'response_message': 'Permission required to delete this business!'
-                }
-                return make_response(jsonify(response))
-            else:
+        if business.created_by == created_by:
+            try:
+                business = Business.query.filter_by(id=business_id).first()
+
                 db.session.delete(business)
                 db.session.commit()
                 response = {
@@ -333,12 +330,17 @@ class SingleBusiness(Resource):
                 }
 
                 return make_response(jsonify(response))
-        except Exception as e:
-            response = {
-                'response_message': str(e)
-            }
+            except Exception as e:
+                response = {
+                    'response_message': str(e)
+                }
 
-            return make_response(jsonify(response))
+                return make_response(jsonify(response))
+        else:
+            response = {
+                'response_message': 'Permission required to delete this business!'
+            }
+            return response, 401
 
 
 class BusinessCategory(Resource):
