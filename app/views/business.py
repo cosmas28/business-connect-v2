@@ -12,7 +12,7 @@ from sqlalchemy import exc
 
 from app.models import Business
 from app.models import db
-from app.helper_functions import business_name_registered
+from app.helper_functions import business_name_registered, get_paginated_list
 
 
 class Businesses(Resource):
@@ -380,14 +380,10 @@ class BusinessCategory(Resource):
         user_request = request.args.get('q')
         result_start = int(request.args.get('start'))
         result_limit = int(request.args.get('limit'))
-        try:
-            businesses = Business.query.filter_by(category=user_request).all()
-            if businesses is None:
-                response = {
-                    'response_message': 'Businesses not found!'
-                }
-                return make_response(jsonify(response))
-            else:
+        businesses = Business.query.filter_by(category=user_request).all()
+        if businesses:
+            try:
+
                 business_list = []
 
                 for business in businesses:
@@ -404,11 +400,16 @@ class BusinessCategory(Resource):
                 pagination_res = get_paginated_list(business_list, '/api/v1/business/search',
                                                     result_start, result_limit)
                 return make_response(jsonify(pagination_res))
-        except Exception as e:
-            response = {
-                'response_message': str(e)
-            }
+            except Exception as e:
+                response = {
+                    'response_message': str(e)
+                }
 
+                return make_response(jsonify(response))
+        else:
+            response = {
+                'response_message': 'Businesses not found is this category!'
+            }
             return make_response(jsonify(response))
 
 
@@ -449,14 +450,10 @@ class BusinessLocation(Resource):
         user_request = request.args.get('q')
         result_start = int(request.args.get('start'))
         result_limit = int(request.args.get('limit'))
-        try:
-            businesses = Business.query.filter_by(location=user_request).all()
-            if businesses is None:
-                response = {
-                    'response_message': 'Businesses not found!'
-                }
-                return make_response(jsonify(response))
-            else:
+
+        businesses = Business.query.filter_by(location=user_request).all()
+        if businesses:
+            try:
                 business_list = []
 
                 for business in businesses:
@@ -473,11 +470,16 @@ class BusinessLocation(Resource):
                 pagination_res = get_paginated_list(business_list, '/api/v1/business/search',
                                                     result_start, result_limit)
                 return make_response(jsonify(pagination_res))
-        except Exception as e:
-            response = {
-                'response_message': str(e)
-            }
+            except Exception as e:
+                response = {
+                    'response_message': str(e)
+                }
 
+                return make_response(jsonify(response))
+        else:
+            response = {
+                'response_message': 'Businesses not found in this location!'
+            }
             return make_response(jsonify(response))
 
 
@@ -518,14 +520,9 @@ class SearchBusiness(Resource):
         user_request = request.args.get('q')
         result_start = int(request.args.get('start'))
         result_limit = int(request.args.get('limit'))
-        try:
-            businesses = Business.query.filter(Business.name.startswith(user_request)).all()
-            if businesses is None:
-                response = {
-                    'response_message': 'Businesses not found!'
-                }
-                return make_response(jsonify(response))
-            else:
+        businesses = Business.query.filter(Business.name.startswith(user_request)).all()
+        if businesses:
+            try:
                 business_list = []
 
                 for business in businesses:
@@ -542,36 +539,17 @@ class SearchBusiness(Resource):
                 pagination_res = get_paginated_list(business_list, '/api/v1/business/search',
                                                     result_start, result_limit)
                 return make_response(jsonify(pagination_res))
-        except Exception as e:
+            except Exception as e:
+                response = {
+                    'response_message': str(e)
+                }
+
+                return make_response(jsonify(response))
+        else:
             response = {
-                'response_message': str(e)
+                'response_message': 'Business not found!'
             }
-
             return make_response(jsonify(response))
-
-
-def get_paginated_list(business_list, url, start, limit):
-    count = len(business_list)
-    _object = {}
-    _object['start'] = start
-    _object['limit'] = limit
-    _object['count'] = count
-
-    if start == 1:
-        _object['previous'] = ''
-    else:
-        start_copy = max(1, start - limit)
-        limit_copy = start - 1
-        _object['previous'] = url + '?start=%d&limit=%d' % (start_copy, limit_copy)
-
-    if start + limit > count:
-        _object['next'] = ''
-    else:
-        start_copy = start + limit
-        _object['next'] = url + '?start=%d&limit=%d' % (start_copy, limit)
-    _object['business_list'] = business_list[(start - 1):(start - 1 + limit)]
-
-    return _object
 
 
 business_api = Blueprint('views.business', __name__)
