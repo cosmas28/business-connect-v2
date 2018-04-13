@@ -41,3 +41,28 @@ def business_name_registered(name):
 
     registered = Business.query.filter_by(name=name).first()
     return registered
+
+
+def get_paginated_list(business_list, url, start, limit):
+    count = len(business_list)
+    _object = {}
+    _object['start'] = start
+    _object['limit'] = limit
+    _object['count'] = count
+
+    if start == 1:
+        _object['previous'] = ''
+    else:
+        start_copy = max(1, start - limit)
+        limit_copy = start - 1
+        _object['previous'] = url + '?start=%d&limit=%d' % (start_copy, limit_copy)
+
+    if start + limit > count:
+        _object['next'] = ''
+    else:
+        start_copy = start + limit
+        _object['next'] = url + '?start=%d&limit=%d' % (start_copy, limit)
+    _object['business_list'] = business_list[(start - 1):(start - 1 + limit)]
+
+    return _object
+
