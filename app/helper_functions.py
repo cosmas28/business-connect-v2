@@ -1,6 +1,7 @@
 """Create helper functions to be used in views module."""
 
 from app.models import User
+from app.models import Business
 
 
 def email_exist(email):
@@ -26,3 +27,17 @@ def valid_password(password, confirm_password):
     if password not in confirm_password:
         response_message = {'message': 'Password does not match the confirmation password!'}
         return response_message
+
+
+def business_name_registered(name):
+    """Check whether the business is already registered.
+
+    Args:
+        name(str): Unique business name.
+
+    Returns:
+        Boolean value.
+    """
+
+    registered = Business.query.filter_by(name=name).first()
+    return registered
