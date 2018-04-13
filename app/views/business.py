@@ -251,16 +251,10 @@ class SingleBusiness(Resource):
         business_location = req_data.get('location')
         business_summary = req_data.get('summary')
 
-        try:
-            current_business = Business.query.filter_by(id=business_id).first()
-
-            if current_business is None:
-                response = {
-                    'response_message': 'Business id is not registered!'
-                }
-                return make_response(jsonify(response))
-            else:
-                update_business = Business.query.filter_by(id=business_id).update(dict(
+        business_is_registered = Business.query.filter_by(id=business_id).first()
+        if business_is_registered:
+            try:
+                Business.query.filter_by(id=business_id).update(dict(
                     name=business_name,
                     category=business_category,
                     location=business_location,
@@ -279,13 +273,17 @@ class SingleBusiness(Resource):
                 }
 
                 return make_response(jsonify(business_object))
+            except Exception as e:
+                response = {
+                    'response_message': str(e)
+                }
 
-        except Exception as e:
+                return make_response(jsonify(response))
+        else:
             response = {
-                'response_message': str(e)
+                'response_message': 'Business id is not registered!'
             }
-
-            return make_response(jsonify(response))
+            return response, 404
 
     @jwt_required
     def delete(self, business_id):
