@@ -12,22 +12,7 @@ from sqlalchemy import exc
 
 from app.models import Business
 from app.models import db
-
-
-def business_name_registered(name):
-    """Check whether the business is already registered.
-
-    Args:
-        name(str): Unique business name.
-
-    Returns:
-        Boolean value.
-    """
-
-    registered = Business.query.filter_by(name=name).first()
-
-    if registered:
-        return True
+from app.helper_functions import business_name_registered
 
 
 class Businesses(Resource):
@@ -69,16 +54,20 @@ class Businesses(Resource):
         business_summary = req_data.get('summary')
         created_by = get_jwt_identity()
 
-        try:
-            if business_name_registered(business_name):
-                response = {
-                    'response_message': 'Business name already registered!'
-                }
-                return make_response(jsonify(response))
-            else:
+        if not business_name or not business_summary:
+            response = {
+               'response_message': 'Business name and description are required!'
+            }
+            return response, 406
+        if not business_location or not business_category:
+            response = {
+                'response_message': 'Business location and category are required!'
+            }
+            return response, 406
+        if not business_name_registered(business_name):
+            try:
                 business = Business(business_name, business_category, business_location, business_summary, created_by)
-                db.session.add(business)
-                db.session.commit()
+                business.save()
 
                 response = {
                     'response_message': 'Business has been registered successfully!',
@@ -86,10 +75,14 @@ class Businesses(Resource):
                 }
 
                 return make_response(jsonify(response))
-
-        except exc.IntegrityError:
-            response = {'response_message': 'All business data is required!'}
-            return response, 406
+            except Exception as error:
+                response_message = {'message': str(error)}
+                return make_response(jsonify(response_message))
+        else:
+            response = {
+                'response_message': 'Business name already registered!'
+            }
+            return make_response(jsonify(response))
 
     @jwt_required
     def get(self):
