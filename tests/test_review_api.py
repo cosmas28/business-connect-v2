@@ -7,8 +7,8 @@ from app.models import db
 from . import app
 
 
-class ReviewsTestCase(unittest.TestCase):
-    """Test suite for reviews functionality."""
+class BusinessReviewsTest(unittest.TestCase):
+    """Test suite for business reviews functionality."""
 
     def setUp(self):
         """Call this before every test."""
@@ -63,8 +63,9 @@ class ReviewsTestCase(unittest.TestCase):
         db.session.remove()
         db.drop_all()
 
-    def test_empty_business_id(self):
-        """Test whether user have provided a business id to be reviewed."""
+    def test_add_null_business_id(self):
+        """Test business review with null business id
+        using post request for BusinessReviews class view."""
 
         self.register_user()
         login_response = self.login_user()
@@ -80,8 +81,9 @@ class ReviewsTestCase(unittest.TestCase):
 
         self.assertEqual(review_res.status_code, 404)
 
-    def test_empty_review(self):
-        """Test whether user have provided a business review."""
+    def test_add_null_review(self):
+        """Test business review with null review
+        using post request for BusinessReviews class view."""
 
         self.register_user()
         login_response = self.login_user()
@@ -96,8 +98,9 @@ class ReviewsTestCase(unittest.TestCase):
 
         self.assertEqual(review_res.status_code, 406)
 
-    def test_user_can_add_review(self):
-        """Test whether user add a business review."""
+    def test_add_successful(self):
+        """Test business reviewed successfully
+        using post request for BusinessReviews class view."""
 
         self.register_user()
         login_response = self.login_user()
@@ -110,8 +113,9 @@ class ReviewsTestCase(unittest.TestCase):
             json.loads(review_res.data.decode())['response_message'],
             'Review has been added successfully!')
 
-    def test_404(self):
-        """Test whether user have provided a business id."""
+    def test_view_unregistered_business(self):
+        """Test view unregistered business reviews
+        using get request for BusinessReviews class view."""
 
         self.register_user()
         login_response = self.login_user()
@@ -127,8 +131,9 @@ class ReviewsTestCase(unittest.TestCase):
 
         self.assertEqual(review_res.status_code, 404)
 
-    def test_view_business_reviews(self):
-        """Test whether user view a business reviews by business id."""
+    def test_view_successful(self):
+        """Test view a business reviews successfully
+        using get request for BusinessReviews class view."""
 
         self.register_user()
         login_response = self.login_user()

@@ -44,8 +44,9 @@ class AbstractTest(unittest.TestCase):
 class RegisterUserTest(AbstractTest):
     """Illustrate test cases for user registration view."""
 
-    def test_empty_email(self):
-        """Test whether user have provided an email."""
+    def test_register_null_email(self):
+        """Test user registration with null user email
+        using post request for RegisterUser class view."""
 
         user_data = json.dumps({'email': '', 'username': 'cosmas',
                                 'first_name': 'first',
@@ -58,8 +59,9 @@ class RegisterUserTest(AbstractTest):
         self.assertEqual(json_res['message'],
                          'Email and Username are required!')
 
-    def test_empty_username(self):
-        """Test whether user have not provided a username."""
+    def test_register_null_username(self):
+        """Test user registration with null username
+        using post request for RegisterUser class view."""
 
         user_data = json.dumps({'email': 'test@andela.com',
                                 'username': '', 'password': 'andela2018',
@@ -70,8 +72,9 @@ class RegisterUserTest(AbstractTest):
         self.assertEqual(json_res['message'],
                          'Email and Username are required!')
 
-    def test_empty_password(self):
-        """Test whether user have provided password."""
+    def test_register_null_password(self):
+        """Test user registration with null password
+        using post request for RegisterUser class view."""
 
         user_data = json.dumps({'email': 'test@andela.com',
                                 'username': 'cosmas', 'password': '',
@@ -82,8 +85,9 @@ class RegisterUserTest(AbstractTest):
         self.assertEqual(json_res['message'],
                          'Password and Confirmation password are required!')
 
-    def test_empty_password_confirm(self):
-        """Test whether user have provided confirmation password."""
+    def test_register_null_confirmation(self):
+        """Test user registration with null confirmation password
+        using post request for RegisterUser class view."""
 
         user_data = json.dumps({'email': 'test@andela.com',
                                 'username': 'cosmas', 'password': 'andela2018',
@@ -94,8 +98,9 @@ class RegisterUserTest(AbstractTest):
         self.assertEqual(json_res['message'],
                          'Password and Confirmation password are required!')
 
-    def test_duplicate_email(self):
-        """Test whether the email address exist."""
+    def test_register_registered_email(self):
+        """Test user registration with a registered email
+        using post request for RegisterUser class view."""
 
         user = User('test@andela.com', 'testuser',
                     'first', 'last', 'password')
@@ -111,8 +116,9 @@ class RegisterUserTest(AbstractTest):
         json_res = json.loads(response.data.decode())
         self.assertEqual(json_res['message'], 'User already exists. Sign in!')
 
-    def test_duplicate_username(self):
-        """Test whether the username exist."""
+    def test_register_registered_name(self):
+        """Test user registration with a registered username
+        using post request for RegisterUser class view."""
 
         user = User('test@andela.com', 'testuser', 'first', 'last', 'password')
         user.save()
@@ -127,8 +133,9 @@ class RegisterUserTest(AbstractTest):
         json_res = json.loads(response.data.decode())
         self.assertEqual(json_res['message'], 'User already exists. Sign in!')
 
-    def test_password_length(self):
-        """Test user password to be more than 6 characters."""
+    def test_register_short_password(self):
+        """Test user registration with a less than 6 password length
+        using post request for RegisterUser class view."""
 
         user_data = json.dumps({'email': 'test2@andela.com',
                                 'username': 'testuser', 'first_name': 'first',
@@ -140,8 +147,9 @@ class RegisterUserTest(AbstractTest):
         self.assertEqual(json_res['message'],
                          'Password must be more than 6 characters!')
 
-    def test_password_confirmation(self):
-        """Test user password match confirmation password."""
+    def test_register_unequal_passwords(self):
+        """Test user registration with unequal passwords
+        using post request for RegisterUser class view."""
 
         user_data = json.dumps({'email': 'test2@andela.com',
                                 'username': 'testuser', 'first_name': 'first',
@@ -153,11 +161,9 @@ class RegisterUserTest(AbstractTest):
         self.assertEqual(json_res['message'],
                          'Password does not match the confirmation password!')
 
-    def test_user_can_create_account(self):
-        """
-            Test registerUser API endpoint can
-             register a new user with POST request.
-        """
+    def test_register_successful(self):
+        """Test user registered successfully with correct data
+        using post request for Businesses class view."""
 
         user_data = json.dumps({'email': 'test2@andela.com',
                                 'username': 'testuser', 'first_name': 'first',
@@ -176,8 +182,9 @@ class RegisterUserTest(AbstractTest):
 class LoginUserTest(AbstractTest):
     """Test case for the login api endpoint."""
 
-    def test_user_login_email(self):
-        """Test whether user have provided existed email."""
+    def test_login_unregistered_email(self):
+        """Test login with unregistered email
+        using post request for LoginUser class view."""
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
@@ -191,11 +198,10 @@ class LoginUserTest(AbstractTest):
         # get the response text in json format
         json_res = json.loads(login_response.data.decode())
         self.assertEqual(json_res['response_message'], 'Invalid email!')
-        # self.assertEqual(login_response.status_code, 401)
-        self.assertEqual(json_res['status_code'], 401)
 
-    def test_user_login_wrong_password(self):
-        """Test whether user have provided a correct password."""
+    def test_login_incorrect_password(self):
+        """Test login with an incorrect
+        using post request for LoginUser class view."""
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
@@ -213,8 +219,9 @@ class LoginUserTest(AbstractTest):
         # self.assertEqual(login_response.status_code, 401)
         self.assertEqual(json_res['status_code'], 401)
 
-    def test_user_can_login(self):
-        """Test registered user can login."""
+    def test_login_successful(self):
+        """Test login successfully with correct credentials
+        using post request for LoginUser class view."""
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
@@ -231,8 +238,13 @@ class LoginUserTest(AbstractTest):
         self.assertEqual(json_res['status_code'], 200)
         self.assertTrue(json_res['access_token'])
 
-    def test_access_token_logout(self):
-        """Test whether user can logout by revoking access token."""
+
+class LogoutAccessTest(AbstractTest):
+    """Test suite for user logout with an access token."""
+
+    def test_logout_successful(self):
+        """Test logout successfully using access token
+        using post request for UserLogoutAccess class view."""
 
         register_res = self.run_app.post('/api/v2/auth/register',
                                          data=self.user_data,
@@ -257,8 +269,13 @@ class LoginUserTest(AbstractTest):
             json.loads(logout_res.data.decode())['response_message'],
             'Log out has been successful!')
 
-    def test_refresh_token_logout(self):
-        """Test whether user can logout by revoking jwt refresh token."""
+
+class LogoutRefreshTest(AbstractTest):
+    """Test suite for user logout using a refresh token."""
+
+    def test_logout_successful(self):
+        """Test logout successfully using refresh token
+        using post request for UserLogoutRefresh class view."""
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
@@ -282,10 +299,11 @@ class LoginUserTest(AbstractTest):
 
 
 class ResetPasswordTest(AbstractTest):
-    """Test case for the reset password api endpoint."""
+    """Test suite for the reset password api endpoint."""
 
-    def test_empty_email(self):
-        """Test whether user have provided an email."""
+    def test_reset_null_email(self):
+        """Test reset password with null registered email
+        using post request for ResetPassword class view."""
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
@@ -299,8 +317,9 @@ class ResetPasswordTest(AbstractTest):
         json_res = json.loads(response.data.decode())
         self.assertEqual(json_res['response_message'], 'Email is required!')
 
-    def test_empty_password(self):
-        """Test whether user have provided a password."""
+    def test_reset_null_password(self):
+        """Test reset password with null new password
+        using post request for ResetPassword class view."""
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
@@ -314,8 +333,9 @@ class ResetPasswordTest(AbstractTest):
         json_res = json.loads(response.data.decode())
         self.assertEqual(json_res['response_message'], 'Password is required!')
 
-    def test_empty_password_confirm(self):
-        """Test whether user have provided confirmation password."""
+    def test_reset_null_confirm(self):
+        """Test reset password with null password confirmation
+        using post request for ResetPassword class view."""
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
@@ -330,8 +350,9 @@ class ResetPasswordTest(AbstractTest):
         json_res = json.loads(response.data.decode())
         self.assertEqual(json_res['response_message'], 'Password is required!')
 
-    def test_registered_email(self):
-        """Test whether user have provided registered email."""
+    def test_reset_unregistered_email(self):
+        """Test reset password with unregistered user email
+        using post request for ResetPassword class view."""
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
@@ -346,8 +367,9 @@ class ResetPasswordTest(AbstractTest):
         json_res = json.loads(response.data.decode())
         self.assertEqual(json_res['response_message'], 'Email not registered')
 
-    def test_user_reset_password(self):
-        """Test registered user can reset their passwords."""
+    def test_reset_password_successful(self):
+        """Test reset password successful with correct data
+        using post request for ResetPassword class view."""
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
