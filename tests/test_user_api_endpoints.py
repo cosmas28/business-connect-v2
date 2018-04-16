@@ -20,8 +20,8 @@ class AbstractTest(unittest.TestCase):
     def setUp(self):
         """Call this before every test."""
 
-        db.app = app
-        db.create_all()
+        # db.app = app
+        # db.create_all()
 
         self.run_app = app.test_client()
         self.headers = {'Content-type': 'application/json',
@@ -33,6 +33,11 @@ class AbstractTest(unittest.TestCase):
                                      'last_name': 'last',
                                      'password': 'andela2018',
                                      'confirm_password': 'andela2018'})
+
+        with app.app_context():
+            db.session.close()
+            db.drop_all()
+            db.create_all()
 
     def tearDown(self):
         """Call after every test to remove the created table."""

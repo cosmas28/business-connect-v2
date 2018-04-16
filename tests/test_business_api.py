@@ -3,9 +3,10 @@
 import unittest
 
 from flask import json
-
 from app.models import db
-from . import app
+from app import create_app
+
+# from . import app
 
 
 class AbstractTest(unittest.TestCase):
@@ -14,12 +15,18 @@ class AbstractTest(unittest.TestCase):
     def setUp(self):
         """Call this before every test."""
 
-        db.app = app
-        db.create_all()
+        # db.app = app
+        # db.create_all()
 
-        self.run_app = app.test_client()
+        self.app = create_app(config_object="testing")
+        self.run_app = self.app.test_client()
         self.headers = {
             'Content-type': 'application/json', 'Accept': 'text/plain'}
+
+        with self.app.app_context():
+            db.session.close()
+            db.drop_all()
+            db.create_all()
 
     def register_user(self):
         """Register a user."""
