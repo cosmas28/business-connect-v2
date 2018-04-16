@@ -9,9 +9,8 @@ import unittest
 
 from flask import json
 
-from app.models import User
 from app.models import db
-from . import app
+from app import create_app
 
 
 class AbstractTest(unittest.TestCase):
@@ -20,12 +19,10 @@ class AbstractTest(unittest.TestCase):
     def setUp(self):
         """Call this before every test."""
 
-        # db.app = app
-        # db.create_all()
-
-        self.run_app = app.test_client()
-        self.headers = {'Content-type': 'application/json',
-                        'Accept': 'text/plain'}
+        self.app = create_app(config_object="testing")
+        self.run_app = self.app.test_client()
+        self.headers = {
+            'Content-type': 'application/json', 'Accept': 'text/plain'}
 
         self.user_data = json.dumps({'email': 'test2@andela.com',
                                      'username': 'testuser',
@@ -34,16 +31,16 @@ class AbstractTest(unittest.TestCase):
                                      'password': 'andela2018',
                                      'confirm_password': 'andela2018'})
 
-        with app.app_context():
-            db.session.close()
+        with self.app.app_context():
             db.drop_all()
             db.create_all()
 
     def tearDown(self):
         """Call after every test to remove the created table."""
 
-        db.session.remove()
-        db.drop_all()
+        with self.app.app_context():
+            db.drop_all()
+            db.create_all()
 
 
 class RegisterUserTest(AbstractTest):
@@ -107,16 +104,19 @@ class RegisterUserTest(AbstractTest):
         """Test user registration with a registered email
         using post request for RegisterUser class view."""
 
-        user = User('test@andela.com', 'testuser',
-                    'first', 'last', 'password')
-        user.save()
+        first_user = json.dumps({
+            'email': 'test@andela.com', 'username': 'testuser',
+            'first_name': 'first', 'last_name': 'last',
+            'password': 'andela2018', 'confirm_password': 'andela2018'})
+        self.run_app.post('/api/v2/auth/register',
+                          data=first_user, headers=self.headers)
 
-        user_data = json.dumps({'email': 'test@andela.com',
-                                'username': 'cosmas', 'first_name': 'first',
-                                'last_name': 'last', 'password': 'andela2018',
-                                'confirm_password': 'andela2018'})
+        second_user = json.dumps({
+            'email': 'test@andela.com', 'username': 'cosmas',
+            'first_name': 'first', 'last_name': 'last',
+            'password': 'andela2018', 'confirm_password': 'andela2018'})
         response = self.run_app.post('/api/v2/auth/register',
-                                     data=user_data, headers=self.headers)
+                                     data=second_user, headers=self.headers)
 
         json_res = json.loads(response.data.decode())
         self.assertEqual(json_res['message'], 'User already exists. Sign in!')
@@ -125,8 +125,12 @@ class RegisterUserTest(AbstractTest):
         """Test user registration with a registered username
         using post request for RegisterUser class view."""
 
-        user = User('test@andela.com', 'testuser', 'first', 'last', 'password')
-        user.save()
+        first_user = json.dumps({
+            'email': 'test@andela.com', 'username': 'testuser',
+            'first_name': 'first', 'last_name': 'last',
+            'password': 'andela2018', 'confirm_password': 'andela2018'})
+        self.run_app.post('/api/v2/auth/register',
+                          data=first_user, headers=self.headers)
 
         user_data = json.dumps({'email': 'test2@andela.com',
                                 'username': 'testuser', 'first_name': 'first',
@@ -179,9 +183,6 @@ class RegisterUserTest(AbstractTest):
         json_res = json.loads(response.data.decode())
         self.assertEqual(json_res['message'],
                          'You have successfully created an account!')
-        registered_user = User.query.filter_by(
-            email='test2@andela.com').first()
-        self.assertTrue(registered_user)
 
 
 class LoginUserTest(AbstractTest):

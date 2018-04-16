@@ -4,7 +4,7 @@ import unittest
 
 from flask import json
 from app.models import db
-from . import app
+from app import create_app
 
 
 class BusinessReviewsTest(unittest.TestCase):
@@ -13,15 +13,12 @@ class BusinessReviewsTest(unittest.TestCase):
     def setUp(self):
         """Call this before every test."""
 
-        # db.app = app
-        # db.create_all()
+        self.app = create_app(config_object="testing")
+        self.run_app = self.app.test_client()
+        self.headers = {
+            'Content-type': 'application/json', 'Accept': 'text/plain'}
 
-        self.run_app = app.test_client()
-        self.headers = {'Content-type': 'application/json',
-                        'Accept': 'text/plain'}
-
-        with app.app_context():
-            db.session.close()
+        with self.app.app_context():
             db.drop_all()
             db.create_all()
 
@@ -65,8 +62,9 @@ class BusinessReviewsTest(unittest.TestCase):
     def tearDown(self):
         """Call after every test to remove the created table."""
 
-        db.session.remove()
-        db.drop_all()
+        with self.app.app_context():
+            db.drop_all()
+            db.create_all()
 
     def test_add_null_business_id(self):
         """Test business review with null business id

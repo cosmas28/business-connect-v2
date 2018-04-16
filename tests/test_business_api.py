@@ -24,7 +24,6 @@ class AbstractTest(unittest.TestCase):
             'Content-type': 'application/json', 'Accept': 'text/plain'}
 
         with self.app.app_context():
-            db.session.close()
             db.drop_all()
             db.create_all()
 
@@ -74,8 +73,9 @@ class AbstractTest(unittest.TestCase):
     def tearDown(self):
         """Call after every test to remove the created table."""
 
-        db.session.remove()
-        db.drop_all()
+        with self.app.app_context():
+            db.drop_all()
+            db.create_all()
 
 
 class CreateBusinessesTest(AbstractTest):
