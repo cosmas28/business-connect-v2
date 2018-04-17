@@ -254,27 +254,30 @@ class OneBusiness(Resource):
         business = Business.query.filter_by(id=business_id).first()
         if business:
             try:
-                business_object = {
+                business_object = jsonify({
                     'id': business.id,
                     'name': business.name,
                     'category': business.category,
                     'location': business.location,
                     'summary': business.summary,
                     'created_by': business.created_by
-                }
+                })
 
-                return make_response(jsonify(business_object))
+                business_object.status_code = 200
+                return business_object
             except Exception as e:
-                response = {
+                response = jsonify({
                     'response_message': str(e)
-                }
+                })
 
-                return make_response(jsonify(response))
+                response.status_code = 500
+                return response
         else:
-            response = {
+            response = jsonify({
                 'response_message': 'Business id is not registered!'
-            }
-            return response, 404
+            })
+            response.status_code = 404
+            return response
 
     @jwt_required
     def put(self, business_id):
