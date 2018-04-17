@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/cosmas28/business-connect-v2.svg?branch=develop)](https://travis-ci.org/cosmas28/business-connect-v2)
-[![Coverage Status](https://coveralls.io/repos/github/cosmas28/business-connect-v2/badge.svg?branch=develop)](https://coveralls.io/github/cosmas28/business-connect-v2?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/github/cosmas28/business-connect-v2/badge.svg)](https://coveralls.io/github/cosmas28/business-connect-v2)
 WeConnect provides a platform that brings businesses and individuals together.
 This platform creates awareness for businesses and gives the users the ability
 to write reviews about the businesses they have interacted with.
