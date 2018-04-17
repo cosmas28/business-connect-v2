@@ -11,8 +11,11 @@ before_script:
   - psql -c "CREATE ROLE test_user WITH LOGIN PASSWORD 'default' NOSUPERUSER INHERIT CREATEDB;" -U postgres
   - psql -c 'create database test_db;' -U postgres
 script:
-  - cd  ./tests && nosetests
+  - nosetests --exe -v
+  - nosetests --exe --with-coverage --cover-package=api
+  - coveralls
+  - codecov
 branches:
   only: develop
 after_success:
-  - coveralls
+  - "coveralls"
