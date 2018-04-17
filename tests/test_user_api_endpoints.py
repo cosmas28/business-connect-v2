@@ -222,8 +222,7 @@ class LoginUserTest(AbstractTest):
         json_res = json.loads(login_response.data.decode())
         self.assertEqual(json_res['response_message'],
                          'Invalid email or password!')
-        # self.assertEqual(login_response.status_code, 401)
-        self.assertEqual(json_res['status_code'], 401)
+        self.assertEqual(login_response.status_code, 401)
 
     def test_login_successful(self):
         """Test login successfully with correct credentials
@@ -241,7 +240,7 @@ class LoginUserTest(AbstractTest):
         json_res = json.loads(login_response.data.decode())
         self.assertEqual(json_res['response_message'],
                          'You logged in successfully!')
-        self.assertEqual(json_res['status_code'], 200)
+        self.assertEqual(login_response.status_code, 200)
         self.assertTrue(json_res['access_token'])
 
 
@@ -269,8 +268,7 @@ class LogoutAccessTest(AbstractTest):
         logout_res = self.run_app.post(
             '/api/v2/auth/logout',
             headers=dict(Authorization='Bearer ' + access_token))
-        self.assertEqual(
-            json.loads(logout_res.data.decode())['status_code'], 200)
+        self.assertEqual(logout_res.status_code, 200)
         self.assertEqual(
             json.loads(logout_res.data.decode())['response_message'],
             'Log out has been successful!')
@@ -297,8 +295,7 @@ class LogoutRefreshTest(AbstractTest):
         logout_res = self.run_app.post(
             '/api/v2/auth/logout_refresh_token',
             headers=dict(Authorization='Bearer ' + refresh_token))
-        self.assertEqual(
-            json.loads(logout_res.data.decode())['status_code'], 200)
+        self.assertEqual(logout_res.status_code, 200)
         self.assertEqual(
             json.loads(logout_res.data.decode())['response_message'],
             'Log out has been successful!')
@@ -390,7 +387,7 @@ class ResetPasswordTest(AbstractTest):
         json_res = json.loads(response.data.decode())
         self.assertEqual(json_res['response_message'],
                          'Password reset successfully!')
-        self.assertEqual(json_res['status_code'], 200)
+        self.assertEqual(response.status_code, 200)
 
 
 if __name__ == '__main__':
