@@ -14,7 +14,6 @@ script:
   - nosetests --exe -v
   - nosetests --exe --with-coverage --cover-package=app
   - coveralls
-  - codecov
 branches:
   only: develop
 after_success:
