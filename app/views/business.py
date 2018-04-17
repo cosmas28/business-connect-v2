@@ -25,26 +25,47 @@ class Businesses(Resource):
         tags:
             -   businesses
         parameters:
+            -   in: header
+                name: authorization
+                description: JSON Web Token
+                type: string
+                required: true
+                x-authentication: Bearer
             -   in: body
                 name: body
                 schema:
-                    $ref: '#/definitions/User'
-        security:
-            $ref: '#/components/securitySchemes/BearAuth'
+                    id: Business
+                    required:
+                        - name
+                        - category
+                        - location
+                        - summary
+                    properties:
+                        name:
+                            type: string
+                            description: Unique business name
+                        category:
+                            type: string
+                            description: businesses with the same features
+                        location:
+                            type: string
+                            description: Business physical location
+                        summary:
+                            type: string
+                            description: Describes the business
         responses:
             201:
                 description: Business has been registered successfully!
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                response_message:
-                                    type: string
-                                    description: message to show successful business registration
-                                status_code:
-                                    type: integer
-                                    description: HTTP status code
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            406:
+                description: Violate business column constraints
+                schema:
+                    properties:
+                        response_message:
+                            type: string
         """
         req_data = request.get_json(force=True)
         business_name = req_data.get('name')
@@ -54,15 +75,19 @@ class Businesses(Resource):
         created_by = get_jwt_identity()
 
         if not business_name or not business_summary:
-            response = {
-               'response_message': 'Business name and description are required!'
-            }
-            return response, 406
+            response = jsonify({
+               'response_message': 'Business name and '
+                                   'description are required!'
+            })
+            response.status_code = 406
+            return response
         if not business_location or not business_category:
-            response = {
-                'response_message': 'Business location and category are required!'
-            }
-            return response, 406
+            response = jsonify({
+                'response_message':
+                    'Business location and category are required!'
+            })
+            response.status_code = 406
+            return response
         if not business_name_registered(business_name):
             try:
                 business = Business(business_name, business_category,
@@ -70,21 +95,22 @@ class Businesses(Resource):
                                     business_summary, created_by)
                 business.save()
 
-                response = {
+                response = jsonify({
                     'response_message':
-                        'Business has been registered successfully!',
-                    'status_code': 201
-                }
+                        'Business has been registered successfully!'
+                })
 
-                return make_response(jsonify(response))
+                response.status_code = 201
+                return response
             except Exception as error:
                 response_message = {'message': str(error)}
                 return make_response(jsonify(response_message))
         else:
-            response = {
+            response = jsonify({
                 'response_message': 'Business name already registered!'
-            }
-            return make_response(jsonify(response))
+            })
+            response.status_code = 406
+            return response
 
     @jwt_required
     def get(self):
@@ -92,19 +118,18 @@ class Businesses(Resource):
         ---
         tags:
             -   businesses
-        security:
-            $ref: '#/components/securitySchemes/BearAuth'
+        parameters:
+            -   in: header
+                name: authorization
+                description: JSON Web Token
+                type: string
+                required: true
+                x-authentication: Bearer
         responses:
             200:
-                description: OK
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schema/Business'
-        components:
-            schema:
-                Business:
-                    type: object
+                description: A list of dictionaries of businesses
+                schema:
+                    name: business_list
                     properties:
                         id:
                             type: integer
@@ -114,34 +139,22 @@ class Businesses(Resource):
                             description: a unique business name
                         category:
                             type: string
-                            description: business category used to group businesses
+                            description: used to group businesses
                         location:
                             type: string
-                            description: describes where the business is located
+                            description: describes physical location
                         summary:
                             type: string
                             description: business description
                         created_by:
                             type: integer
                             description: describes the id of the business owner
-            parameters:
-                Path:
-                    schema:
-                        required: true
-                        type: integer
-                        description: a unique business id
-            parameters:
-                IntQueryString:
-                    schema:
-                        required: true
-                        type: integer
-                        description: numeric number to limit search results
-            parameters:
-                StrQueryString:
-                    schema:
-                        required: true
-                        type: string
-                        description: search criteria
+            500:
+                description: Internal server error
+                schema:
+                    properties:
+                        response_message:
+                            type: string
             security:
                 BearAuth:
                     securitySchemes:
@@ -166,13 +179,16 @@ class Businesses(Resource):
                 }
                 business_result.append(_object)
 
-            return make_response(jsonify(business_list=business_result))
+            response = jsonify(business_list=business_result)
+            response.status_code = 200
+            return response
         except Exception as e:
-            response = {
+            response = jsonify({
                 'response_message': str(e)
-            }
+            })
 
-            return make_response(jsonify(response))
+            response.status_code = 500
+            return response
 
 
 class OneBusiness(Resource):
@@ -187,18 +203,52 @@ class OneBusiness(Resource):
             -   businesses
         parameters:
             -   in: path
-                name: business_id
+                name: business id
+                required: true
+                description: a unique business id
                 schema:
-                    $ref: '#/components/parameters/Path'
-        security:
-            $ref: '#/components/securitySchemes/BearAuth'
+                    type: integer
+            -   in: header
+                name: authorization
+                description: JSON Web Token
+                type: string
+                required: true
+                x-authentication: Bearer
         responses:
             200:
-                description: OK
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schema/Business'
+                description: A dictionary of business data
+                schema:
+                    properties:
+                        id:
+                            type: integer
+                            description: a unique business id
+                        name:
+                            type: string
+                            description: a unique business name
+                        category:
+                            type: string
+                            description: used to group businesses
+                        location:
+                            type: string
+                            description: describes physical location
+                        summary:
+                            type: string
+                            description: business description
+                        created_by:
+                            type: integer
+                            description: describes the id of the business owner
+            404:
+                description: Business is not registered
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            500:
+                description: Internal server error
+                schema:
+                    properties:
+                        response_message:
+                            type: string
         """
 
         business = Business.query.filter_by(id=business_id).first()
@@ -235,17 +285,68 @@ class OneBusiness(Resource):
         parameters:
             -   in: path
                 name: business_id
+                required: true
                 schema:
-                    $ref: '#/components/parameters/Path'
-        security:
-            $ref: '#/components/securitySchemes/BearAuth'
+                    type: integer
+            -   in: header
+                name: authorization
+                description: JSON Web Token
+                type: string
+                required: true
+                x-authentication: Bearer
+            -   in: body
+                name: new data
+                description: new business data
+                schema:
+                    id: Business
+                    properties:
+                        name:
+                            type: string
+                            description: Unique business name
+                        category:
+                            type: string
+                            description: businesses with the same features
+                        location:
+                            type: string
+                            description: Business physical location
+                        summary:
+                            type: string
+                            description: Describes the business
         responses:
             200:
-                description: OK
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schema/Business'
+                description: A dictionary of business data
+                schema:
+                    properties:
+                        id:
+                            type: integer
+                            description: a unique business id
+                        name:
+                            type: string
+                            description: a unique business name
+                        category:
+                            type: string
+                            description: used to group businesses
+                        location:
+                            type: string
+                            description: describes physical location
+                        summary:
+                            type: string
+                            description: business description
+                        created_by:
+                            type: integer
+                            description: describes the id of the business owner
+            404:
+                description: Business is not registered
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            500:
+                description: Internal server error
+                schema:
+                    properties:
+                        response_message:
+                            type: string
         """
 
         req_data = request.get_json(force=True)
@@ -267,27 +368,29 @@ class OneBusiness(Resource):
                 db.session.commit()
 
                 new_business = Business.query.filter_by(id=business_id).first()
-                business_object = {
+                business_object = jsonify({
                     'id': new_business.id,
                     'name': new_business.name,
                     'category': new_business.category,
                     'location': new_business.location,
                     'summary': new_business.summary,
                     'created_by': new_business.created_by
-                }
-
-                return make_response(jsonify(business_object))
+                })
+                business_object.status_code = 200
+                return business_object
             except Exception as e:
-                response = {
+                response = jsonify({
                     'response_message': str(e)
-                }
+                })
 
-                return make_response(jsonify(response))
+                response.status_code = 500
+                return response
         else:
-            response = {
+            response = jsonify({
                 'response_message': 'Business id is not registered!'
-            }
-            return response, 404
+            })
+            response.status_code = 404
+            return response
 
     @jwt_required
     def delete(self, business_id):
@@ -298,30 +401,50 @@ class OneBusiness(Resource):
         parameters:
             -   in: path
                 name: business_id
+                required: true
                 schema:
-                    $ref: '#/components/parameters/Path'
-        security:
-            $ref: '#/components/securitySchemes/BearAuth'
+                    type: integer
+            -   in: header
+                name: authorization
+                description: JSON Web Token
+                type: string
+                required: true
+                x-authentication: Bearer
         responses:
             204:
-                description: No Content
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                response_message:
-                                    type: string
-                                    description: successful delete message
+                description: successful delete message
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            404:
+                description: Business is not registered
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            401:
+                description: Permission required
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            500:
+                description: Internal server error
+                schema:
+                    properties:
+                        response_message:
+                            type: string
         """
 
         created_by = get_jwt_identity()
         business = Business.query.filter_by(id=business_id).first()
         if business is None:
-            response = {
+            response = jsonify({
                 'response_message': 'Business id is not registered!'
-            }
-            return response, 404
+            })
+            response.status_code = 404
+            return response
 
         if business.created_by == created_by:
             try:
@@ -329,24 +452,27 @@ class OneBusiness(Resource):
 
                 db.session.delete(business)
                 db.session.commit()
-                response = {
+                response = jsonify({
                     'response_message':
                         'Business has been deleted successfully!'
-                }
+                })
 
-                return make_response(jsonify(response))
+                response.status_code = 204
+                return response
             except Exception as e:
-                response = {
+                response = jsonify({
                     'response_message': str(e)
-                }
+                })
 
-                return make_response(jsonify(response))
+                response.status_code = 500
+                return response
         else:
-            response = {
+            response = jsonify({
                 'response_message':
                     'Permission required to delete this business!'
-            }
-            return response, 401
+            })
+            response.status_code = 401
+            return response
 
 
 class BusinessCategory(Resource):
@@ -361,26 +487,65 @@ class BusinessCategory(Resource):
             -   businesses
         parameters:
             -   in: query
-                name: q
+                name: category
+                description: business category
+                required: true
                 schema:
-                    $ref: '#/components/schema/StrQueryString'
+                    type: string
             -   in: query
                 name: start
+                description: pagination starting number
+                required: true
                 schema:
-                    $ref: '#/components/schema/IntQueryString'
+                    type: integer
             -   in: query
                 name: limit
+                description: pagination ending number
+                required: true
                 schema:
-                    $ref: '#/components/schema/IntQueryString'
-        security:
-            $ref: '#/components/securitySchemes/BearAuth'
+                    type: integer
+            -   in: header
+                name: authorization
+                description: JSON Web Token
+                type: string
+                required: true
+                x-authentication: Bearer
         responses:
             200:
-                description: OK
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schema/Business'
+                description: A list of dictionaries of businesses
+                schema:
+                    name: business_list
+                    properties:
+                        id:
+                            type: integer
+                            description: a unique business id
+                        name:
+                            type: string
+                            description: a unique business name
+                        category:
+                            type: string
+                            description: used to group businesses
+                        location:
+                            type: string
+                            description: describes physical location
+                        summary:
+                            type: string
+                            description: business description
+                        created_by:
+                            type: integer
+                            description: describes the id of the business owner
+            404:
+                description: Business category not found
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            500:
+                description: Internal server error
+                schema:
+                    properties:
+                        response_message:
+                            type: string
         """
 
         user_request = request.args.get('q')
@@ -406,18 +571,22 @@ class BusinessCategory(Resource):
                 pagination_res = get_paginated_list(business_list,
                                                     '/api/v1/business/search',
                                                     result_start, result_limit)
-                return make_response(jsonify(pagination_res))
+                response = jsonify(pagination_res)
+                response.status_code = 200
+                return response
             except Exception as e:
-                response = {
+                response = jsonify({
                     'response_message': str(e)
-                }
+                })
 
-                return make_response(jsonify(response))
+                response.status_code = 500
+                return response
         else:
-            response = {
+            response = jsonify({
                 'response_message': 'Businesses not found is this category!'
-            }
-            return make_response(jsonify(response))
+            })
+            response.status_code = 404
+            return response
 
 
 class BusinessLocation(Resource):
@@ -432,26 +601,65 @@ class BusinessLocation(Resource):
             -   businesses
         parameters:
             -   in: query
-                name: q
+                name: location
+                description: business location
+                required: true
                 schema:
-                    $ref: '#/components/schema/StrQueryString'
+                    type: string
             -   in: query
                 name: start
+                description: pagination starting number
+                required: true
                 schema:
-                    $ref: '#/components/schema/IntQueryString'
+                    type: integer
             -   in: query
                 name: limit
+                description: pagination ending number
+                required: true
                 schema:
-                    $ref: '#/components/schema/IntQueryString'
-        security:
-            $ref: '#/components/securitySchemes/BearAuth'
+                    type: integer
+            -   in: header
+                name: authorization
+                description: JSON Web Token
+                type: string
+                required: true
+                x-authentication: Bearer
         responses:
             200:
-                description: OK
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schema/Business'
+                description: A list of dictionaries of businesses
+                schema:
+                    name: business_list
+                    properties:
+                        id:
+                            type: integer
+                            description: a unique business id
+                        name:
+                            type: string
+                            description: a unique business name
+                        category:
+                            type: string
+                            description: used to group businesses
+                        location:
+                            type: string
+                            description: describes physical location
+                        summary:
+                            type: string
+                            description: business description
+                        created_by:
+                            type: integer
+                            description: describes the id of the business owner
+            404:
+                description: Business location not found
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            500:
+                description: Internal server error
+                schema:
+                    properties:
+                        response_message:
+                            type: string
         """
 
         user_request = request.args.get('q')
@@ -477,18 +685,22 @@ class BusinessLocation(Resource):
                 pagination_res = get_paginated_list(business_list,
                                                     '/api/v1/business/search',
                                                     result_start, result_limit)
-                return make_response(jsonify(pagination_res))
+                response = jsonify(pagination_res)
+                response.status_code = 200
+                return response
             except Exception as e:
-                response = {
+                response = jsonify({
                     'response_message': str(e)
-                }
+                })
 
-                return make_response(jsonify(response))
+                response.status_code = 500
+                return response
         else:
-            response = {
+            response = jsonify({
                 'response_message': 'Businesses not found in this location!'
-            }
-            return make_response(jsonify(response))
+            })
+            response.status_code = 404
+            return response
 
 
 class SearchBusiness(Resource):
@@ -503,26 +715,65 @@ class SearchBusiness(Resource):
             -   businesses
         parameters:
             -   in: query
-                name: q
+                name: name
+                description: business name
+                required: true
                 schema:
-                    $ref: '#/components/schema/StrQueryString'
+                    type: string
             -   in: query
                 name: start
+                description: pagination starting number
+                required: true
                 schema:
-                    $ref: '#/components/schema/IntQueryString'
+                    type: integer
             -   in: query
                 name: limit
+                description: pagination ending number
+                required: true
                 schema:
-                    $ref: '#/components/schema/IntQueryString'
-        security:
-            $ref: '#/components/securitySchemes/BearAuth'
+                    type: integer
+            -   in: header
+                name: authorization
+                description: JSON Web Token
+                type: string
+                required: true
+                x-authentication: Bearer
         responses:
             200:
-                description: OK
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schema/Business'
+                description: A list of dictionaries of businesses
+                schema:
+                    name: business_list
+                    properties:
+                        id:
+                            type: integer
+                            description: a unique business id
+                        name:
+                            type: string
+                            description: a unique business name
+                        category:
+                            type: string
+                            description: used to group businesses
+                        location:
+                            type: string
+                            description: describes physical location
+                        summary:
+                            type: string
+                            description: business description
+                        created_by:
+                            type: integer
+                            description: describes the id of the business owner
+            404:
+                description: Business not found
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            500:
+                description: Internal server error
+                schema:
+                    properties:
+                        response_message:
+                            type: string
         """
 
         user_request = request.args.get('q')
@@ -548,18 +799,22 @@ class SearchBusiness(Resource):
                 pagination_res = get_paginated_list(business_list,
                                                     '/api/v1/business/search',
                                                     result_start, result_limit)
-                return make_response(jsonify(pagination_res))
+                response = jsonify(pagination_res)
+                response.status_code = 200
+                return response
             except Exception as e:
-                response = {
+                response = jsonify({
                     'response_message': str(e)
-                }
+                })
 
-                return make_response(jsonify(response))
+                response.status_code = 500
+                return response
         else:
-            response = {
+            response = jsonify({
                 'response_message': 'Business not found!'
-            }
-            return make_response(jsonify(response))
+            })
+            response.status_code = 404
+            return response
 
 
 business_api = Blueprint('views.business', __name__)
