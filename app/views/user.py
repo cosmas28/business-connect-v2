@@ -31,18 +31,36 @@ class RegisterUser(Resource):
             -   in: body
                 name: body
                 schema:
-                    $ref: '#/definitions/User'
+                    id: User
+                    required:
+                        - email
+                        - username
+                        - password
+                        - confirm_password
+                    properties:
+                        email:
+                            type: string
+                            description: user email
+                        username:
+                            type: string
+                            description: user username
+                        password:
+                            type: string
+                            description: user password
+                        confirm_password:
+                            type: string
+                            description: user confirmation password
+                        first_name:
+                            type: string
+                            description: user first name
+                        last_name:
+                            type: string
+                            description: user last name
         responses:
             201:
-                description: OK
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                response_message:
-                                    type: string
-                                    description: response message to show successful registration
+                description: User registered
+            406:
+                description: Invalid data, Null required parameters
         """
 
         req_data = request.get_json()
@@ -56,32 +74,40 @@ class RegisterUser(Resource):
         not_valid_password = valid_password(password, confirm_password)
         registered = username_exist(username) or email_exist(email)
         if not email or not username:
-            response_message = {'message': 'Email and Username are required!'}
-            return make_response(jsonify(response_message))
+            response_message = jsonify({
+                'message': 'Email and Username are required!'})
+            response_message.status_code = 406
+            return response_message
         elif not password or not confirm_password:
-            response_message = {
+            response_message = jsonify({
                 'message': 'Password and Confirmation password are required!'
-            }
-            return make_response(jsonify(response_message))
+            })
+            response_message.status_code = 406
+            return response_message
         elif not_valid_password:
-            return make_response(jsonify(not_valid_password))
+            response_message = jsonify(not_valid_password)
+            response_message.status_code = 406
+            return response_message
         if not registered:
             try:
                 user = User(email=email, username=username,
                             first_name=first_name, last_name=last_name,
                             password=password)
                 user.save()
-                response_message = {
+                response_message = jsonify({
                     'message': 'You have successfully created an account!'
-                }
+                })
 
-                return make_response(jsonify(response_message))
+                response_message.status_code = 201
+                return response_message
             except Exception as error:
                 response_message = {'message': str(error)}
                 return make_response(jsonify(response_message))
         else:
-            response_message = {'message': 'User already exists. Sign in!'}
-            return make_response(jsonify(response_message))
+            response_message = jsonify({
+                'message': 'User already exists. Sign in!'})
+            response_message.status_code = 406
+            return response_message
 
 
 class LoginUser(Resource):
@@ -97,27 +123,23 @@ class LoginUser(Resource):
             -   in: body
                 name: body
                 schema:
-                    $ref: '#/definitions/User'
+                    required:
+                        - email
+                        - password
+                    properties:
+                        email:
+                            type: string
+                            description: user email
+                        password:
+                            type: string
+                            description: user password
         responses:
             200:
-                description: OK
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                response_message:
-                                    type: string
-                                    description: message to show successful login
-                                status_code:
-                                    type: integer
-                                    description: HTTP status code
-                                access_token:
-                                    type: string
-                                    description: JSON token for user authorization
-                                refresh_token:
-                                    type: string
-                                    description: refreshed JSON token for user authorization
+                description: Successful login
+            401:
+                description: Invalid login credentials
+            access_token:
+                description: JSON Web Token for authorization
 
         """
         req_data = request.get_json()
@@ -125,11 +147,11 @@ class LoginUser(Resource):
         password = req_data.get('password')
 
         if not email_exist(email):
-            response = {
+            response = jsonify({
                 'response_message': 'Invalid email!',
-                'status_code': 401
-            }
-            return make_response(jsonify(response))
+            })
+            response.status_code = 401
+            return response
 
         user = User.query.filter_by(email=email).first()
         if email_exist(email) and user.check_password(password):
@@ -137,24 +159,24 @@ class LoginUser(Resource):
                 access_token = create_access_token(identity=user.id)
                 refresh_token = create_refresh_token(identity=user.id)
                 if access_token:
-                    response = {
+                    response = jsonify({
                         'response_message': 'You logged in successfully!',
-                        'status_code': 200,
                         'access_token': access_token,
                         'refresh_token': refresh_token
-                    }
-                    return make_response(jsonify(response))
+                    })
+                    response.status_code = 200
+                    return response
             except Exception as error:
                 response = {
                     'response_message': str(error)
                 }
 
                 return make_response(jsonify(response))
-        response = {
-            'response_message': 'Invalid email or password!',
-            'status_code': 401
-        }
-        return make_response(jsonify(response))
+        response = jsonify({
+            'response_message': 'Invalid email or password!'
+        })
+        response.status_code = 401
+        return response
 
 
 class UserLogoutAccess(Resource):
@@ -170,35 +192,24 @@ class UserLogoutAccess(Resource):
             $ref: '#/components/securitySchemes/BearAuth'
         responses:
             200:
-                description: OK
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                response_message:
-                                    type: string
-                                    description: response message to show successful logout
-                                status_code:
-                                    type: integer
-                                    description: HTTP status code
+                description: logout successfully
         """
         jti = get_raw_jwt()['jti']
 
         try:
             revoked_token = RevokedToken(jti)
             revoked_token.save()
-            response = {
-                'response_message': 'Log out has been successful!',
-                'status_code': 200
-            }
-            return make_response(jsonify(response))
+            response = jsonify({
+                'response_message': 'Log out has been successful!'
+            })
+            response.status_code = 200
+            return response
         except Exception as error:
-            response = {
-                'response_message': str(error),
-                'status_code': 500
-            }
-            return make_response(jsonify(response))
+            response = jsonify({
+                'response_message': str(error)
+            })
+            response.status_code = 500
+            return response
 
 
 class UserLogoutRefresh(Resource):
@@ -215,34 +226,25 @@ class UserLogoutRefresh(Resource):
         responses:
             200:
                 description: Log out has been successful!
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                response_message:
-                                    type: string
-                                    description: response message to show successful logout
-                                status_code:
-                                    type: integer
-                                    description: HTTP status code
+            500:
+                description: Internal server error
         """
         jti = get_raw_jwt()['jti']
 
         try:
             revoked_token = RevokedToken(jti)
             revoked_token.save()
-            response = {
-                'response_message': 'Log out has been successful!',
-                'status_code': 200
-            }
-            return make_response(jsonify(response))
+            response = jsonify({
+                'response_message': 'Log out has been successful!'
+            })
+            response.status_code = 200
+            return response
         except Exception as error:
-            response = {
-                'response_message': str(error),
-                'status_code': 500
-            }
-            return make_response(jsonify(response))
+            response = jsonify({
+                'response_message': str(error)
+            })
+            response.status_code = 500
+            return response
 
 
 class TokenRefresh(Resource):
@@ -259,24 +261,17 @@ class TokenRefresh(Resource):
         responses:
             200:
                 description: OK
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                access_token:
-                                    type: string
-                                    description: JSON token for user authorization
         """
 
         current_user = get_jwt_identity()
         access_token = create_refresh_token(identity=current_user)
 
-        response = {
+        response = jsonify({
             'access_token': access_token
-        }
+        })
 
-        return make_response(jsonify(response))
+        response.status_code = 200
+        return response
 
 
 class ResetPassword(Resource):
@@ -292,18 +287,25 @@ class ResetPassword(Resource):
             -   in: body
                 name: body
                 schema:
-                    $ref: '#/definitions/User'
+                    required:
+                        - email
+                        - password
+                        - confirm_password
+                    properties:
+                        email:
+                            type: string
+                            description: user email
+                        password:
+                            type: string
+                            description: user password
+                        confirm_password:
+                            type: string
+                            description: user password confirmation
         responses:
             200:
                 description: Password reset successfully
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                response_message:
-                                    type: string
-                                    description: response message to show password has been reset successful
+            406:
+                description: Invalid data, Null required parameters
         """
         req_data = request.get_json()
         email = req_data.get('email')
@@ -312,30 +314,39 @@ class ResetPassword(Resource):
 
         not_valid_password = valid_password(password, confirm_password)
         if not email:
-            response_message = {'response_message': 'Email is required!'}
-            return make_response(jsonify(response_message))
+            response_message = jsonify({
+                'response_message': 'Email is required!'})
+            response_message.status_code = 406
+            return response_message
         elif not password or not confirm_password:
-            response_message = {'response_message': 'Password is required!'}
-            return make_response(jsonify(response_message))
+            response_message = jsonify({
+                'response_message': 'Password is required!'})
+            response_message.status_code = 406
+            return response_message
         elif not_valid_password:
-            return make_response(jsonify(not_valid_password))
+            response_message = jsonify(not_valid_password)
+            response_message.status_code = 406
+            return response_message
         if email_exist(email):
             try:
                 User.query.filter_by(email=email).update(dict(
                     password=generate_password_hash(password)))
                 db.session.commit()
 
-                response = {
-                    'response_message': 'Password reset successfully!',
-                    'status_code': 200
-                }
-                return make_response(jsonify(response))
+                response = jsonify({
+                    'response_message': 'Password reset successfully!'
+                })
+                response.status_code = 200
+                return response
             except Exception as error:
-                response_message = {'message': str(error)}
-                return make_response(jsonify(response_message))
+                response_message = jsonify({'message': str(error)})
+                response_message.status_code = 500
+                return response_message
         else:
-            response_message = {'response_message': 'Email not registered'}
-            return make_response(jsonify(response_message))
+            response_message = jsonify({
+                'response_message': 'Email not registered'})
+            response_message.status_code = 406
+            return response_message
 
 
 user_api = Blueprint('views.user', __name__)
