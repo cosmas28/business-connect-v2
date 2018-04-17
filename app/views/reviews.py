@@ -5,7 +5,7 @@ reviews and view reviews fo a single business.
 
 """
 
-from flask import Blueprint, request, make_response, jsonify
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, Api
 
@@ -23,36 +23,63 @@ class BusinessReviews(Resource):
         tags:
             -   business reviews
         parameters:
-            -   in: body
-                name: body
+            -   in: path
+                name: business id
+                required: true
+                description: a unique business id
                 schema:
-                    $ref: '#/definitions/User'
-        security:
-            $ref: '#/components/securitySchemes/BearAuth'
+                    type: integer
+            -   in: header
+                name: authorization
+                description: JSON Web Token
+                type: string
+                required: true
+                x-authentication: Bearer
+            -   in: body
+                name: review
+                required: true
+                schema:
+                    required:
+                        - review
+                    properties:
+                        review:
+                            type: string
+                            description: Business review
         responses:
             201:
-                description: Created
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                response_message:
-                                    type: string
-                                    description: message to show review has been added successfully
+                description: Review added
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            404:
+                description: Business is not registered
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            500:
+                description: Internal server error
+                schema:
+                    properties:
+                        response_message:
+                            type: string
         """
         request_data = request.get_json(force=True)
         business_review = request_data.get('review')
         created_by = get_jwt_identity()
 
         if not business_id:
-            response = {
+            response = jsonify({
                 'response_message': 'Business not registered!'
-            }
-            return make_response(jsonify(response)), 404
+            })
+            response.status_code = 404
+            return response
         if not business_review:
-            response_text = 'Review field is required!'
-            return {'response_message': response_text}, 406
+            response = jsonify({
+                'response_message': 'Review field is required!'})
+            response.status_code = 406
+            return response
 
         business = Business.query.filter_by(id=business_id).first()
 
@@ -61,19 +88,23 @@ class BusinessReviews(Resource):
                 review = Reviews(business_review, business_id, created_by)
                 review.save()
 
-                response = {
+                response = jsonify({
                     'response_message': 'Review has been added successfully!'
-                }
+                })
 
-                return make_response(jsonify(response))
+                response.status_code = 201
+                return response
             except Exception as error:
-                response_message = {'response_message': str(error)}
-                return make_response(jsonify(response_message))
+                response = jsonify({
+                    'response_message': str(error)})
+                response.status_code = 500
+                return response
         else:
-            response = {
+            response = jsonify({
                 'response_message': 'Business not registered!'
-            }
-            return make_response(jsonify(response))
+            })
+            response.status_code = 404
+            return response
 
     @jwt_required
     def get(self, business_id):
@@ -87,35 +118,55 @@ class BusinessReviews(Resource):
                 required: true
                 type: integer
                 description: a unique business id
-        security:
-            $ref: '#/components/securitySchemes/BearAuth'
+            -   in: header
+                name: authorization
+                description: JSON Web Token
+                type: string
+                required: true
+                x-authentication: Bearer
         responses:
             200:
-                description: OK
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                id:
-                                    type: integer
-                                    description: a unique business id
-                                review:
-                                    type: string
-                                    description: review description
-                                reviewed_by:
-                                    type: integer
-                                    description: describes the id of the user who reviewed
+                description: A dictionary of business reviews
+                schema:
+                    properties:
+                        id:
+                            type: integer
+                            description: a unique review id
+                        review:
+                            type: string
+                            description: a business review
+                        reviewed_by:
+                            type: integer
+                            description: user id of the user who reviewed
+            404:
+                description: Business is not registered
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            204:
+                description: Business have not reviews
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            500:
+                description: Internal server error
+                schema:
+                    properties:
+                        response_message:
+                            type: string
 
         """
         if not business_id:
             return 404
         business = Business.query.filter_by(id=business_id).first()
         if business is None:
-            response = {
+            response = jsonify({
                 'response_message': 'Business id is not registered!'
-            }
-            return make_response(jsonify(response))
+            })
+            response.status_code = 404
+            return response
         business_reviews = Reviews.query.filter_by(
             review_for=business_id).all()
 
@@ -130,19 +181,23 @@ class BusinessReviews(Resource):
                         'reviewed_by': _review.reviewed_by,
                     }
                     _reviews.append(_object)
+                response = jsonify(reviews_list=_reviews)
 
-                return make_response(jsonify(reviews_list=_reviews))
-            except Exception as e:
-                response = {
-                    'response_message': str(e)
-                }
+                response.status_code = 200
+                return response
+            except Exception as error:
+                response = jsonify({
+                    'response_message': str(error)
+                })
 
-                return make_response(jsonify(response))
+                response.status_code = 500
+                return response
         else:
-            response = {
+            response = jsonify({
                 'response_message': 'Business have no reviews!'
-            }
-            return make_response(jsonify(response))
+            })
+            response.status_code = 204
+            return response
 
 
 reviews_api = Blueprint('views.reviews', __name__)
