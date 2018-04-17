@@ -293,9 +293,7 @@ class DeleteBusinessTest(AbstractTest):
             '/api/v2/businesses/1',
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(
-            json.loads(response.data.decode())['response_message'],
-            'Business has been deleted successfully!')
+        self.assertEqual(response.status_code, 204)
 
 
 class BusinessCategoryTest(AbstractTest):
