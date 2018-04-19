@@ -22,10 +22,12 @@ def valid_password(password, confirm_password):
     """Check whether the password have more than 6 characters."""
 
     if len(password) <= 6:
-        response_message = {'message': 'Password must be more than 6 characters!'}
+        response_message = {
+            'message': 'Password must be more than 6 characters!'}
         return response_message
     if password not in confirm_password:
-        response_message = {'message': 'Password does not match the confirmation password!'}
+        response_message = {
+            'message': 'Password does not match the confirmation password!'}
         return response_message
 
 
@@ -44,6 +46,17 @@ def business_name_registered(name):
 
 
 def get_paginated_list(business_list, url, start, limit):
+    """Check whether the business is already registered.
+
+    Args:
+        business_list(list): a list of business recodes.
+        url(str): API endpoint url
+        start(int): beginning index of a list
+        limit(int): ending index of a list
+
+    Returns:
+        A dictionary of business records.
+    """
     count = len(business_list)
     _object = {}
     _object['start'] = start
@@ -55,7 +68,8 @@ def get_paginated_list(business_list, url, start, limit):
     else:
         start_copy = max(1, start - limit)
         limit_copy = start - 1
-        _object['previous'] = url + '?start=%d&limit=%d' % (start_copy, limit_copy)
+        _object['previous'] = \
+            url + '?start=%d&limit=%d' % (start_copy, limit_copy)
 
     if start + limit > count:
         _object['next'] = ''
@@ -65,4 +79,3 @@ def get_paginated_list(business_list, url, start, limit):
     _object['business_list'] = business_list[(start - 1):(start - 1 + limit)]
 
     return _object
-

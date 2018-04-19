@@ -1,6 +1,8 @@
 # config.py
+"""Define configuration for different development stages."""
 
 import os
+
 
 class Config(object):
     """Parent configuration class."""
@@ -20,9 +22,11 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
+    """Configuration for testing stage."""
     DEBUG = True
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = "postgresql://test_user:default@localhost/test_db"
+    SQLALCHEMY_DATABASE_URI = \
+        "postgresql://test_user:default@localhost/test_db"
 
 
 class StagingConfig(Config):
@@ -32,6 +36,7 @@ class StagingConfig(Config):
 
 
 class ProductionConfig(Config):
+    """Configuration for production stage."""
     DEBUG = False
     TESTING = False
 

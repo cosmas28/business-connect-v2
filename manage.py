@@ -1,3 +1,5 @@
+"""Define commands to run the server and migration."""
+
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
@@ -13,6 +15,7 @@ manager = Manager(app)
 swagger = Swagger(app)
 
 manager.add_command('db', MigrateCommand)
+
 
 @manager.shell
 def make_shell_context():
