@@ -3,6 +3,7 @@
 import os
 
 from flask_script import Manager
+from flask import redirect
 from flask_migrate import Migrate, MigrateCommand
 
 from flasgger import Swagger
@@ -17,6 +18,15 @@ manager = Manager(app)
 swagger = Swagger(app)
 
 manager.add_command('db', MigrateCommand)
+
+
+@app.route('/')
+def index():
+    """Application homepage.
+        :return
+            Redirect to Application API documentation
+    """
+    return redirect('/apidocs')
 
 
 @manager.shell
