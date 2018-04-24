@@ -39,6 +39,7 @@ class ProductionConfig(Config):
     """Configuration for production stage."""
     DEBUG = False
     TESTING = False
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
 
 
 app_config = {

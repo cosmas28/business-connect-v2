@@ -11,19 +11,12 @@ from app.views.user import user_api
 from config import app_config
 
 
-def init_heroku(app):
-    app.config.update(
-        SQLALCHEMY_DATABASE_URI=os.environ['DATABASE_URL']
-    )
-
-
 def create_app(config_object):
 
     app = Flask(__name__, instance_relative_config=True)
     CORS(app)
     app.config.from_object(app_config[config_object])
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    init_heroku(app)
 
     db.init_app(app)
 
