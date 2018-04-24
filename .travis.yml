@@ -15,6 +15,6 @@ script:
   - nosetests --exe --with-coverage --cover-package=app
   - coveralls
 branches:
-  only: develop
+  only: master
 after_success:
   - "coveralls"
