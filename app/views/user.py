@@ -146,6 +146,12 @@ class LoginUser(Resource):
                 description: Successful login
                 schema:
                     properties:
+                        access_token:
+                            type: string
+                        refresh_token:
+                            type: string
+                        user_id:
+                            type: integer
                         response_message:
                             type: string
             401:
@@ -154,18 +160,6 @@ class LoginUser(Resource):
                     properties:
                         response_message:
                             type: string
-            access_token:
-                description: JSON Web Token for authorization
-                schema:
-                    properties:
-                        access_token:
-                            type: string
-            user_id:
-                description: Logged in user id
-                schema:
-                    properties:
-                        user_id:
-                            type: integer
 
         """
         req_data = request.get_json()
