@@ -10,6 +10,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, Api
 
 from app.models import Business
+from app.models import User
 from app.models import db
 from app.helper_functions import business_name_registered, get_paginated_list
 
@@ -478,6 +479,95 @@ class OneBusiness(Resource):
             return response
 
 
+class UserBusiness(Resource):
+
+    """Illustrate API endpoints to manipulate one user business."""
+
+    @jwt_required
+    def get(self, user_id):
+        """view a registered business by user id.
+        ---
+        tags:
+            -   businesses
+        parameters:
+            -   in: path
+                name: user id
+                required: true
+                description: a unique user id
+                schema:
+                    type: integer
+            -   in: header
+                name: authorization
+                description: JSON Web Token
+                type: string
+                required: true
+                x-authentication: Bearer
+        responses:
+            200:
+                description: A dictionary of business data
+                schema:
+                    properties:
+                        id:
+                            type: integer
+                            description: a unique business id
+                        name:
+                            type: string
+                            description: a unique business name
+                        category:
+                            type: string
+                            description: used to group businesses
+                        location:
+                            type: string
+                            description: describes physical location
+                        summary:
+                            type: string
+                            description: business description
+                        created_by:
+                            type: string
+                            description: username of the business owner
+            404:
+                description: User is not registered
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            500:
+                description: Internal server error
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+        """
+        user = User.query.filter_by(id=user_id).first()
+        if user:
+            business = Business.query.filter_by(created_by=user_id).first()
+            try:
+                business_object = jsonify({
+                    'id': business.id,
+                    'name': business.name,
+                    'category': business.category,
+                    'location': business.location,
+                    'summary': business.summary,
+                    'created_by': user.username
+                })
+
+                business_object.status_code = 200
+                return business_object
+            except Exception as e:
+                response = jsonify({
+                    'response_message': str(e)
+                })
+
+                response.status_code = 500
+                return response
+        else:
+            response = jsonify({
+                'response_message': 'User is not registered!'
+            })
+            response.status_code = 404
+            return response
+
+
 class BusinessCategory(Resource):
 
     """Illustrate API endpoints to view businesses with the same category."""
@@ -825,6 +915,8 @@ api = Api(business_api)
 api.add_resource(Businesses, '/businesses', endpoint='businesses')
 api.add_resource(OneBusiness,
                  '/businesses/<int:business_id>', endpoint='business')
+api.add_resource(UserBusiness,
+                 '/businesses/user/<int:user_id>', endpoint='user_business')
 api.add_resource(BusinessCategory, '/businesses/category', endpoint='category')
 api.add_resource(BusinessLocation, '/businesses/location', endpoint='location')
 api.add_resource(SearchBusiness, '/businesses/search', endpoint='search')
