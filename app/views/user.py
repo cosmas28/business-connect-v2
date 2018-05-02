@@ -58,9 +58,17 @@ class RegisterUser(Resource):
                             description: user last name
         responses:
             201:
-                description: User registered
+                description: You have successfully created an account!
+                schema:
+                    properties:
+                        message:
+                            type: string
             406:
                 description: Invalid data, Null required parameters
+                schema:
+                    properties:
+                        message:
+                            type: string
         """
 
         req_data = request.get_json()
@@ -136,10 +144,22 @@ class LoginUser(Resource):
         responses:
             200:
                 description: Successful login
+                schema:
+                    properties:
+                        response_message:
+                            type: string
             401:
                 description: Invalid login credentials
+                schema:
+                    properties:
+                        response_message:
+                            type: string
             access_token:
                 description: JSON Web Token for authorization
+                schema:
+                    properties:
+                        access_token:
+                            type: string
 
         """
         req_data = request.get_json()
@@ -261,6 +281,10 @@ class TokenRefresh(Resource):
         responses:
             200:
                 description: OK
+                schema:
+                    properties:
+                        access_token:
+                            type: string
         """
 
         current_user = get_jwt_identity()
@@ -304,8 +328,16 @@ class ResetPassword(Resource):
         responses:
             200:
                 description: Password reset successfully
+                schema:
+                    properties:
+                        response_message:
+                            type: string
             406:
                 description: Invalid data, Null required parameters
+                schema:
+                    properties:
+                        response_message:
+                            type: string
         """
         req_data = request.get_json()
         email = req_data.get('email')
