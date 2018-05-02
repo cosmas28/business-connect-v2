@@ -228,6 +228,39 @@ class ViewBusinessTest(AbstractTest):
         self.assertIn('Palmer Tech', str(response.data))
 
 
+class ViewUserBusinessTest(AbstractTest):
+    """Test cases for viewing one business by user id."""
+
+    def test_view_unregistered(self):
+        """Test view business by unregistered user
+        using get request for UserBusiness class view."""
+        access_token = json.loads(
+            self.authenticate_user().data.decode())['access_token']
+        user_id = 4
+        self.register_business(access_token)
+
+        response = self.run_app.get(
+            '/api/v2/businesses/user/{}'.format(user_id),
+            headers=dict(Authorization='Bearer ' + access_token))
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_view_successful(self):
+        """Test view a registered business successfully
+        using get request for UserBusiness class view."""
+        access_token = json.loads(
+            self.authenticate_user().data.decode())['access_token']
+        user_id = json.loads(
+            self.authenticate_user().data.decode())['user_id']
+        self.register_business(access_token)
+
+        response = self.run_app.get(
+            '/api/v2/businesses/user/{}'.format(user_id),
+            headers=dict(Authorization='Bearer ' + access_token))
+
+        self.assertIn('Palmer Tech', str(response.data))
+
+
 class UpdateBusinessTest(AbstractTest):
     """Test cases for updating a business."""
 
