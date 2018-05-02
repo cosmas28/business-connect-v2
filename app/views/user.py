@@ -160,6 +160,12 @@ class LoginUser(Resource):
                     properties:
                         access_token:
                             type: string
+            user_id:
+                description: Logged in user id
+                schema:
+                    properties:
+                        user_id:
+                            type: integer
 
         """
         req_data = request.get_json()
@@ -182,7 +188,8 @@ class LoginUser(Resource):
                     response = jsonify({
                         'response_message': 'You logged in successfully!',
                         'access_token': access_token,
-                        'refresh_token': refresh_token
+                        'refresh_token': refresh_token,
+                        'user_id': user.id
                     })
                     response.status_code = 200
                     return response
