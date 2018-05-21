@@ -382,7 +382,7 @@ class ResetPassword(Resource):
             return response_message
 
 
-user_api = Blueprint('views.user', __name__)
+user_api = Blueprint('users.views', __name__)
 api = Api(user_api)
 api.add_resource(RegisterUser, '/register', endpoint='register')
 api.add_resource(LoginUser, '/login', endpoint='login')
