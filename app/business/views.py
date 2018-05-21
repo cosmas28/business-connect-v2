@@ -910,7 +910,7 @@ class SearchBusiness(Resource):
             return response
 
 
-business_api = Blueprint('views.business', __name__)
+business_api = Blueprint('business.views', __name__)
 api = Api(business_api)
 api.add_resource(Businesses, '/businesses', endpoint='businesses')
 api.add_resource(OneBusiness,

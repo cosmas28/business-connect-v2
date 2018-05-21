@@ -4,9 +4,9 @@ from flask_cors import CORS
 
 from app.models import RevokedToken
 from app.models import db
-from app.views.business import business_api
-from app.views.reviews import reviews_api
-from app.views.user import user_api
+from app.business.views import business_api
+from app.reviews.views import reviews_api
+from app.users.views import user_api
 
 from config import app_config
 
