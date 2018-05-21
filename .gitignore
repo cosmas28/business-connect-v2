@@ -3,3 +3,8 @@
 .idea
 instance
 migrations
+.DS_Store
+.coverage
+.vscode/
+app/.DS_Store
+.pytest_cache/v/cache/lastfailed
