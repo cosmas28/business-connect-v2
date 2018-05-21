@@ -8,7 +8,6 @@ view a single business, view all businesses.
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, Api
-from sqlalchemy import or_
 
 from app.models import Business
 from app.models import User
