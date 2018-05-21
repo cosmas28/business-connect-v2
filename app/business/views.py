@@ -8,6 +8,7 @@ view a single business, view all businesses.
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, Api
+from sqlalchemy import or_
 
 from app.models import Business
 from app.models import User
@@ -570,232 +571,6 @@ class UserBusiness(Resource):
             return response
 
 
-class BusinessCategory(Resource):
-
-    """Illustrate API endpoints to view businesses with the same category."""
-
-    @jwt_required
-    def get(self):
-        """View registered businesses based on category.
-        ---
-        tags:
-            -   businesses
-        parameters:
-            -   in: query
-                name: category
-                description: business category
-                required: true
-                schema:
-                    type: string
-            -   in: query
-                name: start
-                description: pagination starting number
-                required: true
-                schema:
-                    type: integer
-            -   in: query
-                name: limit
-                description: pagination ending number
-                required: true
-                schema:
-                    type: integer
-            -   in: header
-                name: authorization
-                description: JSON Web Token
-                type: string
-                required: true
-                x-authentication: Bearer
-        responses:
-            200:
-                description: A list of dictionaries of businesses
-                schema:
-                    name: business_list
-                    properties:
-                        id:
-                            type: integer
-                            description: a unique business id
-                        name:
-                            type: string
-                            description: a unique business name
-                        category:
-                            type: string
-                            description: used to group businesses
-                        location:
-                            type: string
-                            description: describes physical location
-                        summary:
-                            type: string
-                            description: business description
-                        created_by:
-                            type: integer
-                            description: describes the id of the business owner
-            404:
-                description: Business category not found
-                schema:
-                    properties:
-                        response_message:
-                            type: string
-            500:
-                description: Internal server error
-                schema:
-                    properties:
-                        response_message:
-                            type: string
-        """
-
-        user_request = request.args.get('q')
-        result_start = int(request.args.get('start'))
-        result_limit = int(request.args.get('limit'))
-        businesses = Business.query.filter_by(category=user_request).all()
-        if businesses:
-            try:
-
-                business_list = []
-
-                for business in businesses:
-                    _object = {
-                        'id': business.id,
-                        'name': business.name,
-                        'category': business.category,
-                        'location': business.location,
-                        'summary': business.summary,
-                        'created_by': business.created_by
-                    }
-                    business_list.append(_object)
-
-                pagination_res = get_paginated_list(business_list,
-                                                    '/api/v1/business/search',
-                                                    result_start, result_limit)
-                response = jsonify(pagination_res)
-                response.status_code = 200
-                return response
-            except Exception as e:
-                response = jsonify({
-                    'response_message': str(e),
-                    'status_code': 500
-                })
-                return response
-        else:
-            response = jsonify({
-                'response_message': 'Businesses not found is this category!',
-                'status_code': 404
-            })
-            return response
-
-
-class BusinessLocation(Resource):
-
-    """Illustrate API endpoints to view businesses in the same location."""
-
-    @jwt_required
-    def get(self):
-        """View registered businesses based on location.
-        ---
-        tags:
-            -   businesses
-        parameters:
-            -   in: query
-                name: location
-                description: business location
-                required: true
-                schema:
-                    type: string
-            -   in: query
-                name: start
-                description: pagination starting number
-                required: true
-                schema:
-                    type: integer
-            -   in: query
-                name: limit
-                description: pagination ending number
-                required: true
-                schema:
-                    type: integer
-            -   in: header
-                name: authorization
-                description: JSON Web Token
-                type: string
-                required: true
-                x-authentication: Bearer
-        responses:
-            200:
-                description: A list of dictionaries of businesses
-                schema:
-                    name: business_list
-                    properties:
-                        id:
-                            type: integer
-                            description: a unique business id
-                        name:
-                            type: string
-                            description: a unique business name
-                        category:
-                            type: string
-                            description: used to group businesses
-                        location:
-                            type: string
-                            description: describes physical location
-                        summary:
-                            type: string
-                            description: business description
-                        created_by:
-                            type: integer
-                            description: describes the id of the business owner
-            404:
-                description: Business location not found
-                schema:
-                    properties:
-                        response_message:
-                            type: string
-            500:
-                description: Internal server error
-                schema:
-                    properties:
-                        response_message:
-                            type: string
-        """
-
-        user_request = request.args.get('q')
-        result_start = int(request.args.get('start'))
-        result_limit = int(request.args.get('limit'))
-
-        businesses = Business.query.filter_by(location=user_request).all()
-        if businesses:
-            try:
-                business_list = []
-
-                for business in businesses:
-                    _object = {
-                        'id': business.id,
-                        'name': business.name,
-                        'category': business.category,
-                        'location': business.location,
-                        'summary': business.summary,
-                        'created_by': business.created_by
-                    }
-                    business_list.append(_object)
-
-                pagination_res = get_paginated_list(business_list,
-                                                    '/api/v1/business/search',
-                                                    result_start, result_limit)
-                response = jsonify(pagination_res)
-                response.status_code = 200
-                return response
-            except Exception as e:
-                response = jsonify({
-                    'response_message': str(e),
-                    'status_code': 500
-                })
-                return response
-        else:
-            response = jsonify({
-                'response_message': 'Businesses not found in this location!',
-                'status_code': 404
-            })
-            return response
-
-
 class SearchBusiness(Resource):
 
     """Illustrate API endpoints to search businesses."""
@@ -809,7 +584,7 @@ class SearchBusiness(Resource):
         parameters:
             -   in: query
                 name: name
-                description: business name
+                description: business name/category/location
                 required: true
                 schema:
                     type: string
@@ -872,9 +647,24 @@ class SearchBusiness(Resource):
         user_request = request.args.get('q')
         result_start = int(request.args.get('start'))
         result_limit = int(request.args.get('limit'))
-        businesses = Business.query.filter(
+        is_found = False
+        businesses = None
+        by_name = Business.query.filter(
             Business.name.startswith(user_request)).all()
-        if businesses:
+        by_category = Business.query.filter(
+            Business.category.startswith(user_request)).all()
+        by_location = Business.query.filter(
+            Business.location.startswith(user_request)).all()
+        if by_name:
+            is_found = True
+            businesses = by_name
+        elif by_category:
+            is_found = True
+            businesses = by_category
+        elif by_location:
+            is_found = True
+            businesses = by_location
+        if is_found:
             try:
                 business_list = []
 
@@ -916,6 +706,4 @@ api.add_resource(OneBusiness,
                  '/businesses/<int:business_id>', endpoint='business')
 api.add_resource(UserBusiness,
                  '/businesses/user/<int:user_id>', endpoint='user_business')
-api.add_resource(BusinessCategory, '/businesses/category', endpoint='category')
-api.add_resource(BusinessLocation, '/businesses/location', endpoint='location')
 api.add_resource(SearchBusiness, '/businesses/search', endpoint='search')
