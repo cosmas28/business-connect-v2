@@ -83,14 +83,14 @@ class RegisterUser(Resource):
         registered = username_exist(username) or email_exist(email)
         if not email or not username:
             response_message = jsonify({
-                'message': 'Email and Username are required!'})
-            response_message.status_code = 406
+                'message': 'Email and Username are required!',
+                'status_code': 406})
             return response_message
         elif not password or not confirm_password:
             response_message = jsonify({
-                'message': 'Password and Confirmation password are required!'
+                'message': 'Password and Confirmation password are required!',
+                'status_code': 406
             })
-            response_message.status_code = 406
             return response_message
         elif not_valid_password:
             response_message = jsonify(not_valid_password)
@@ -103,18 +103,17 @@ class RegisterUser(Resource):
                             password=password)
                 user.save()
                 response_message = jsonify({
-                    'message': 'You have successfully created an account!'
+                    'message': 'You have successfully created an account!',
+                    'status_code': 201
                 })
-
-                response_message.status_code = 201
                 return response_message
             except Exception as error:
                 response_message = {'message': str(error)}
                 return make_response(jsonify(response_message))
         else:
             response_message = jsonify({
-                'message': 'User already exists. Sign in!'})
-            response_message.status_code = 406
+                'message': 'User already exists. Sign in!',
+                'status_code': 406})
             return response_message
 
 
@@ -169,23 +168,21 @@ class LoginUser(Resource):
         if not email_exist(email):
             response = jsonify({
                 'response_message': 'Invalid email!',
+                'status_code': 401
             })
-            response.status_code = 401
             return response
 
         user = User.query.filter_by(email=email).first()
         if email_exist(email) and user.check_password(password):
             try:
                 access_token = create_access_token(identity=user.id)
-                refresh_token = create_refresh_token(identity=user.id)
                 if access_token:
                     response = jsonify({
                         'response_message': 'You logged in successfully!',
                         'access_token': access_token,
-                        'refresh_token': refresh_token,
-                        'user_id': user.id
+                        'user_id': user.id,
+                        'status_code': 200
                     })
-                    response.status_code = 200
                     return response
             except Exception as error:
                 response = {
@@ -194,9 +191,9 @@ class LoginUser(Resource):
 
                 return make_response(jsonify(response))
         response = jsonify({
-            'response_message': 'Invalid email or password!'
+            'response_message': 'Invalid email or password!',
+            'status_code': 401
         })
-        response.status_code = 401
         return response
 
 
@@ -221,15 +218,15 @@ class UserLogoutAccess(Resource):
             revoked_token = RevokedToken(jti)
             revoked_token.save()
             response = jsonify({
-                'response_message': 'Log out has been successful!'
+                'response_message': 'Log out has been successful!',
+                'status_code': 200
             })
-            response.status_code = 200
             return response
         except Exception as error:
             response = jsonify({
-                'response_message': str(error)
+                'response_message': str(error),
+                'status_code': 500
             })
-            response.status_code = 500
             return response
 
 
@@ -256,15 +253,15 @@ class UserLogoutRefresh(Resource):
             revoked_token = RevokedToken(jti)
             revoked_token.save()
             response = jsonify({
-                'response_message': 'Log out has been successful!'
+                'response_message': 'Log out has been successful!',
+                'status_code': 200
             })
-            response.status_code = 200
             return response
         except Exception as error:
             response = jsonify({
-                'response_message': str(error)
+                'response_message': str(error),
+                'status_code': 500
             })
-            response.status_code = 500
             return response
 
 
@@ -292,10 +289,9 @@ class TokenRefresh(Resource):
         access_token = create_refresh_token(identity=current_user)
 
         response = jsonify({
-            'access_token': access_token
+            'access_token': access_token,
+            'status_code': 200
         })
-
-        response.status_code = 200
         return response
 
 
@@ -348,13 +344,13 @@ class ResetPassword(Resource):
         not_valid_password = valid_password(password, confirm_password)
         if not email:
             response_message = jsonify({
-                'response_message': 'Email is required!'})
-            response_message.status_code = 406
+                'response_message': 'Email is required!',
+                'status_code': 406})
             return response_message
         elif not password or not confirm_password:
             response_message = jsonify({
-                'response_message': 'Password is required!'})
-            response_message.status_code = 406
+                'response_message': 'Password is required!',
+                'status_code': 406})
             return response_message
         elif not_valid_password:
             response_message = jsonify(not_valid_password)
@@ -367,18 +363,19 @@ class ResetPassword(Resource):
                 db.session.commit()
 
                 response = jsonify({
-                    'response_message': 'Password reset successfully!'
+                    'response_message': 'Password reset successfully!',
+                    'status_code': 200
                 })
-                response.status_code = 200
                 return response
             except Exception as error:
-                response_message = jsonify({'message': str(error)})
-                response_message.status_code = 500
+                response_message = jsonify({
+                    'message': str(error),
+                    'status_code': 500})
                 return response_message
         else:
             response_message = jsonify({
-                'response_message': 'Email not registered'})
-            response_message.status_code = 406
+                'response_message': 'Email not registered',
+                'status_code': 406})
             return response_message
 
 

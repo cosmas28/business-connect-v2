@@ -222,7 +222,7 @@ class LoginUserTest(AbstractTest):
         json_res = json.loads(login_response.data.decode())
         self.assertEqual(json_res['response_message'],
                          'Invalid email or password!')
-        self.assertEqual(login_response.status_code, 401)
+        self.assertEqual(json_res['status_code'], 401)
 
     def test_login_successful(self):
         """Test login successfully with correct credentials
@@ -268,33 +268,6 @@ class LogoutAccessTest(AbstractTest):
         logout_res = self.run_app.post(
             '/api/v2/auth/logout',
             headers=dict(Authorization='Bearer ' + access_token))
-        self.assertEqual(logout_res.status_code, 200)
-        self.assertEqual(
-            json.loads(logout_res.data.decode())['response_message'],
-            'Log out has been successful!')
-
-
-class LogoutRefreshTest(AbstractTest):
-    """Test suite for user logout using a refresh token."""
-
-    def test_logout_successful(self):
-        """Test logout successfully using refresh token
-        using post request for UserLogoutRefresh class view."""
-
-        self.run_app.post('/api/v2/auth/register',
-                          data=self.user_data, headers=self.headers)
-
-        login_data = json.dumps({'email': 'test2@andela.com',
-                                 'password': 'andela2018'})
-        login_response = self.run_app.post('/api/v2/auth/login',
-                                           data=login_data,
-                                           headers=self.headers)
-        refresh_token = json.loads(
-            login_response.data.decode())['refresh_token']
-
-        logout_res = self.run_app.post(
-            '/api/v2/auth/logout_refresh_token',
-            headers=dict(Authorization='Bearer ' + refresh_token))
         self.assertEqual(logout_res.status_code, 200)
         self.assertEqual(
             json.loads(logout_res.data.decode())['response_message'],

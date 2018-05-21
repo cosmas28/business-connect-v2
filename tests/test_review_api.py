@@ -100,7 +100,8 @@ class BusinessReviewsTest(unittest.TestCase):
             '/api/v2/businesses/1/reviews', data=review,
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(review_res.status_code, 406)
+        self.assertEqual(
+            json.loads(review_res.data.decode())['status_code'], 406)
 
     def test_add_successful(self):
         """Test business reviewed successfully
@@ -131,7 +132,8 @@ class BusinessReviewsTest(unittest.TestCase):
             '/api/v2/businesses/2/reviews',
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(review_res.status_code, 404)
+        self.assertEqual(
+            json.loads(review_res.data.decode())['status_code'], 404)
 
     def test_view_successful(self):
         """Test view a business reviews successfully

@@ -71,14 +71,14 @@ class BusinessReviews(Resource):
 
         if not business_id:
             response = jsonify({
-                'response_message': 'Business not registered!'
+                'response_message': 'Business not registered!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
         if not business_review:
             response = jsonify({
-                'response_message': 'Review field is required!'})
-            response.status_code = 406
+                'response_message': 'Review field is required!',
+                'status_code': 406})
             return response
 
         business = Business.query.filter_by(id=business_id).first()
@@ -89,21 +89,20 @@ class BusinessReviews(Resource):
                 review.save()
 
                 response = jsonify({
-                    'response_message': 'Review has been added successfully!'
+                    'response_message': 'Review has been added successfully!',
+                    'status_code': 201
                 })
-
-                response.status_code = 201
                 return response
             except Exception as error:
                 response = jsonify({
-                    'response_message': str(error)})
-                response.status_code = 500
+                    'response_message': str(error),
+                    'status_code': 500})
                 return response
         else:
             response = jsonify({
-                'response_message': 'Business not registered!'
+                'response_message': 'Business not registered!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
 
     @jwt_required
@@ -163,9 +162,9 @@ class BusinessReviews(Resource):
         business = Business.query.filter_by(id=business_id).first()
         if business is None:
             response = jsonify({
-                'response_message': 'Business id is not registered!'
+                'response_message': 'Business id is not registered!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
         business_reviews = Reviews.query.filter_by(
             review_for=business_id).all()
@@ -187,16 +186,15 @@ class BusinessReviews(Resource):
                 return response
             except Exception as error:
                 response = jsonify({
-                    'response_message': str(error)
+                    'response_message': str(error),
+                    'status_code': 500
                 })
-
-                response.status_code = 500
                 return response
         else:
             response = jsonify({
-                'response_message': 'Business have no reviews!'
+                'response_message': 'Business have no reviews!',
+                'status_code': 204
             })
-            response.status_code = 204
             return response
 
 
