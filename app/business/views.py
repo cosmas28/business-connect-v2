@@ -537,24 +537,31 @@ class UserBusiness(Resource):
         user = User.query.filter_by(id=user_id).first()
         if user:
             business = Business.query.filter_by(created_by=user_id).first()
-            try:
-                business_object = jsonify({
-                    'id': business.id,
-                    'name': business.name,
-                    'category': business.category,
-                    'location': business.location,
-                    'summary': business.summary,
-                    'created_by': user.username
-                })
+            if business:
+                try:
+                    business_object = jsonify({
+                        'id': business.id,
+                        'name': business.name,
+                        'category': business.category,
+                        'location': business.location,
+                        'summary': business.summary,
+                        'created_by': user.username
+                    })
 
-                business_object.status_code = 200
-                return business_object
-            except Exception as e:
+                    business_object.status_code = 200
+                    return business_object
+                except Exception as e:
+                    response = jsonify({
+                        'response_message': str(e),
+                        'status_code': 500
+                    })
+                    return response
+            else:
                 response = jsonify({
-                    'response_message': str(e),
-                    'status_code': 500
+                    'response_message': 'You have not registered a business!',
+                    'status_code': 204
                 })
-                return response
+            return response
         else:
             response = jsonify({
                 'response_message': 'User is not registered!',
