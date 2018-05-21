@@ -82,7 +82,8 @@ class BusinessReviewsTest(unittest.TestCase):
             '/api/v2/businesses/reviews', data=review,
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(review_res.status_code, 404)
+        self.assertEqual(
+            json.loads(review_res.data.decode())['status_code'], 404)
 
     def test_add_null_review(self):
         """Test business review with null review
@@ -126,10 +127,8 @@ class BusinessReviewsTest(unittest.TestCase):
 
         self.register_business(access_token)
 
-        review = json.dumps({
-            'review': 'The future of AI is very bright, mostly in security'})
         review_res = self.run_app.get(
-            '/api/v2/businesses/reviews', data=review,
+            '/api/v2/businesses/2/reviews',
             headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertEqual(review_res.status_code, 404)
