@@ -77,17 +77,17 @@ class Businesses(Resource):
 
         if not business_name or not business_summary:
             response = jsonify({
-               'response_message': 'Business name and '
-                                   'description are required!'
+               'response_message':
+               'Business name and description are required!',
+               'status_code': 406
             })
-            response.status_code = 406
             return response
         if not business_location or not business_category:
             response = jsonify({
                 'response_message':
-                    'Business location and category are required!'
+                    'Business location and category are required!',
+                'status_code': 406
             })
-            response.status_code = 406
             return response
         if not business_name_registered(business_name):
             try:
@@ -98,19 +98,20 @@ class Businesses(Resource):
 
                 response = jsonify({
                     'response_message':
-                        'Business has been registered successfully!'
+                        'Business has been registered successfully!',
+                    'status_code': 201
                 })
-
-                response.status_code = 201
                 return response
             except Exception as error:
-                response_message = {'message': str(error)}
+                response_message = {
+                    'message': str(error),
+                    'status_code': 500}
                 return make_response(jsonify(response_message))
         else:
             response = jsonify({
-                'response_message': 'Business name already registered!'
+                'response_message': 'Business name already registered!',
+                'status_code': 406
             })
-            response.status_code = 406
             return response
 
     @jwt_required
@@ -185,10 +186,9 @@ class Businesses(Resource):
             return response
         except Exception as e:
             response = jsonify({
-                'response_message': str(e)
+                'response_message': str(e),
+                'status_code': 500
             })
-
-            response.status_code = 500
             return response
 
 
@@ -268,16 +268,15 @@ class OneBusiness(Resource):
                 return business_object
             except Exception as e:
                 response = jsonify({
-                    'response_message': str(e)
+                    'response_message': str(e),
+                    'status_code': 500
                 })
-
-                response.status_code = 500
                 return response
         else:
             response = jsonify({
-                'response_message': 'Business id is not registered!'
+                'response_message': 'Business id is not registered!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
 
     @jwt_required
@@ -384,16 +383,15 @@ class OneBusiness(Resource):
                 return business_object
             except Exception as e:
                 response = jsonify({
-                    'response_message': str(e)
+                    'response_message': str(e),
+                    'status_code': 500
                 })
-
-                response.status_code = 500
                 return response
         else:
             response = jsonify({
-                'response_message': 'Business id is not registered!'
+                'response_message': 'Business id is not registered!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
 
     @jwt_required
@@ -445,9 +443,9 @@ class OneBusiness(Resource):
         business = Business.query.filter_by(id=business_id).first()
         if business is None:
             response = jsonify({
-                'response_message': 'Business id is not registered!'
+                'response_message': 'Business id is not registered!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
 
         if business.created_by == created_by:
@@ -458,24 +456,22 @@ class OneBusiness(Resource):
                 db.session.commit()
                 response = jsonify({
                     'response_message':
-                        'Business has been deleted successfully!'
+                        'Business has been deleted successfully!',
+                        'status_code': 204
                 })
-
-                response.status_code = 204
                 return response
             except Exception as e:
                 response = jsonify({
-                    'response_message': str(e)
+                    'response_message': str(e),
+                    'status_code': 500
                 })
-
-                response.status_code = 500
                 return response
         else:
             response = jsonify({
                 'response_message':
-                    'Permission required to delete this business!'
+                    'Permission required to delete this business!',
+                'status_code': 401
             })
-            response.status_code = 401
             return response
 
 
@@ -555,16 +551,15 @@ class UserBusiness(Resource):
                 return business_object
             except Exception as e:
                 response = jsonify({
-                    'response_message': str(e)
+                    'response_message': str(e),
+                    'status_code': 500
                 })
-
-                response.status_code = 500
                 return response
         else:
             response = jsonify({
-                'response_message': 'User is not registered!'
+                'response_message': 'User is not registered!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
 
 
@@ -669,16 +664,15 @@ class BusinessCategory(Resource):
                 return response
             except Exception as e:
                 response = jsonify({
-                    'response_message': str(e)
+                    'response_message': str(e),
+                    'status_code': 500
                 })
-
-                response.status_code = 500
                 return response
         else:
             response = jsonify({
-                'response_message': 'Businesses not found is this category!'
+                'response_message': 'Businesses not found is this category!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
 
 
@@ -783,16 +777,15 @@ class BusinessLocation(Resource):
                 return response
             except Exception as e:
                 response = jsonify({
-                    'response_message': str(e)
+                    'response_message': str(e),
+                    'status_code': 500
                 })
-
-                response.status_code = 500
                 return response
         else:
             response = jsonify({
-                'response_message': 'Businesses not found in this location!'
+                'response_message': 'Businesses not found in this location!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
 
 
@@ -897,16 +890,15 @@ class SearchBusiness(Resource):
                 return response
             except Exception as e:
                 response = jsonify({
-                    'response_message': str(e)
+                    'response_message': str(e),
+                    'status_code': 500
                 })
-
-                response.status_code = 500
                 return response
         else:
             response = jsonify({
-                'response_message': 'Business not found!'
+                'response_message': 'Business not found!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
 
 

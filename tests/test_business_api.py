@@ -6,17 +6,12 @@ from flask import json
 from app.models import db
 from app import create_app
 
-# from . import app
-
 
 class AbstractTest(unittest.TestCase):
     """Define reusable methods and attributes."""
 
     def setUp(self):
         """Call this before every test."""
-
-        # db.app = app
-        # db.create_all()
 
         self.app = create_app(config_object="testing")
         self.run_app = self.app.test_client()
@@ -96,7 +91,8 @@ class CreateBusinessesTest(AbstractTest):
             '/api/v2/businesses', data=business_data,
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(response.status_code, 406)
+        self.assertEqual(
+            json.loads(response.data.decode())['status_code'], 406)
 
     def test_registration_null_category(self):
         """Test business registration with null business category
@@ -112,7 +108,8 @@ class CreateBusinessesTest(AbstractTest):
             '/api/v2/businesses', data=business_data,
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(response.status_code, 406)
+        self.assertEqual(
+            json.loads(response.data.decode())['status_code'], 406)
 
     def test_registration_null_location(self):
         """Test business registration with null business location
@@ -128,7 +125,8 @@ class CreateBusinessesTest(AbstractTest):
             '/api/v2/businesses', data=business_data,
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(response.status_code, 406)
+        self.assertEqual(
+            json.loads(response.data.decode())['status_code'], 406)
 
     def test_registration_null_summary(self):
         """Test business registration with null business summary
@@ -144,7 +142,8 @@ class CreateBusinessesTest(AbstractTest):
             '/api/v2/businesses', data=business_data,
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(response.status_code, 406)
+        self.assertEqual(
+            json.loads(response.data.decode())['status_code'], 406)
 
     def test_registration_unique_name(self):
         """Test business registration with unique name
@@ -212,7 +211,8 @@ class ViewBusinessTest(AbstractTest):
             '/api/v2/businesses/4',
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(
+            json.loads(response.data.decode())['status_code'], 404)
 
     def test_view_successful(self):
         """Test view a registered business successfully
@@ -243,7 +243,8 @@ class ViewUserBusinessTest(AbstractTest):
             '/api/v2/businesses/user/{}'.format(user_id),
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(
+            json.loads(response.data.decode())['status_code'], 404)
 
     def test_view_successful(self):
         """Test view a registered business successfully
@@ -279,7 +280,8 @@ class UpdateBusinessTest(AbstractTest):
             '/api/v2/businesses/3', data=new_data,
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(
+            json.loads(response.data.decode())['status_code'], 404)
 
     def test_update_successful(self):
         """Test update registered business successfully
@@ -313,7 +315,8 @@ class DeleteBusinessTest(AbstractTest):
             '/api/v2/businesses/5',
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(
+            json.loads(response.data.decode())['status_code'], 404)
 
     def test_delete_successful(self):
         """Test delete successfully
@@ -326,7 +329,8 @@ class DeleteBusinessTest(AbstractTest):
             '/api/v2/businesses/1',
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(
+            json.loads(response.data.decode())['status_code'], 204)
 
 
 class BusinessCategoryTest(AbstractTest):
