@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 
@@ -21,6 +21,14 @@ def create_app(config_object):
     db.init_app(app)
 
     jwt = JWTManager(app)
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        response = jsonify({
+            'response_message': 'Page not found!',
+            'status_code': 404
+        })
+        return response
 
     @jwt.token_in_blacklist_loader
     def check_if_token_in_blacklist(decrypted_token):
