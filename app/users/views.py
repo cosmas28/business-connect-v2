@@ -16,7 +16,7 @@ from werkzeug.security import generate_password_hash
 from app.models import User, RevokedToken
 from app.models import db
 from app.helper_functions import (
-    email_exist, username_exist, valid_password, check_key)
+    email_exist, username_exist, valid_password)
 
 
 class RegisterUser(Resource):
@@ -379,7 +379,6 @@ class ResetPassword(Resource):
                             type: string
         """
         req_data = request.get_json()
-        
         email = req_data.get('email')
         password = req_data.get('password')
         confirm_password = req_data.get('confirm_password')
