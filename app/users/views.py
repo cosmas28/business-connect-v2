@@ -15,7 +15,8 @@ from werkzeug.security import generate_password_hash
 
 from app.models import User, RevokedToken
 from app.models import db
-from app.helper_functions import email_exist, username_exist, valid_password
+from app.helper_functions import (
+    email_exist, username_exist, valid_password, check_key)
 
 
 class RegisterUser(Resource):
@@ -72,6 +73,37 @@ class RegisterUser(Resource):
         """
 
         req_data = request.get_json()
+        if 'email' not in req_data:
+            response_message = jsonify({
+                'message': 'email key is required!',
+                'status_code': 400})
+            return response_message
+        if 'username' not in req_data:
+            response_message = jsonify({
+                'message': 'username key is required!',
+                'status_code': 400})
+            return response_message
+        if 'first_name' not in req_data:
+            response_message = jsonify({
+                'message': 'first_name key is required!',
+                'status_code': 400})
+            return response_message
+        if 'last_name' not in req_data:
+            response_message = jsonify({
+                'message': 'last_name key is required!',
+                'status_code': 400})
+            return response_message
+        if 'password' not in req_data:
+            response_message = jsonify({
+                'message': 'password key is required!',
+                'status_code': 400})
+            return response_message
+        if 'confirm_password' not in req_data:
+            response_message = jsonify({
+                'message': 'confirm_password key is required!',
+                'status_code': 400})
+            return response_message
+
         email = req_data.get('email')
         username = req_data.get('username')
         first_name = req_data.get('first_name')
@@ -81,7 +113,7 @@ class RegisterUser(Resource):
 
         not_valid_password = valid_password(password, confirm_password)
         registered = username_exist(username) or email_exist(email)
-        if not email or not username:
+        if email is None and username is None:
             response_message = jsonify({
                 'message': 'Email and Username are required!',
                 'status_code': 406})
@@ -162,6 +194,16 @@ class LoginUser(Resource):
 
         """
         req_data = request.get_json()
+        if 'email' not in req_data:
+            response_message = jsonify({
+                'message': 'email key is required!',
+                'status_code': 400})
+            return response_message
+        if 'password' not in req_data:
+            response_message = jsonify({
+                'message': 'password key is required!',
+                'status_code': 400})
+            return response_message
         email = req_data.get('email')
         password = req_data.get('password')
 
@@ -337,6 +379,7 @@ class ResetPassword(Resource):
                             type: string
         """
         req_data = request.get_json()
+        
         email = req_data.get('email')
         password = req_data.get('password')
         confirm_password = req_data.get('confirm_password')
