@@ -5,6 +5,8 @@ This module provides API endpoints to register users,
 
 """
 
+import re
+
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import (
     create_access_token, create_refresh_token, jwt_required,
@@ -73,8 +75,8 @@ class RegisterUser(Resource):
         """
 
         req_data = request.get_json()
-        email = req_data.get('email')
-        username = req_data.get('username')
+        email = re.sub(r'\s+', '', str(req_data.get('email'))).lower()
+        username = re.sub(r'\s+', '', str(req_data.get('username'))).lower()
         first_name = req_data.get('first_name')
         last_name = req_data.get('last_name')
         password = req_data.get('password')
