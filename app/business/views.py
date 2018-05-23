@@ -643,7 +643,7 @@ class SearchBusiness(Resource):
                             type: string
         """
 
-        user_request = request.args.get('q')
+        user_request = request.args.get('q').lower()
         result_start = int(request.args.get('start'))
         result_limit = int(request.args.get('limit'))
         is_found = False
