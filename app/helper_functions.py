@@ -116,3 +116,11 @@ def get_paginated_list(business_list, url, start, limit):
     _object['business_list'] = business_list[(start - 1):(start - 1 + limit)]
 
     return _object
+
+
+def check_key_error(**kwargs):
+    error_message = {}
+    for key in kwargs:
+        if kwargs[key] is None:
+            error_message[key] = '{} key is required!'.format(key)
+    return error_message
