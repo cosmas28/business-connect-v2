@@ -83,9 +83,9 @@ class Business(db.Model):
         'Reviews', order_by='Reviews.id', cascade='all, delete-orphan')
 
     def __init__(self, name, category, location, summary, created_by):
-        self.name = name
-        self.category = category
-        self.location = location
+        self.name = name.lower()
+        self.category = category.lower()
+        self.location = location.lower()
         self.summary = summary
         self.created_by = created_by
 
