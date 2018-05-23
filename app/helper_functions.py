@@ -1,5 +1,7 @@
 """Create helper functions to be used in views module."""
 
+import re
+
 from app.models import User
 from app.models import Business
 
@@ -55,6 +57,14 @@ def valid_password(password, confirm_password):
         response_message = {
             'message': 'Password does not match the confirmation password!'}
         return response_message
+
+
+def valid_email(email):
+    valid = False
+    match_email = re.search(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+\.[a-zA-Z0-9.]*\.*$)", email)
+    if match_email:
+        valid = True
+    return valid
 
 
 def business_name_registered(name):
