@@ -21,6 +21,32 @@ def username_exist(user_name):
 def valid_password(password, confirm_password):
     """Check whether the password have more than 6 characters."""
 
+    if password.isalpha():
+        response_message = {
+            'message': 'Password must contain different characters!',
+            'status_code': 406}
+        return response_message
+    if not password.isalnum():
+        response_message = {
+            'message': 'Password must contain alphanumeric characters!',
+            'status_code': 406}
+        return response_message
+    if password.islower():
+        response_message = {
+            'message': 'Password must contain at least one capital character!',
+            'status_code': 406}
+        return response_message
+    if password.isspace():
+        response_message = {
+            'message': 'Password must contain at least 6 characters!',
+            'status_code': 406}
+        return response_message
+    if password.isdigit():
+        response_message = {
+            'message': 'Password must contain at least one alphabetical \
+                         characters!',
+            'status_code': 406}
+        return response_message
     if len(password) <= 6:
         response_message = {
             'message': 'Password must be more than 6 characters!'}
