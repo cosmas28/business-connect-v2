@@ -73,52 +73,21 @@ class RegisterUser(Resource):
         """
 
         req_data = request.get_json()
-        if 'email' not in req_data:
-            response_message = jsonify({
-                'message': 'email key is required!',
-                'status_code': 400})
-            return response_message
-        if 'username' not in req_data:
-            response_message = jsonify({
-                'message': 'username key is required!',
-                'status_code': 400})
-            return response_message
-        if 'first_name' not in req_data:
-            response_message = jsonify({
-                'message': 'first_name key is required!',
-                'status_code': 400})
-            return response_message
-        if 'last_name' not in req_data:
-            response_message = jsonify({
-                'message': 'last_name key is required!',
-                'status_code': 400})
-            return response_message
-        if 'password' not in req_data:
-            response_message = jsonify({
-                'message': 'password key is required!',
-                'status_code': 400})
-            return response_message
-        if 'confirm_password' not in req_data:
-            response_message = jsonify({
-                'message': 'confirm_password key is required!',
-                'status_code': 400})
-            return response_message
-
-        email = req_data.get('email')
-        username = req_data.get('username')
+        # email = req_data.get('email')
+        # username = req_data.get('username')
         first_name = req_data.get('first_name')
         last_name = req_data.get('last_name')
         password = req_data.get('password')
         confirm_password = req_data.get('confirm_password')
 
         not_valid_password = valid_password(password, confirm_password)
-        registered = username_exist(username) or email_exist(email)
-        if not email or not username:
+        registered = username_exist(request.get_json()['username']) or email_exist(request.get_json()['email'])
+        if not request.get_json()['email'] or not request.get_json()['username']:
             response_message = jsonify({
                 'message': 'Email and Username are required!',
                 'status_code': 406})
             return response_message
-        elif not valid_email(email):
+        elif not valid_email(request.get_json()['email']):
             response_message = jsonify({
                 'message': 'Invalid email address!',
                 'status_code': 406})
@@ -135,7 +104,7 @@ class RegisterUser(Resource):
             return response_message
         if not registered:
             try:
-                user = User(email=email, username=username,
+                user = User(email=request.get_json()['email'], username=request.get_json()['username'],
                             first_name=first_name, last_name=last_name,
                             password=password)
                 user.save()
