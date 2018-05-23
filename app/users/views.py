@@ -113,7 +113,7 @@ class RegisterUser(Resource):
 
         not_valid_password = valid_password(password, confirm_password)
         registered = username_exist(username) or email_exist(email)
-        if email is None and username is None:
+        if not email or not username:
             response_message = jsonify({
                 'message': 'Email and Username are required!',
                 'status_code': 406})
