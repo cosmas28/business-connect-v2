@@ -61,7 +61,8 @@ def valid_password(password, confirm_password):
 
 def valid_email(email):
     valid = False
-    match_email = re.search(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+\.[a-zA-Z0-9.]*\.*$)", email)
+    match_email = re.search(
+        r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+\.[a-zA-Z0-9.]*\.*$)", email)
     if match_email:
         valid = True
     return valid

@@ -4,7 +4,7 @@ This module provides API endpoints to register users,
  login users, and reset user passwords.
 
 """
-import re
+
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import (
     create_access_token, create_refresh_token, jwt_required,
