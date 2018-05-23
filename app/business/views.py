@@ -5,6 +5,8 @@ view a single business, view all businesses.
 
 """
 
+import re
+
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, Api
@@ -69,7 +71,7 @@ class Businesses(Resource):
                             type: string
         """
         req_data = request.get_json(force=True)
-        business_name = req_data.get('name')
+        business_name = re.sub(r'\s+', '', str(req_data.get('name'))).lower()
         business_category = req_data.get('category')
         business_location = req_data.get('location')
         business_summary = req_data.get('summary')
