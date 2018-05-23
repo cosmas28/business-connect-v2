@@ -4,7 +4,7 @@ This module provides API endpoints to register users,
  login users, and reset user passwords.
 
 """
-
+import re
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import (
     create_access_token, create_refresh_token, jwt_required,
@@ -16,7 +16,7 @@ from werkzeug.security import generate_password_hash
 from app.models import User, RevokedToken
 from app.models import db
 from app.helper_functions import (
-    email_exist, username_exist, valid_password)
+    email_exist, username_exist, valid_password, valid_email)
 
 
 class RegisterUser(Resource):
@@ -116,6 +116,11 @@ class RegisterUser(Resource):
         if not email or not username:
             response_message = jsonify({
                 'message': 'Email and Username are required!',
+                'status_code': 406})
+            return response_message
+        elif not valid_email(email):
+            response_message = jsonify({
+                'message': 'Invalid email address!',
                 'status_code': 406})
             return response_message
         elif not password or not confirm_password:
