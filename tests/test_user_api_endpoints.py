@@ -66,6 +66,7 @@ class RegisterUserTest(AbstractTest):
         using post request for RegisterUser class view."""
 
         user_data = json.dumps({'email': 'test@andela.com',
+                                'first_name': 'first', 'last_name': 'last',
                                 'username': '', 'password': 'andela2018',
                                 'confirm_password': 'andela2018'})
         response = self.run_app.post('/api/v2/auth/register',
@@ -79,6 +80,7 @@ class RegisterUserTest(AbstractTest):
         using post request for RegisterUser class view."""
 
         user_data = json.dumps({'email': 'test@andela.com',
+                                'first_name': 'first', 'last_name': 'last',
                                 'username': 'cosmas', 'password': '',
                                 'confirm_password': 'andela2018'})
         response = self.run_app.post('/api/v2/auth/register',
@@ -92,6 +94,7 @@ class RegisterUserTest(AbstractTest):
         using post request for RegisterUser class view."""
 
         user_data = json.dumps({'email': 'test@andela.com',
+                                'first_name': 'first', 'last_name': 'last',
                                 'username': 'cosmas', 'password': 'andela2018',
                                 'confirm_password': ''})
         response = self.run_app.post('/api/v2/auth/register',
