@@ -14,7 +14,7 @@ from flask_restful import Resource, Api
 from app.models import Business
 from app.models import User
 from app.models import db
-from app.helper_functions import business_name_registered, get_paginated_list
+from app.utils import business_name_registered, get_paginated_list
 
 
 class Businesses(Resource):

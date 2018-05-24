@@ -17,7 +17,7 @@ from werkzeug.security import generate_password_hash
 
 from app.models import User, RevokedToken
 from app.models import db
-from app.helper_functions import (
+from app.utils import (
     email_exist, username_exist, valid_password, valid_email, check_key_error)
 
 
