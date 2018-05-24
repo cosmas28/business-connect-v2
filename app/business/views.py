@@ -648,28 +648,18 @@ class SearchBusiness(Resource):
         user_request = request.args.get('q').lower()
         result_start = int(request.args.get('start'))
         result_limit = int(request.args.get('limit'))
-        is_found = False
-        businesses = None
-        by_name = Business.query.filter(
-            Business.name.startswith(user_request)).all()
-        by_category = Business.query.filter(
-            Business.category.startswith(user_request)).all()
-        by_location = Business.query.filter(
-            Business.location.startswith(user_request)).all()
-        if by_name:
-            is_found = True
-            businesses = by_name
-        elif by_category:
-            is_found = True
-            businesses = by_category
-        elif by_location:
-            is_found = True
-            businesses = by_location
-        if is_found:
+        found_businesses = []
+        all_businesses = Business.query.all()
+        for row in all_businesses:
+            if row.name.startswith(user_request) or \
+                row.category.startswith(user_request) or \
+                    row.location.startswith(user_request):
+                        found_businesses.append(row)
+        if found_businesses:
             try:
                 business_list = []
 
-                for business in businesses:
+                for business in found_businesses:
                     _object = {
                         'id': business.id,
                         'name': business.name,
