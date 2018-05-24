@@ -194,7 +194,7 @@ class CreateBusinessesTest(AbstractTest):
             '/api/v2/businesses',
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertIn('Palmer Tech', str(response.data))
+        self.assertIn('mombasa', str(response.data))
 
 
 class ViewBusinessTest(AbstractTest):
@@ -225,7 +225,7 @@ class ViewBusinessTest(AbstractTest):
             '/api/v2/businesses/1',
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertIn('Palmer Tech', str(response.data))
+        self.assertIn('mombasa', str(response.data))
 
 
 class ViewUserBusinessTest(AbstractTest):
@@ -344,12 +344,12 @@ class BusinessCategoryTest(AbstractTest):
         self.register_business(access_token)
 
         response = self.run_app.get(
-            '/api/v2/businesses/category?q=Accounting&start=1&limit=2',
+            '/api/v2/businesses/search?q=Accounting&start=1&limit=2',
             headers=dict(Authorization='Bearer ' + access_token))
 
         json_res = json.loads(response.data.decode())
         self.assertEqual(json_res['response_message'],
-                         'Businesses not found is this category!')
+                         'Business not found!')
 
     def test_filter_successful(self):
         """Test filter businesses by category
@@ -359,10 +359,10 @@ class BusinessCategoryTest(AbstractTest):
         self.register_business(access_token)
 
         response = self.run_app.get(
-            '/api/v2/businesses/category?q=Technology&start=1&limit=2',
+            '/api/v2/businesses/search?q=Technology&start=1&limit=2',
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertIn('Palmer Tech', str(response.data))
+        self.assertIn('technology', str(response.data))
 
 
 class BusinessLocationTest(AbstractTest):
@@ -376,12 +376,12 @@ class BusinessLocationTest(AbstractTest):
         self.register_business(access_token)
 
         response = self.run_app.get(
-            '/api/v2/businesses/location?q=kitale&start=1&limit=2',
+            '/api/v2/businesses/search?q=kitale&start=1&limit=2',
             headers=dict(Authorization='Bearer ' + access_token))
 
         json_res = json.loads(response.data.decode())
         self.assertEqual(json_res['response_message'],
-                         'Businesses not found in this location!')
+                         'Business not found!')
 
     def test_filter_successful(self):
         """Test filter businesses in by location successfully
@@ -391,10 +391,10 @@ class BusinessLocationTest(AbstractTest):
         self.register_business(access_token)
 
         response = self.run_app.get(
-            '/api/v2/businesses/location?q=Mombasa&start=1&limit=2',
+            '/api/v2/businesses/search?q=Mombasa&start=1&limit=2',
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertIn('Palmer Tech', str(response.data))
+        self.assertIn('mombasa', str(response.data))
 
 
 class BusinessSearchTest(AbstractTest):
@@ -425,7 +425,7 @@ class BusinessSearchTest(AbstractTest):
             '/api/v2/businesses/search?q=Palmer&start=1&limit=2',
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertIn('Palmer Tech', str(response.data))
+        self.assertIn('mombasa', str(response.data))
 
     def test_pagination_api(self):
         """Test business results pagination
