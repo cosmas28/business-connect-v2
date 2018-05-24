@@ -259,7 +259,7 @@ class ViewUserBusinessTest(AbstractTest):
             '/api/v2/businesses/user/{}'.format(user_id),
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertIn('Palmer Tech', str(response.data))
+        self.assertIn('mombasa', str(response.data))
 
 
 class UpdateBusinessTest(AbstractTest):
