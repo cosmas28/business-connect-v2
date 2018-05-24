@@ -78,7 +78,7 @@ class ModelsTestCase(unittest.TestCase):
         business.save()
 
         query_res = Business.query.filter_by(id=1).first()
-        self.assertEqual(query_res.name, 'CosmasTech')
+        self.assertEqual(query_res.name, 'cosmastech')
 
     def test_reviews_model(self):
         """Test whether review model is working."""
@@ -89,7 +89,7 @@ class ModelsTestCase(unittest.TestCase):
         business = Business('CosmasTech', 'Technology', 'Nairobi',
                             'AI is transforming human life', query_user.id)
         business.save()
-        query_business = Business.query.filter_by(name='CosmasTech').first()
+        query_business = Business.query.filter_by(name='cosmastech').first()
 
         review = Reviews('The business will really save the world!',
                          query_business.id, query_user.id)
