@@ -28,14 +28,14 @@ class BusinessReviewsTest(unittest.TestCase):
         user_data = json.dumps({
             'email': 'test@andela.com', 'username': 'cosmas',
             'first_name': 'first', 'last_name': 'last',
-            'password': 'andela2018', 'confirm_password': 'andela2018'})
+            'password': 'aNdela2018', 'confirm_password': 'aNdela2018'})
         return self.run_app.post('/api/v2/auth/register',
                                  data=user_data, headers=self.headers)
 
     def login_user(self):
         """Register a user."""
         login_data = json.dumps({'email': 'test@andela.com',
-                                 'password': 'andela2018'})
+                                 'password': 'aNdela2018'})
 
         return self.run_app.post('/api/v2/auth/login',
                                  data=login_data, headers=self.headers)
