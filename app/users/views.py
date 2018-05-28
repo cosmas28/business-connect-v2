@@ -6,6 +6,8 @@ This module provides API endpoints to register users,
 """
 
 import re
+import os
+from itsdangerous import URLSafeTimedSerializer as Serializer
 
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import (
@@ -319,11 +321,76 @@ class TokenRefresh(Resource):
         return response
 
 
+class ConfirmResetPasswordEmail(Resource):
+
+    """Illustrate API endpoint to confirm and validate user email."""
+
+    def post(self):
+        """Reset user password validate email.
+        ---
+        tags:
+            - User authentication and authorization
+        parameters:
+            -   in: body
+                name: body
+                schema:
+                    required:
+                        - email
+                    properties:
+                        email:
+                            type: string
+                            description: user email
+        responses:
+            200:
+                description: Email sent successfully
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            406:
+                description: Invalid email, Null required parameters
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+        """
+        req_data = request.get_json()
+        email = req_data.get('email')
+
+        if not email:
+            response_message = jsonify({
+                'response_message': 'Email is required!',
+                'status_code': 406})
+            return response_message
+        if email_exist(email):
+            try:
+                serializer = Serializer(
+                    os.getenv('SECRET_KEY'), salt='email-confirmation-salt')
+                token = serializer.dumps(email)
+                response = jsonify({
+                    'response_message': 'Confirm your email',
+                    'token': token,
+                    'email': email,
+                    'status_code': 200
+                })
+                return response
+            except Exception as error:
+                response_message = jsonify({
+                    'message': str(error),
+                    'status_code': 500})
+                return response_message
+        else:
+            response_message = jsonify({
+                'response_message': 'Email not registered',
+                'status_code': 406})
+            return response_message
+
+
 class ResetPassword(Resource):
 
     """Illustrate API endpoint to reset user password."""
 
-    def post(self):
+    def post(self, token):
         """Reset user password.
         ---
         tags:
@@ -361,17 +428,11 @@ class ResetPassword(Resource):
                             type: string
         """
         req_data = request.get_json()
-        email = req_data.get('email')
         password = req_data.get('password')
         confirm_password = req_data.get('confirm_password')
 
         not_valid_password = valid_password(password, confirm_password)
-        if not email:
-            response_message = jsonify({
-                'response_message': 'Email is required!',
-                'status_code': 406})
-            return response_message
-        elif not password or not confirm_password:
+        if not password or not confirm_password:
             response_message = jsonify({
                 'response_message': 'Password is required!',
                 'status_code': 406})
@@ -380,26 +441,24 @@ class ResetPassword(Resource):
             response_message = jsonify(not_valid_password)
             response_message.status_code = 406
             return response_message
-        if email_exist(email):
-            try:
-                User.query.filter_by(email=email).update(dict(
-                    password=generate_password_hash(password)))
-                db.session.commit()
+        try:
+            serializer = Serializer(
+                os.getenv('SECRET_KEY'), salt='email-confirmation-salt')
+            user_email = serializer.loads(
+                token, salt='email-confirmation-salt', max_age=300)
+            User.query.filter_by(email=user_email).update(dict(
+                password=generate_password_hash(password)))
+            db.session.commit()
 
-                response = jsonify({
-                    'response_message': 'Password reset successfully!',
-                    'status_code': 200
-                })
-                return response
-            except Exception as error:
-                response_message = jsonify({
-                    'message': str(error),
-                    'status_code': 500})
-                return response_message
-        else:
+            response = jsonify({
+                'response_message': 'Password reset successfully!',
+                'status_code': 200
+            })
+            return response
+        except Exception as error:
             response_message = jsonify({
-                'response_message': 'Email not registered',
-                'status_code': 406})
+                'response_message': str(error),
+                'status_code': 500})
             return response_message
 
 
@@ -411,4 +470,8 @@ api.add_resource(TokenRefresh, '/refresh_token', endpoint='refresh_token')
 api.add_resource(UserLogoutAccess, '/logout', endpoint='logout')
 api.add_resource(UserLogoutRefresh,
                  '/logout_refresh_token', endpoint='logout_refresh_token')
-api.add_resource(ResetPassword, '/reset_password', endpoint='reset_password')
+api.add_resource(
+    ResetPassword, '/reset_password/<token>', endpoint='reset_password')
+api.add_resource(
+    ConfirmResetPasswordEmail, '/reset_password/confirm_email',
+    endpoint='confirm_password')
