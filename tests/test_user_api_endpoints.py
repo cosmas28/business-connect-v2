@@ -309,9 +309,9 @@ class ResetPasswordTest(AbstractTest):
 
         new_password = json.dumps({
             'password': '', 'confirm_password': 'anDela2018'})
+        token = json.loads(email_response.data.decode())['token']
         response = self.run_app.post(
-            '/api/v2/auth/reset_password?email=test2@andela.com&token={}'
-            .format(json.loads(email_response.data.decode())['token']),
+            '/api/v2/auth/reset_password/' + token,
             data=new_password, headers=self.headers)
 
         # get the response text in json format
@@ -331,9 +331,9 @@ class ResetPasswordTest(AbstractTest):
 
         new_password = json.dumps({
             'password': 'anDela2018', 'confirm_password': ''})
+        token = json.loads(email_response.data.decode())['token']
         response = self.run_app.post(
-            '/api/v2/auth/reset_password?email=test2@andela.com&token={}'
-            .format(json.loads(email_response.data.decode())['token']),
+            '/api/v2/auth/reset_password/' + token,
             data=new_password, headers=self.headers)
 
         # get the response text in json format
@@ -384,9 +384,9 @@ class ResetPasswordTest(AbstractTest):
             data=user_email, headers=self.headers)
         new_password = json.dumps({
             'password': 'anDela2018', 'confirm_password': 'anDela2018'})
+        token = json.loads(email_response.data.decode())['token']
         response = self.run_app.post(
-            '/api/v2/auth/reset_password?email=test2@andela.com&token={}'
-            .format(json.loads(email_response.data.decode())['token']),
+            '/api/v2/auth/reset_password/' + token,
             data=new_password, headers=self.headers)
 
         # get the response text in json format
