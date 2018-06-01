@@ -20,7 +20,8 @@ from werkzeug.security import generate_password_hash
 from app.models import User, RevokedToken
 from app.models import db
 from app.utils import (
-    email_exist, username_exist, valid_password, valid_email, check_key_error)
+    email_exist, username_exist, valid_password, valid_email, check_key_error,
+    send_mail)
 
 
 class RegisterUser(Resource):
@@ -367,10 +368,18 @@ class ConfirmResetPasswordEmail(Resource):
                 serializer = Serializer(
                     os.getenv('SECRET_KEY'), salt='email-confirmation-salt')
                 token = serializer.dumps(email)
+                user = User.query.filter_by(email=email).first()
+                link = 'http://127.0.0.1:5000/api/v2/auth/reset_password/'\
+                    + token
+                mail_body = 'Hello ' + user.username + ', '\
+                            'You or someone else has requested that a '\
+                            'new password be generated for your account. '\
+                            'If you made this request, then please follow'\
+                            'this link:' + link
+                mail_response = send_mail(email, mail_body)
                 response = jsonify({
-                    'response_message': 'Confirm your email',
+                    'response_message': mail_response,
                     'token': token,
-                    'email': email,
                     'status_code': 200
                 })
                 return response
