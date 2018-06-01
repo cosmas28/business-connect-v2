@@ -1,9 +1,13 @@
 """Create helper functions to be used in views module."""
 
 import re
+import os
+from flask_mail import Message, Mail
 
 from app.models import User
 from app.models import Business
+
+mail = Mail()
 
 
 def email_exist(email):
@@ -124,3 +128,18 @@ def check_key_error(**kwargs):
         if kwargs[key] is None:
             error_message[key] = '{} key is required!'.format(key)
     return error_message
+
+
+def send_mail(user_email, body):
+    try:
+        message = Message(
+            subject='Forgot Password - weconnect.com',
+            sender=os.getenv('CONFIG_EMAIL'),
+            recipients=[user_email],
+            body=body
+            )
+
+        mail.send(message)
+        return 'Confirm your email'
+    except Exception as error:
+        return (str(error))
