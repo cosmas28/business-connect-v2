@@ -52,6 +52,8 @@ class BusinessReviews(Resource):
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
             404:
                 description: Business is not registered
                 schema:
@@ -143,6 +145,8 @@ class BusinessReviews(Resource):
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
             204:
                 description: Business have not reviews
                 schema:

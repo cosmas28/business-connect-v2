@@ -63,6 +63,8 @@ class Businesses(Resource):
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
             406:
                 description: Violate business column constraints
                 schema:
@@ -159,6 +161,8 @@ class Businesses(Resource):
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
             security:
                 BearAuth:
                     securitySchemes:
@@ -246,12 +250,16 @@ class OneBusiness(Resource):
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
             500:
                 description: Internal server error
                 schema:
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
         """
 
         business = Business.query.filter_by(id=business_id).first()
@@ -346,12 +354,16 @@ class OneBusiness(Resource):
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
             500:
                 description: Internal server error
                 schema:
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
         """
 
         req_data = request.get_json(force=True)
@@ -421,24 +433,32 @@ class OneBusiness(Resource):
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
             404:
                 description: Business is not registered
                 schema:
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
             401:
                 description: Permission required
                 schema:
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
             500:
                 description: Internal server error
                 schema:
                     properties:
                         response_message:
-                            type: string
+                            type: strin
+                        status_code:
+                            type: integer
         """
 
         created_by = get_jwt_identity()
@@ -529,12 +549,16 @@ class UserBusiness(Resource):
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
             500:
                 description: Internal server error
                 schema:
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
         """
         user = User.query.filter_by(id=user_id).first()
         if user:
@@ -637,12 +661,16 @@ class SearchBusiness(Resource):
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
             500:
                 description: Internal server error
                 schema:
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
         """
 
         user_request = request.args.get('q').lower()

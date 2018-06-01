@@ -69,6 +69,8 @@ class RegisterUser(Resource):
                     properties:
                         message:
                             type: string
+                        status_code:
+                            type: integer
             406:
                 description: Invalid data, Null required parameters
                 schema:
@@ -170,6 +172,8 @@ class LoginUser(Resource):
                             type: integer
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
             401:
                 description: Invalid login credentials
                 schema:
@@ -310,6 +314,8 @@ class TokenRefresh(Resource):
                     properties:
                         access_token:
                             type: string
+                        status_code:
+                            type: integer
         """
 
         current_user = get_jwt_identity()
@@ -348,6 +354,10 @@ class ConfirmResetPasswordEmail(Resource):
                     properties:
                         response_message:
                             type: string
+                        token:
+                            type: string
+                        status_code:
+                            type: integer
             406:
                 description: Invalid email, Null required parameters
                 schema:
@@ -429,6 +439,8 @@ class ResetPassword(Resource):
                     properties:
                         response_message:
                             type: string
+                        status_code:
+                            type: integer
             406:
                 description: Invalid data, Null required parameters
                 schema:
