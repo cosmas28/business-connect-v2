@@ -358,8 +358,6 @@ class ConfirmResetPasswordEmail(Resource):
                     properties:
                         response_message:
                             type: string
-                        token:
-                            type: string
                         status_code:
                             type: integer
             406:
@@ -398,7 +396,6 @@ class ConfirmResetPasswordEmail(Resource):
                 mail_response = send_mail(email, mail_body)
                 response = jsonify({
                     'response_message': mail_response,
-                    'token': token,
                     'status_code': 200
                 })
                 return response
