@@ -343,10 +343,14 @@ class ConfirmResetPasswordEmail(Resource):
                 schema:
                     required:
                         - email
+                        - url
                     properties:
                         email:
                             type: string
                             description: user email
+                        url:
+                            type: string
+                            description: reset password route
         responses:
             200:
                 description: Email sent successfully
@@ -367,10 +371,16 @@ class ConfirmResetPasswordEmail(Resource):
         """
         req_data = request.get_json()
         email = req_data.get('email')
+        url = req_data.get('url')
 
         if not email:
             response_message = jsonify({
                 'response_message': 'Email is required!',
+                'status_code': 406})
+            return response_message
+        if not url:
+            response_message = jsonify({
+                'response_message': 'reset password route is required!',
                 'status_code': 406})
             return response_message
         if email_exist(email):
@@ -379,8 +389,7 @@ class ConfirmResetPasswordEmail(Resource):
                     os.getenv('SECRET_KEY'), salt='email-confirmation-salt')
                 token = serializer.dumps(email)
                 user = User.query.filter_by(email=email).first()
-                link = 'http://127.0.0.1:5000/api/v2/auth/reset_password/'\
-                    + token
+                link = url + '/' + token
                 mail_body = 'Hello ' + user.username + ', '\
                             'You or someone else has requested that a '\
                             'new password be generated for your account. '\
