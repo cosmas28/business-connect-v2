@@ -22,7 +22,7 @@ def create_app(config_object):
     app.config.update(
         MAIL_SERVER='smtp.sendgrid.net',
         MAIL_PORT=25,
-        MAIL_USE_SSL=True,
+        # MAIL_USE_SSL=True,
         MAIL_USERNAME=os.getenv('CONFIG_EMAIL'),
         MAIL_PASSWORD=os.getenv('CONFIG_EMAIL_PASSWORD')
     )
