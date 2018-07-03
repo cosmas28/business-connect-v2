@@ -484,8 +484,9 @@ class ResetPassword(Resource):
             return response
         except Exception as error:
             response_message = jsonify({
-                'response_message': str(error),
-                'status_code': 500})
+                'response_message':
+                    'The confirmation link is invalid or has expired!',
+                'status_code': 406})
             return response_message
 
 
