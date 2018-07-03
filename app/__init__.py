@@ -20,8 +20,8 @@ def create_app(config_object):
     app.config.from_object(app_config[config_object])
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config.update(
-        MAIL_SERVER='smtp.gmail.com',
-        MAIL_PORT=465,
+        MAIL_SERVER='smtp.sendgrid.net',
+        MAIL_PORT=25,
         MAIL_USE_SSL=True,
         MAIL_USERNAME=os.getenv('CONFIG_EMAIL'),
         MAIL_PASSWORD=os.getenv('CONFIG_EMAIL_PASSWORD')
