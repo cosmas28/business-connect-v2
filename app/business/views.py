@@ -562,20 +562,25 @@ class UserBusiness(Resource):
         """
         user = User.query.filter_by(id=user_id).first()
         if user:
-            business = Business.query.filter_by(created_by=user_id).first()
-            if business:
+            businesses = Business.query.filter_by(created_by=user_id).all()
+            if businesses:
                 try:
-                    business_object = jsonify({
-                        'id': business.id,
-                        'name': business.name,
-                        'category': business.category,
-                        'location': business.location,
-                        'summary': business.summary,
-                        'created_by': user.username
-                    })
+                    business_result = []
 
-                    business_object.status_code = 200
-                    return business_object
+                    for business in businesses:
+                        _object = {
+                            'id': business.id,
+                            'name': business.name,
+                            'category': business.category,
+                            'location': business.location,
+                            'summary': business.summary,
+                            'created_by': business.created_by
+                        }
+                        business_result.append(_object)
+
+                    response = jsonify(business_list=business_result)
+                    response.status_code = 200
+                    return response
                 except Exception as e:
                     response = jsonify({
                         'response_message': str(e),
