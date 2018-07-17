@@ -287,7 +287,7 @@ class ResetPasswordTest(AbstractTest):
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
 
-        user_email = json.dumps({'email': ''})
+        user_email = json.dumps({'email': '', 'url': 'localhost:3000/signup'})
         response = self.run_app.post(
             '/api/v2/auth/reset_password/confirm_email',
             data=user_email, headers=self.headers)
@@ -302,7 +302,8 @@ class ResetPasswordTest(AbstractTest):
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
-        user_email = json.dumps({'email': 'test2@andela.com'})
+        user_email = json.dumps({
+            'email': 'test2@andela.com', 'url': 'localhost:3000/signup'})
         email_response = self.run_app.post(
             '/api/v2/auth/reset_password/confirm_email',
             data=user_email, headers=self.headers)
@@ -324,7 +325,8 @@ class ResetPasswordTest(AbstractTest):
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
-        user_email = json.dumps({'email': 'test2@andela.com'})
+        user_email = json.dumps({
+            'email': 'test2@andela.com', 'url': 'localhost:3000/signup'})
         email_response = self.run_app.post(
             '/api/v2/auth/reset_password/confirm_email',
             data=user_email, headers=self.headers)
@@ -347,7 +349,9 @@ class ResetPasswordTest(AbstractTest):
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
 
-        user_email = json.dumps({'email': 'not_registered@andela.com'})
+        user_email = json.dumps({
+            'email': 'not_registered@andela.com',
+            'url': 'localhost:3000/signup'})
         response = self.run_app.post(
             '/api/v2/auth/reset_password/confirm_email', data=user_email,
             headers=self.headers)
@@ -363,7 +367,8 @@ class ResetPasswordTest(AbstractTest):
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
 
-        user_email = json.dumps({'email': 'test2@andela.com'})
+        user_email = json.dumps({
+            'email': 'test2@andela.com', 'url': 'localhost:3000/signup'})
         response = self.run_app.post(
             '/api/v2/auth/reset_password/confirm_email', data=user_email,
             headers=self.headers)
@@ -378,7 +383,8 @@ class ResetPasswordTest(AbstractTest):
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
-        user_email = json.dumps({'email': 'test2@andela.com'})
+        user_email = json.dumps({
+            'email': 'test2@andela.com', 'url': 'localhost:3000/signup'})
         email_response = self.run_app.post(
             '/api/v2/auth/reset_password/confirm_email',
             data=user_email, headers=self.headers)

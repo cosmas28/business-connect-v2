@@ -396,7 +396,8 @@ class ConfirmResetPasswordEmail(Resource):
                 mail_response = send_mail(email, mail_body)
                 response = jsonify({
                     'response_message': mail_response,
-                    'status_code': 200
+                    'status_code': 200,
+                    'token': token
                 })
                 return response
             except Exception as error:
