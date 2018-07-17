@@ -242,6 +242,9 @@ class OneBusiness(Resource):
                             type: string
                             description: business description
                         created_by:
+                            type: string
+                            description: username of the business owner
+                        owner_id:
                             type: integer
                             description: describes the id of the business owner
             404:
@@ -262,6 +265,8 @@ class OneBusiness(Resource):
                             type: integer
         """
 
+        created_by = get_jwt_identity()
+        user = User.query.filter_by(id=created_by).first()
         business = Business.query.filter_by(id=business_id).first()
         if business:
             try:
@@ -271,7 +276,8 @@ class OneBusiness(Resource):
                     'category': business.category,
                     'location': business.location,
                     'summary': business.summary,
-                    'created_by': business.created_by
+                    'created_by': user.username,
+                    'owner_id': business.created_by
                 })
 
                 business_object.status_code = 200
@@ -574,7 +580,7 @@ class UserBusiness(Resource):
                             'category': business.category,
                             'location': business.location,
                             'summary': business.summary,
-                            'created_by': business.created_by
+                            'created_by': user.username
                         }
                         business_result.append(_object)
 
