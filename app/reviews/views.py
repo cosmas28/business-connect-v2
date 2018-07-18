@@ -9,7 +9,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, Api
 
-from app.models import Business, Reviews
+from app.models import Business, Reviews, User
 
 
 class BusinessReviews(Resource):
@@ -87,12 +87,13 @@ class BusinessReviews(Resource):
 
         if business:
             try:
+                reviewer_name = User.query.filter_by(id=created_by).first()
                 review = Reviews(business_review, business_id, created_by)
                 review.save()
 
                 response = jsonify({
-                    'response_message': 'Review has been added successfully!',
-                    'status_code': 201
+                    'created_by': reviewer_name.username,
+                    'review': business_review
                 })
                 return response
             except Exception as error:
@@ -178,10 +179,11 @@ class BusinessReviews(Resource):
                 _reviews = []
 
                 for _review in business_reviews:
+                    reviewer = User.query.filter_by(
+                        id=_review.reviewed_by).first()
                     _object = {
-                        'id': _review.id,
                         'review': _review.review,
-                        'reviewed_by': _review.reviewed_by,
+                        'reviewed_by': reviewer.username,
                     }
                     _reviews.append(_object)
                 response = jsonify(reviews_list=_reviews)

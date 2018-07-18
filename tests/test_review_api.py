@@ -115,8 +115,8 @@ class BusinessReviewsTest(unittest.TestCase):
         review_res = self.add_review(access_token)
 
         self.assertEqual(
-            json.loads(review_res.data.decode())['response_message'],
-            'Review has been added successfully!')
+            json.loads(review_res.data.decode())['review'],
+            'The future of AI is very bright, mostly in security')
 
     def test_view_unregistered_business(self):
         """Test view unregistered business reviews
