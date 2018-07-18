@@ -265,10 +265,10 @@ class OneBusiness(Resource):
                             type: integer
         """
 
-        created_by = get_jwt_identity()
-        user = User.query.filter_by(id=created_by).first()
         business = Business.query.filter_by(id=business_id).first()
         if business:
+            user_id = business.created_by
+            user = User.query.filter_by(id=user_id).first()
             try:
                 business_object = jsonify({
                     'id': business.id,
