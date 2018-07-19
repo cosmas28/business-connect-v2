@@ -201,6 +201,7 @@ class BusinessReviews(Resource):
                 'response_message': 'Business have no reviews!',
                 'status_code': 204
             })
+            response.status_code = 404
             return response
 
 
