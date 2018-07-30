@@ -92,7 +92,7 @@ class BusinessReviews(Resource):
                 review.save()
 
                 response = jsonify({
-                    'created_by': reviewer_name.username,
+                    'reviewed_by': reviewer_name.username,
                     'review': business_review
                 })
                 return response

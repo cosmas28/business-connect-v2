@@ -298,7 +298,7 @@ class UpdateBusinessTest(AbstractTest):
             '/api/v2/businesses/1', data=new_data,
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertIn('Nairobi', str(response.data))
+        self.assertIn('Business has been updated successfully', str(response.data))
 
 
 class DeleteBusinessTest(AbstractTest):
