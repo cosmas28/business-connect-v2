@@ -136,26 +136,30 @@ class Businesses(Resource):
             200:
                 description: A list of dictionaries of businesses
                 schema:
-                    name: business_list
                     properties:
-                        id:
-                            type: integer
-                            description: a unique business id
-                        name:
-                            type: string
-                            description: a unique business name
-                        category:
-                            type: string
-                            description: used to group businesses
-                        location:
-                            type: string
-                            description: describes physical location
-                        summary:
-                            type: string
-                            description: business description
-                        created_by:
-                            type: integer
-                            description: describes the id of the business owner
+                        business_list:
+                            type: array
+                            items:
+                                type: object
+                                properties:
+                                    id:
+                                        type: integer
+                                        description: a unique business id
+                                    name:
+                                        type: string
+                                        description: a unique business name
+                                    category:
+                                        type: string
+                                        description: used to group businesses
+                                    location:
+                                        type: string
+                                        description: business location
+                                    summary:
+                                        type: string
+                                        description: business description
+                                    created_by:
+                                        type: integer
+                                        description: id of the business owner
             500:
                 description: Internal server error
                 schema:
@@ -249,6 +253,11 @@ class OneBusiness(Resource):
                         owner_id:
                             type: integer
                             description: describes the id of the business owner
+                        reviews:
+                            type: array
+                            items:
+                                type: string
+                                description: a list of business reviews
             404:
                 description: Business is not registered
                 schema:
@@ -350,24 +359,10 @@ class OneBusiness(Resource):
                 description: A dictionary of business data
                 schema:
                     properties:
-                        id:
+                        response_message:
+                            type: string
+                        status_code:
                             type: integer
-                            description: a unique business id
-                        name:
-                            type: string
-                            description: a unique business name
-                        category:
-                            type: string
-                            description: used to group businesses
-                        location:
-                            type: string
-                            description: describes physical location
-                        summary:
-                            type: string
-                            description: business description
-                        created_by:
-                            type: integer
-                            description: describes the id of the business owner
             404:
                 description: Business is not registered
                 schema:
@@ -541,24 +536,29 @@ class UserBusiness(Resource):
                 description: A dictionary of business data
                 schema:
                     properties:
-                        id:
-                            type: integer
-                            description: a unique business id
-                        name:
-                            type: string
-                            description: a unique business name
-                        category:
-                            type: string
-                            description: used to group businesses
-                        location:
-                            type: string
-                            description: describes physical location
-                        summary:
-                            type: string
-                            description: business description
-                        created_by:
-                            type: string
-                            description: username of the business owner
+                        business_list:
+                            type: array
+                            items:
+                                type: object
+                                properties:
+                                    id:
+                                        type: integer
+                                        description: a unique business id
+                                    name:
+                                        type: string
+                                        description: a unique business name
+                                    category:
+                                        type: string
+                                        description: used to group businesses
+                                    location:
+                                        type: string
+                                        description: describes physical location
+                                    summary:
+                                        type: string
+                                        description: business description
+                                    created_by:
+                                        type: string
+                                        description: username of the business owner
             404:
                 description: User is not registered
                 schema:
@@ -657,26 +657,45 @@ class SearchBusiness(Resource):
             200:
                 description: A list of dictionaries of businesses
                 schema:
-                    name: business_list
                     properties:
-                        id:
+                        business_list:
+                            type: array
+                            items:
+                                type: object
+                                properties:
+                                    id:
+                                        type: integer
+                                        description: a unique business id
+                                    name:
+                                        type: string
+                                        description: a unique business name
+                                    category:
+                                        type: string
+                                        description: used to group businesses
+                                    location:
+                                        type: string
+                                        description: physical location
+                                    summary:
+                                        type: string
+                                        description: business description
+                                    created_by:
+                                        type: integer
+                                        description: id of the business owner
+                        count:
                             type: integer
-                            description: a unique business id
-                        name:
-                            type: string
-                            description: a unique business name
-                        category:
-                            type: string
-                            description: used to group businesses
-                        location:
-                            type: string
-                            description: describes physical location
-                        summary:
-                            type: string
-                            description: business description
-                        created_by:
+                            description: number of businesses availabale
+                        limit:
                             type: integer
-                            description: describes the id of the business owner
+                            description: maximum number of businesses
+                        next:
+                            type: string
+                            description: next url
+                        previous:
+                            type: string
+                            description: previous url
+                        start:
+                            type: integer
+                            description: index of the list to start from
             404:
                 description: Business not found
                 schema:
@@ -721,7 +740,7 @@ class SearchBusiness(Resource):
                     business_list.append(_object)
 
                 pagination_res = get_paginated_list(business_list,
-                                                    '/api/v1/business/search',
+                                                    '/api/v1/businesses/search',
                                                     result_start, result_limit)
                 response = jsonify(pagination_res)
                 response.status_code = 200
