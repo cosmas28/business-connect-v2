@@ -10,8 +10,9 @@ import re
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, Api
+from sqlalchemy import desc
 
-from app.models import Business
+from app.models import Business, Reviews
 from app.models import User
 from app.models import db
 from app.utils import business_name_registered, get_paginated_list
@@ -173,7 +174,8 @@ class Businesses(Resource):
         """
 
         try:
-            businesses = Business.query.all()
+            # businesses = Business.query.all()
+            businesses = Business.query.order_by(desc(Business.id)).all()
             business_result = []
 
             for business in businesses:
@@ -269,6 +271,17 @@ class OneBusiness(Resource):
         if business:
             user_id = business.created_by
             user = User.query.filter_by(id=user_id).first()
+            reviews = Reviews.query.filter_by(review_for=business_id).all()
+            _reviews = []
+
+            for _review in reviews:
+                reviewer = User.query.filter_by(
+                    id=_review.reviewed_by).first()
+                _object = {
+                    'review': _review.review,
+                    'reviewed_by': reviewer.username,
+                }
+                _reviews.append(_object)
             try:
                 business_object = jsonify({
                     'id': business.id,
@@ -277,7 +290,8 @@ class OneBusiness(Resource):
                     'location': business.location,
                     'summary': business.summary,
                     'created_by': user.username,
-                    'owner_id': business.created_by
+                    'owner_id': business.created_by,
+                    'reviews': _reviews
                 })
 
                 business_object.status_code = 200
@@ -390,17 +404,13 @@ class OneBusiness(Resource):
                 ))
                 db.session.commit()
 
-                new_business = Business.query.filter_by(id=business_id).first()
-                business_object = jsonify({
-                    'id': new_business.id,
-                    'name': new_business.name,
-                    'category': new_business.category,
-                    'location': new_business.location,
-                    'summary': new_business.summary,
-                    'created_by': new_business.created_by
+                response = jsonify({
+                    'response_message':
+                        'Business has been updated successfully!',
+                        'status_code': 200
                 })
-                business_object.status_code = 200
-                return business_object
+                response.status_code = 200
+                return response
             except Exception as e:
                 response = jsonify({
                     'response_message': str(e),
@@ -598,7 +608,8 @@ class UserBusiness(Resource):
                     'response_message': 'You have not registered a business!',
                     'status_code': 204
                 })
-            return response
+                response.status_code = 204
+                return response
         else:
             response = jsonify({
                 'response_message': 'User is not registered!',
