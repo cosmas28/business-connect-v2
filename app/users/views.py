@@ -9,7 +9,7 @@ import re
 import os
 from itsdangerous import URLSafeTimedSerializer as Serializer
 
-from flask import Blueprint, request, make_response, jsonify
+from flask import Blueprint, request, make_response, jsonify, render_template
 from flask_jwt_extended import (
     create_access_token, create_refresh_token, jwt_required,
     jwt_refresh_token_required, get_jwt_identity, get_raw_jwt
@@ -388,12 +388,9 @@ class ConfirmResetPasswordEmail(Resource):
                 token = serializer.dumps(email)
                 user = User.query.filter_by(email=email).first()
                 link = url + '/' + token
-                mail_body = 'Hello ' + user.username + ', '\
-                            'You or someone else has requested that a '\
-                            'new password be generated for your account. '\
-                            'If you made this request, then please follow'\
-                            'this link:' + link
-                mail_response = send_mail(email, mail_body)
+                html = render_template(
+                    'user/email.html', link=link, user_name=user.username)
+                mail_response = send_mail(email, html)
                 response = jsonify({
                     'response_message': mail_response,
                     'status_code': 200,

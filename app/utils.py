@@ -136,7 +136,7 @@ def send_mail(user_email, body):
             subject='Forgot Password - weconnect.com',
             sender=os.getenv('CONFIG_EMAIL'),
             recipients=[user_email],
-            body=body
+            html=body
             )
 
         mail.send(message)
