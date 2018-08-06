@@ -635,18 +635,6 @@ class SearchBusiness(Resource):
                 required: true
                 schema:
                     type: string
-            -   in: query
-                name: start
-                description: pagination starting number
-                required: true
-                schema:
-                    type: integer
-            -   in: query
-                name: limit
-                description: pagination ending number
-                required: true
-                schema:
-                    type: integer
             -   in: header
                 name: authorization
                 description: JSON Web Token
@@ -681,21 +669,6 @@ class SearchBusiness(Resource):
                                     created_by:
                                         type: integer
                                         description: id of the business owner
-                        count:
-                            type: integer
-                            description: number of businesses availabale
-                        limit:
-                            type: integer
-                            description: maximum number of businesses
-                        next:
-                            type: string
-                            description: next url
-                        previous:
-                            type: string
-                            description: previous url
-                        start:
-                            type: integer
-                            description: index of the list to start from
             404:
                 description: Business not found
                 schema:
@@ -715,8 +688,6 @@ class SearchBusiness(Resource):
         """
 
         user_request = request.args.get('q').lower()
-        result_start = int(request.args.get('start'))
-        result_limit = int(request.args.get('limit'))
         found_businesses = []
         all_businesses = Business.query.all()
         for row in all_businesses:
@@ -738,11 +709,7 @@ class SearchBusiness(Resource):
                         'created_by': business.created_by
                     }
                     business_list.append(_object)
-
-                pagination_res = get_paginated_list(business_list,
-                                                    '/api/v1/businesses/search',
-                                                    result_start, result_limit)
-                response = jsonify(pagination_res)
+                response = jsonify(business_list=business_list)
                 response.status_code = 200
                 return response
             except Exception as e:

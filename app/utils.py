@@ -108,6 +108,7 @@ def get_paginated_list(business_list, url, start, limit):
         _object['previous'] = ''
     else:
         start_copy = max(1, start - limit)
+        _object['previous_start'] = start_copy
         limit_copy = start - 1
         _object['previous'] = \
             url + '?start=%d&limit=%d' % (start_copy, limit_copy)
@@ -116,6 +117,7 @@ def get_paginated_list(business_list, url, start, limit):
         _object['next'] = ''
     else:
         start_copy = start + limit
+        _object['next_start'] = start_copy
         _object['next'] = url + '?start=%d&limit=%d' % (start_copy, limit)
     _object['business_list'] = business_list[(start - 1):(start - 1 + limit)]
 
