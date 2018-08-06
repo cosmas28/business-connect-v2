@@ -454,7 +454,7 @@ class BusinessSearchTest(AbstractTest):
             headers=dict(Authorization='Bearer ' + access_token))
 
         self.assertEqual(
-            len(json.loads(response.data.decode()).get('business_list')), 2)
+            len(json.loads(response.data.decode()).get('business_list')), 3)
 
 
 if __name__ == '__main__':
