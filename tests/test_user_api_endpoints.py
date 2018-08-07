@@ -122,7 +122,8 @@ class RegisterUserTest(AbstractTest):
                                      data=second_user, headers=self.headers)
 
         json_res = json.loads(response.data.decode())
-        self.assertEqual(json_res['message'], 'User already exists. Sign in!')
+        self.assertEqual(
+            json_res['message'], 'Email address already exists. Sign in!')
 
     def test_register_registered_name(self):
         """Test user registration with a registered username
@@ -143,7 +144,7 @@ class RegisterUserTest(AbstractTest):
                                      data=user_data, headers=self.headers)
 
         json_res = json.loads(response.data.decode())
-        self.assertEqual(json_res['message'], 'User already exists. Sign in!')
+        self.assertEqual(json_res['message'], 'Username already exists!')
 
     def test_register_short_password(self):
         """Test user registration with a less than 6 password length

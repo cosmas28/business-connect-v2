@@ -94,7 +94,6 @@ class RegisterUser(Resource):
         if check_key_error(**user_data):
             return jsonify(check_key_error(**user_data))
         not_valid_password = valid_password(password, confirm_password)
-        registered = username_exist(username) or email_exist(email)
         if not email or not username:
             response_message = jsonify({
                 'message': 'Email and Username are required!',
@@ -115,7 +114,13 @@ class RegisterUser(Resource):
             response_message = jsonify(not_valid_password)
             response_message.status_code = 406
             return response_message
-        if not registered:
+
+        elif username_exist(username):
+            response_message = jsonify({
+                'message': 'Username already exists!',
+                'status_code': 406})
+            return response_message
+        if not email_exist(email):
             try:
                 user = User(email=email, username=username,
                             first_name=first_name, last_name=last_name,
@@ -131,7 +136,7 @@ class RegisterUser(Resource):
                 return make_response(jsonify(response_message))
         else:
             response_message = jsonify({
-                'message': 'User already exists. Sign in!',
+                'message': 'Email address already exists. Sign in!',
                 'status_code': 406})
             return response_message
 
