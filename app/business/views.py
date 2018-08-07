@@ -74,7 +74,8 @@ class Businesses(Resource):
                             type: string
         """
         req_data = request.get_json(force=True)
-        business_name = re.sub(r'\s+', '', str(req_data.get('name'))).lower()
+        # business_name = re.sub(r'\s+', '', str(req_data.get('name'))).lower()
+        business_name = req_data.get('name')
         business_category = req_data.get('category')
         business_location = req_data.get('location')
         business_summary = req_data.get('summary')
