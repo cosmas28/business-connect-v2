@@ -549,13 +549,13 @@ class UserBusiness(Resource):
                                         description: used to group businesses
                                     location:
                                         type: string
-                                        description: describes physical location
+                                        description: physical location
                                     summary:
                                         type: string
                                         description: business description
                                     created_by:
                                         type: string
-                                        description: username of the business owner
+                                        description: business owner
             404:
                 description: User is not registered
                 schema:
