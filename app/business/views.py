@@ -5,8 +5,6 @@ view a single business, view all businesses.
 
 """
 
-import re
-
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, Api
@@ -15,7 +13,7 @@ from sqlalchemy import desc
 from app.models import Business, Reviews
 from app.models import User
 from app.models import db
-from app.utils import business_name_registered, get_paginated_list
+from app.utils import business_name_registered
 
 
 class Businesses(Resource):
@@ -74,7 +72,6 @@ class Businesses(Resource):
                             type: string
         """
         req_data = request.get_json(force=True)
-        # business_name = re.sub(r'\s+', '', str(req_data.get('name'))).lower()
         business_name = req_data.get('name')
         business_category = req_data.get('category')
         business_location = req_data.get('location')
@@ -179,7 +176,6 @@ class Businesses(Resource):
         """
 
         try:
-            # businesses = Business.query.all()
             businesses = Business.query.order_by(desc(Business.id)).all()
             business_result = []
 
@@ -692,7 +688,7 @@ class SearchBusiness(Resource):
         found_businesses = []
         all_businesses = Business.query.all()
         for row in all_businesses:
-            if row.name.startswith(user_request) or \
+            if row.name.lower().startswith(user_request) or \
                 row.category.startswith(user_request) or \
                     row.location.startswith(user_request):
                         found_businesses.append(row)
