@@ -82,8 +82,13 @@ def business_name_registered(name):
         Boolean value.
     """
 
-    registered = Business.query.filter_by(name=name).first()
-    return registered
+    business_names = []
+    businesses = Business.query.all()
+    for business in businesses:
+        business_names.append(business.name.lower())
+
+    if name.lower() in business_names:
+        return True
 
 
 def get_paginated_list(business_list, url, start, limit):
