@@ -28,8 +28,8 @@ class AbstractTest(unittest.TestCase):
                                      'username': 'testuser',
                                      'first_name': 'first',
                                      'last_name': 'last',
-                                     'password': 'andela2018',
-                                     'confirm_password': 'andela2018'})
+                                     'password': 'anDela2018',
+                                     'confirm_password': 'anDela2018'})
 
         with self.app.app_context():
             db.drop_all()
@@ -53,7 +53,7 @@ class RegisterUserTest(AbstractTest):
         user_data = json.dumps({'email': '', 'username': 'cosmas',
                                 'first_name': 'first',
                                 'last_name': 'last', 'password': 'andela2018',
-                                'confirm_password': 'andela2018'})
+                                'confirm_password': 'anDela2018'})
         response = self.run_app.post('/api/v2/auth/register',
                                      data=user_data, headers=self.headers)
 
@@ -66,8 +66,9 @@ class RegisterUserTest(AbstractTest):
         using post request for RegisterUser class view."""
 
         user_data = json.dumps({'email': 'test@andela.com',
-                                'username': '', 'password': 'andela2018',
-                                'confirm_password': 'andela2018'})
+                                'first_name': 'first', 'last_name': 'last',
+                                'username': '', 'password': 'anDela2018',
+                                'confirm_password': 'anDela2018'})
         response = self.run_app.post('/api/v2/auth/register',
                                      data=user_data, headers=self.headers)
         json_res = json.loads(response.data.decode())
@@ -79,8 +80,9 @@ class RegisterUserTest(AbstractTest):
         using post request for RegisterUser class view."""
 
         user_data = json.dumps({'email': 'test@andela.com',
+                                'first_name': 'first', 'last_name': 'last',
                                 'username': 'cosmas', 'password': '',
-                                'confirm_password': 'andela2018'})
+                                'confirm_password': 'anDela2018'})
         response = self.run_app.post('/api/v2/auth/register',
                                      data=user_data, headers=self.headers)
         json_res = json.loads(response.data.decode())
@@ -92,7 +94,8 @@ class RegisterUserTest(AbstractTest):
         using post request for RegisterUser class view."""
 
         user_data = json.dumps({'email': 'test@andela.com',
-                                'username': 'cosmas', 'password': 'andela2018',
+                                'first_name': 'first', 'last_name': 'last',
+                                'username': 'cosmas', 'password': 'anDela2018',
                                 'confirm_password': ''})
         response = self.run_app.post('/api/v2/auth/register',
                                      data=user_data, headers=self.headers)
@@ -107,14 +110,14 @@ class RegisterUserTest(AbstractTest):
         first_user = json.dumps({
             'email': 'test@andela.com', 'username': 'testuser',
             'first_name': 'first', 'last_name': 'last',
-            'password': 'andela2018', 'confirm_password': 'andela2018'})
+            'password': 'anDela2018', 'confirm_password': 'anDela2018'})
         self.run_app.post('/api/v2/auth/register',
                           data=first_user, headers=self.headers)
 
         second_user = json.dumps({
             'email': 'test@andela.com', 'username': 'cosmas',
             'first_name': 'first', 'last_name': 'last',
-            'password': 'andela2018', 'confirm_password': 'andela2018'})
+            'password': 'anDela2018', 'confirm_password': 'anDela2018'})
         response = self.run_app.post('/api/v2/auth/register',
                                      data=second_user, headers=self.headers)
 
@@ -128,14 +131,14 @@ class RegisterUserTest(AbstractTest):
         first_user = json.dumps({
             'email': 'test@andela.com', 'username': 'testuser',
             'first_name': 'first', 'last_name': 'last',
-            'password': 'andela2018', 'confirm_password': 'andela2018'})
+            'password': 'anDela2018', 'confirm_password': 'anDela2018'})
         self.run_app.post('/api/v2/auth/register',
                           data=first_user, headers=self.headers)
 
         user_data = json.dumps({'email': 'test2@andela.com',
                                 'username': 'testuser', 'first_name': 'first',
-                                'last_name': 'last', 'password': 'andela2018',
-                                'confirm_password': 'andela2018'})
+                                'last_name': 'last', 'password': 'anDela2018',
+                                'confirm_password': 'anDela2018'})
         response = self.run_app.post('/api/v2/auth/register',
                                      data=user_data, headers=self.headers)
 
@@ -148,8 +151,8 @@ class RegisterUserTest(AbstractTest):
 
         user_data = json.dumps({'email': 'test2@andela.com',
                                 'username': 'testuser', 'first_name': 'first',
-                                'last_name': 'last', 'password': 'a2018',
-                                'confirm_password': 'a2018'})
+                                'last_name': 'last', 'password': 'A2018',
+                                'confirm_password': 'A2018'})
         response = self.run_app.post('/api/v2/auth/register',
                                      data=user_data, headers=self.headers)
         json_res = json.loads(response.data.decode())
@@ -162,8 +165,8 @@ class RegisterUserTest(AbstractTest):
 
         user_data = json.dumps({'email': 'test2@andela.com',
                                 'username': 'testuser', 'first_name': 'first',
-                                'last_name': 'last', 'password': 'andela2014',
-                                'confirm_password': 'andela2018'})
+                                'last_name': 'last', 'password': 'anDela2014',
+                                'confirm_password': 'anDela2018'})
         response = self.run_app.post('/api/v2/auth/register',
                                      data=user_data, headers=self.headers)
         json_res = json.loads(response.data.decode())
@@ -176,8 +179,8 @@ class RegisterUserTest(AbstractTest):
 
         user_data = json.dumps({'email': 'test2@andela.com',
                                 'username': 'testuser', 'first_name': 'first',
-                                'last_name': 'last', 'password': 'andela2018',
-                                'confirm_password': 'andela2018'})
+                                'last_name': 'last', 'password': 'anDela2018',
+                                'confirm_password': 'anDela2018'})
         response = self.run_app.post('/api/v2/auth/register',
                                      data=user_data, headers=self.headers)
         json_res = json.loads(response.data.decode())
@@ -196,7 +199,7 @@ class LoginUserTest(AbstractTest):
                           data=self.user_data, headers=self.headers)
 
         login_data = json.dumps({'email': 'test@andela.com',
-                                 'password': 'andela2018'})
+                                 'password': 'anDela2018'})
         login_response = self.run_app.post('/api/v2/auth/login',
                                            data=login_data,
                                            headers=self.headers)
@@ -222,7 +225,7 @@ class LoginUserTest(AbstractTest):
         json_res = json.loads(login_response.data.decode())
         self.assertEqual(json_res['response_message'],
                          'Invalid email or password!')
-        self.assertEqual(login_response.status_code, 401)
+        self.assertEqual(json_res['status_code'], 401)
 
     def test_login_successful(self):
         """Test login successfully with correct credentials
@@ -232,7 +235,7 @@ class LoginUserTest(AbstractTest):
                           data=self.user_data, headers=self.headers)
 
         login_data = json.dumps({'email': 'test2@andela.com',
-                                 'password': 'andela2018'})
+                                 'password': 'anDela2018'})
         login_response = self.run_app.post('/api/v2/auth/login',
                                            data=login_data,
                                            headers=self.headers)
@@ -259,7 +262,7 @@ class LogoutAccessTest(AbstractTest):
                          'You have successfully created an account!')
 
         login_data = json.dumps({'email': 'test2@andela.com',
-                                 'password': 'andela2018'})
+                                 'password': 'anDela2018'})
         login_response = self.run_app.post('/api/v2/auth/login',
                                            data=login_data,
                                            headers=self.headers)
@@ -268,33 +271,6 @@ class LogoutAccessTest(AbstractTest):
         logout_res = self.run_app.post(
             '/api/v2/auth/logout',
             headers=dict(Authorization='Bearer ' + access_token))
-        self.assertEqual(logout_res.status_code, 200)
-        self.assertEqual(
-            json.loads(logout_res.data.decode())['response_message'],
-            'Log out has been successful!')
-
-
-class LogoutRefreshTest(AbstractTest):
-    """Test suite for user logout using a refresh token."""
-
-    def test_logout_successful(self):
-        """Test logout successfully using refresh token
-        using post request for UserLogoutRefresh class view."""
-
-        self.run_app.post('/api/v2/auth/register',
-                          data=self.user_data, headers=self.headers)
-
-        login_data = json.dumps({'email': 'test2@andela.com',
-                                 'password': 'andela2018'})
-        login_response = self.run_app.post('/api/v2/auth/login',
-                                           data=login_data,
-                                           headers=self.headers)
-        refresh_token = json.loads(
-            login_response.data.decode())['refresh_token']
-
-        logout_res = self.run_app.post(
-            '/api/v2/auth/logout_refresh_token',
-            headers=dict(Authorization='Bearer ' + refresh_token))
         self.assertEqual(logout_res.status_code, 200)
         self.assertEqual(
             json.loads(logout_res.data.decode())['response_message'],
@@ -311,10 +287,10 @@ class ResetPasswordTest(AbstractTest):
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
 
-        new_data = json.dumps({'email': '', 'password': 'andela2018',
-                               'confirm_password': 'andela2018'})
-        response = self.run_app.post('/api/v2/auth/reset_password',
-                                     data=new_data, headers=self.headers)
+        user_email = json.dumps({'email': ''})
+        response = self.run_app.post(
+            '/api/v2/auth/reset_password/confirm_email',
+            data=user_email, headers=self.headers)
 
         # get the response text in json format
         json_res = json.loads(response.data.decode())
@@ -326,11 +302,17 @@ class ResetPasswordTest(AbstractTest):
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
+        user_email = json.dumps({'email': 'test2@andela.com'})
+        email_response = self.run_app.post(
+            '/api/v2/auth/reset_password/confirm_email',
+            data=user_email, headers=self.headers)
 
-        new_data = json.dumps({'email': 'test@andela.com', 'password': '',
-                               'confirm_password': 'andela2018'})
-        response = self.run_app.post('/api/v2/auth/reset_password',
-                                     data=new_data, headers=self.headers)
+        new_password = json.dumps({
+            'password': '', 'confirm_password': 'anDela2018'})
+        token = json.loads(email_response.data.decode())['token']
+        response = self.run_app.post(
+            '/api/v2/auth/reset_password/' + token,
+            data=new_password, headers=self.headers)
 
         # get the response text in json format
         json_res = json.loads(response.data.decode())
@@ -342,12 +324,17 @@ class ResetPasswordTest(AbstractTest):
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
+        user_email = json.dumps({'email': 'test2@andela.com'})
+        email_response = self.run_app.post(
+            '/api/v2/auth/reset_password/confirm_email',
+            data=user_email, headers=self.headers)
 
-        new_data = json.dumps({'email': 'test@andela.com',
-                               'password': 'andela2018',
-                               'confirm_password': ''})
-        response = self.run_app.post('/api/v2/auth/reset_password',
-                                     data=new_data, headers=self.headers)
+        new_password = json.dumps({
+            'password': 'anDela2018', 'confirm_password': ''})
+        token = json.loads(email_response.data.decode())['token']
+        response = self.run_app.post(
+            '/api/v2/auth/reset_password/' + token,
+            data=new_password, headers=self.headers)
 
         # get the response text in json format
         json_res = json.loads(response.data.decode())
@@ -360,15 +347,30 @@ class ResetPasswordTest(AbstractTest):
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
 
-        new_data = json.dumps({'email': 'not_registered@andela.com',
-                               'password': 'andela2018',
-                               'confirm_password': 'andela2018'})
-        response = self.run_app.post('/api/v2/auth/reset_password',
-                                     data=new_data, headers=self.headers)
+        user_email = json.dumps({'email': 'not_registered@andela.com'})
+        response = self.run_app.post(
+            '/api/v2/auth/reset_password/confirm_email', data=user_email,
+            headers=self.headers)
 
         # get the response text in json format
         json_res = json.loads(response.data.decode())
         self.assertEqual(json_res['response_message'], 'Email not registered')
+
+    def test_check_email_successful(self):
+        """Test successful message returned when user email
+        exists using post request for ResetPassword class view."""
+
+        self.run_app.post('/api/v2/auth/register',
+                          data=self.user_data, headers=self.headers)
+
+        user_email = json.dumps({'email': 'test2@andela.com'})
+        response = self.run_app.post(
+            '/api/v2/auth/reset_password/confirm_email', data=user_email,
+            headers=self.headers)
+
+        # get the response text in json format
+        json_res = json.loads(response.data.decode())
+        self.assertEqual(json_res['response_message'], 'Confirm your email')
 
     def test_reset_password_successful(self):
         """Test reset password successful with correct data
@@ -376,12 +378,16 @@ class ResetPasswordTest(AbstractTest):
 
         self.run_app.post('/api/v2/auth/register',
                           data=self.user_data, headers=self.headers)
-
-        new_data = json.dumps({'email': 'test2@andela.com',
-                               'password': 'andela2018',
-                               'confirm_password': 'andela2018'})
-        response = self.run_app.post('/api/v2/auth/reset_password',
-                                     data=new_data, headers=self.headers)
+        user_email = json.dumps({'email': 'test2@andela.com'})
+        email_response = self.run_app.post(
+            '/api/v2/auth/reset_password/confirm_email',
+            data=user_email, headers=self.headers)
+        new_password = json.dumps({
+            'password': 'anDela2018', 'confirm_password': 'anDela2018'})
+        token = json.loads(email_response.data.decode())['token']
+        response = self.run_app.post(
+            '/api/v2/auth/reset_password/' + token,
+            data=new_password, headers=self.headers)
 
         # get the response text in json format
         json_res = json.loads(response.data.decode())

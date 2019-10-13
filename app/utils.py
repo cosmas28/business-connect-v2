@@ -1,7 +1,13 @@
 """Create helper functions to be used in views module."""
 
+import re
+import os
+from flask_mail import Message, Mail
+
 from app.models import User
 from app.models import Business
+
+mail = Mail()
 
 
 def email_exist(email):
@@ -21,6 +27,32 @@ def username_exist(user_name):
 def valid_password(password, confirm_password):
     """Check whether the password have more than 6 characters."""
 
+    if password.isalpha():
+        response_message = {
+            'message': 'Password must contain different characters!',
+            'status_code': 406}
+        return response_message
+    if not password.isalnum():
+        response_message = {
+            'message': 'Password must contain alphanumeric characters!',
+            'status_code': 406}
+        return response_message
+    if password.islower():
+        response_message = {
+            'message': 'Password must contain at least one capital character!',
+            'status_code': 406}
+        return response_message
+    if password.isspace():
+        response_message = {
+            'message': 'Password must contain at least 6 characters!',
+            'status_code': 406}
+        return response_message
+    if password.isdigit():
+        response_message = {
+            'message': 'Password must contain at least one alphabetical \
+                         characters!',
+            'status_code': 406}
+        return response_message
     if len(password) <= 6:
         response_message = {
             'message': 'Password must be more than 6 characters!'}
@@ -29,6 +61,15 @@ def valid_password(password, confirm_password):
         response_message = {
             'message': 'Password does not match the confirmation password!'}
         return response_message
+
+
+def valid_email(email):
+    valid = False
+    match_email = re.search(
+        r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+\.[a-zA-Z0-9.]*\.*$)", email)
+    if match_email:
+        valid = True
+    return valid
 
 
 def business_name_registered(name):
@@ -79,3 +120,26 @@ def get_paginated_list(business_list, url, start, limit):
     _object['business_list'] = business_list[(start - 1):(start - 1 + limit)]
 
     return _object
+
+
+def check_key_error(**kwargs):
+    error_message = {}
+    for key in kwargs:
+        if kwargs[key] is None:
+            error_message[key] = '{} key is required!'.format(key)
+    return error_message
+
+
+def send_mail(user_email, body):
+    try:
+        message = Message(
+            subject='Forgot Password - weconnect.com',
+            sender=os.getenv('CONFIG_EMAIL'),
+            recipients=[user_email],
+            body=body
+            )
+
+        mail.send(message)
+        return 'Confirm your email'
+    except Exception as error:
+        return (str(error))

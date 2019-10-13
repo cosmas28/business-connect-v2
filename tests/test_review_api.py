@@ -28,14 +28,14 @@ class BusinessReviewsTest(unittest.TestCase):
         user_data = json.dumps({
             'email': 'test@andela.com', 'username': 'cosmas',
             'first_name': 'first', 'last_name': 'last',
-            'password': 'andela2018', 'confirm_password': 'andela2018'})
+            'password': 'aNdela2018', 'confirm_password': 'aNdela2018'})
         return self.run_app.post('/api/v2/auth/register',
                                  data=user_data, headers=self.headers)
 
     def login_user(self):
         """Register a user."""
         login_data = json.dumps({'email': 'test@andela.com',
-                                 'password': 'andela2018'})
+                                 'password': 'aNdela2018'})
 
         return self.run_app.post('/api/v2/auth/login',
                                  data=login_data, headers=self.headers)
@@ -82,7 +82,8 @@ class BusinessReviewsTest(unittest.TestCase):
             '/api/v2/businesses/reviews', data=review,
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(review_res.status_code, 404)
+        self.assertEqual(
+            json.loads(review_res.data.decode())['status_code'], 404)
 
     def test_add_null_review(self):
         """Test business review with null review
@@ -99,7 +100,8 @@ class BusinessReviewsTest(unittest.TestCase):
             '/api/v2/businesses/1/reviews', data=review,
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(review_res.status_code, 406)
+        self.assertEqual(
+            json.loads(review_res.data.decode())['status_code'], 406)
 
     def test_add_successful(self):
         """Test business reviewed successfully
@@ -126,13 +128,12 @@ class BusinessReviewsTest(unittest.TestCase):
 
         self.register_business(access_token)
 
-        review = json.dumps({
-            'review': 'The future of AI is very bright, mostly in security'})
         review_res = self.run_app.get(
-            '/api/v2/businesses/reviews', data=review,
+            '/api/v2/businesses/2/reviews',
             headers=dict(Authorization='Bearer ' + access_token))
 
-        self.assertEqual(review_res.status_code, 404)
+        self.assertEqual(
+            json.loads(review_res.data.decode())['status_code'], 404)
 
     def test_view_successful(self):
         """Test view a business reviews successfully

@@ -5,6 +5,8 @@ view a single business, view all businesses.
 
 """
 
+import re
+
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource, Api
@@ -12,7 +14,7 @@ from flask_restful import Resource, Api
 from app.models import Business
 from app.models import User
 from app.models import db
-from app.helper_functions import business_name_registered, get_paginated_list
+from app.utils import business_name_registered, get_paginated_list
 
 
 class Businesses(Resource):
@@ -69,7 +71,7 @@ class Businesses(Resource):
                             type: string
         """
         req_data = request.get_json(force=True)
-        business_name = req_data.get('name')
+        business_name = re.sub(r'\s+', '', str(req_data.get('name'))).lower()
         business_category = req_data.get('category')
         business_location = req_data.get('location')
         business_summary = req_data.get('summary')
@@ -77,17 +79,17 @@ class Businesses(Resource):
 
         if not business_name or not business_summary:
             response = jsonify({
-               'response_message': 'Business name and '
-                                   'description are required!'
+               'response_message':
+               'Business name and description are required!',
+               'status_code': 406
             })
-            response.status_code = 406
             return response
         if not business_location or not business_category:
             response = jsonify({
                 'response_message':
-                    'Business location and category are required!'
+                    'Business location and category are required!',
+                'status_code': 406
             })
-            response.status_code = 406
             return response
         if not business_name_registered(business_name):
             try:
@@ -98,19 +100,20 @@ class Businesses(Resource):
 
                 response = jsonify({
                     'response_message':
-                        'Business has been registered successfully!'
+                        'Business has been registered successfully!',
+                    'status_code': 201
                 })
-
-                response.status_code = 201
                 return response
             except Exception as error:
-                response_message = {'message': str(error)}
+                response_message = {
+                    'message': str(error),
+                    'status_code': 500}
                 return make_response(jsonify(response_message))
         else:
             response = jsonify({
-                'response_message': 'Business name already registered!'
+                'response_message': 'Business name already registered!',
+                'status_code': 406
             })
-            response.status_code = 406
             return response
 
     @jwt_required
@@ -185,10 +188,9 @@ class Businesses(Resource):
             return response
         except Exception as e:
             response = jsonify({
-                'response_message': str(e)
+                'response_message': str(e),
+                'status_code': 500
             })
-
-            response.status_code = 500
             return response
 
 
@@ -268,16 +270,15 @@ class OneBusiness(Resource):
                 return business_object
             except Exception as e:
                 response = jsonify({
-                    'response_message': str(e)
+                    'response_message': str(e),
+                    'status_code': 500
                 })
-
-                response.status_code = 500
                 return response
         else:
             response = jsonify({
-                'response_message': 'Business id is not registered!'
+                'response_message': 'Business id is not registered!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
 
     @jwt_required
@@ -384,16 +385,15 @@ class OneBusiness(Resource):
                 return business_object
             except Exception as e:
                 response = jsonify({
-                    'response_message': str(e)
+                    'response_message': str(e),
+                    'status_code': 500
                 })
-
-                response.status_code = 500
                 return response
         else:
             response = jsonify({
-                'response_message': 'Business id is not registered!'
+                'response_message': 'Business id is not registered!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
 
     @jwt_required
@@ -445,9 +445,9 @@ class OneBusiness(Resource):
         business = Business.query.filter_by(id=business_id).first()
         if business is None:
             response = jsonify({
-                'response_message': 'Business id is not registered!'
+                'response_message': 'Business id is not registered!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
 
         if business.created_by == created_by:
@@ -458,24 +458,22 @@ class OneBusiness(Resource):
                 db.session.commit()
                 response = jsonify({
                     'response_message':
-                        'Business has been deleted successfully!'
+                        'Business has been deleted successfully!',
+                        'status_code': 204
                 })
-
-                response.status_code = 204
                 return response
             except Exception as e:
                 response = jsonify({
-                    'response_message': str(e)
+                    'response_message': str(e),
+                    'status_code': 500
                 })
-
-                response.status_code = 500
                 return response
         else:
             response = jsonify({
                 'response_message':
-                    'Permission required to delete this business!'
+                    'Permission required to delete this business!',
+                'status_code': 401
             })
-            response.status_code = 401
             return response
 
 
@@ -541,258 +539,36 @@ class UserBusiness(Resource):
         user = User.query.filter_by(id=user_id).first()
         if user:
             business = Business.query.filter_by(created_by=user_id).first()
-            try:
-                business_object = jsonify({
-                    'id': business.id,
-                    'name': business.name,
-                    'category': business.category,
-                    'location': business.location,
-                    'summary': business.summary,
-                    'created_by': user.username
-                })
-
-                business_object.status_code = 200
-                return business_object
-            except Exception as e:
-                response = jsonify({
-                    'response_message': str(e)
-                })
-
-                response.status_code = 500
-                return response
-        else:
-            response = jsonify({
-                'response_message': 'User is not registered!'
-            })
-            response.status_code = 404
-            return response
-
-
-class BusinessCategory(Resource):
-
-    """Illustrate API endpoints to view businesses with the same category."""
-
-    @jwt_required
-    def get(self):
-        """View registered businesses based on category.
-        ---
-        tags:
-            -   businesses
-        parameters:
-            -   in: query
-                name: category
-                description: business category
-                required: true
-                schema:
-                    type: string
-            -   in: query
-                name: start
-                description: pagination starting number
-                required: true
-                schema:
-                    type: integer
-            -   in: query
-                name: limit
-                description: pagination ending number
-                required: true
-                schema:
-                    type: integer
-            -   in: header
-                name: authorization
-                description: JSON Web Token
-                type: string
-                required: true
-                x-authentication: Bearer
-        responses:
-            200:
-                description: A list of dictionaries of businesses
-                schema:
-                    name: business_list
-                    properties:
-                        id:
-                            type: integer
-                            description: a unique business id
-                        name:
-                            type: string
-                            description: a unique business name
-                        category:
-                            type: string
-                            description: used to group businesses
-                        location:
-                            type: string
-                            description: describes physical location
-                        summary:
-                            type: string
-                            description: business description
-                        created_by:
-                            type: integer
-                            description: describes the id of the business owner
-            404:
-                description: Business category not found
-                schema:
-                    properties:
-                        response_message:
-                            type: string
-            500:
-                description: Internal server error
-                schema:
-                    properties:
-                        response_message:
-                            type: string
-        """
-
-        user_request = request.args.get('q')
-        result_start = int(request.args.get('start'))
-        result_limit = int(request.args.get('limit'))
-        businesses = Business.query.filter_by(category=user_request).all()
-        if businesses:
-            try:
-
-                business_list = []
-
-                for business in businesses:
-                    _object = {
+            if business:
+                try:
+                    business_object = jsonify({
                         'id': business.id,
                         'name': business.name,
                         'category': business.category,
                         'location': business.location,
                         'summary': business.summary,
-                        'created_by': business.created_by
-                    }
-                    business_list.append(_object)
+                        'created_by': user.username
+                    })
 
-                pagination_res = get_paginated_list(business_list,
-                                                    '/api/v1/business/search',
-                                                    result_start, result_limit)
-                response = jsonify(pagination_res)
-                response.status_code = 200
-                return response
-            except Exception as e:
+                    business_object.status_code = 200
+                    return business_object
+                except Exception as e:
+                    response = jsonify({
+                        'response_message': str(e),
+                        'status_code': 500
+                    })
+                    return response
+            else:
                 response = jsonify({
-                    'response_message': str(e)
+                    'response_message': 'You have not registered a business!',
+                    'status_code': 204
                 })
-
-                response.status_code = 500
-                return response
-        else:
-            response = jsonify({
-                'response_message': 'Businesses not found is this category!'
-            })
-            response.status_code = 404
             return response
-
-
-class BusinessLocation(Resource):
-
-    """Illustrate API endpoints to view businesses in the same location."""
-
-    @jwt_required
-    def get(self):
-        """View registered businesses based on location.
-        ---
-        tags:
-            -   businesses
-        parameters:
-            -   in: query
-                name: location
-                description: business location
-                required: true
-                schema:
-                    type: string
-            -   in: query
-                name: start
-                description: pagination starting number
-                required: true
-                schema:
-                    type: integer
-            -   in: query
-                name: limit
-                description: pagination ending number
-                required: true
-                schema:
-                    type: integer
-            -   in: header
-                name: authorization
-                description: JSON Web Token
-                type: string
-                required: true
-                x-authentication: Bearer
-        responses:
-            200:
-                description: A list of dictionaries of businesses
-                schema:
-                    name: business_list
-                    properties:
-                        id:
-                            type: integer
-                            description: a unique business id
-                        name:
-                            type: string
-                            description: a unique business name
-                        category:
-                            type: string
-                            description: used to group businesses
-                        location:
-                            type: string
-                            description: describes physical location
-                        summary:
-                            type: string
-                            description: business description
-                        created_by:
-                            type: integer
-                            description: describes the id of the business owner
-            404:
-                description: Business location not found
-                schema:
-                    properties:
-                        response_message:
-                            type: string
-            500:
-                description: Internal server error
-                schema:
-                    properties:
-                        response_message:
-                            type: string
-        """
-
-        user_request = request.args.get('q')
-        result_start = int(request.args.get('start'))
-        result_limit = int(request.args.get('limit'))
-
-        businesses = Business.query.filter_by(location=user_request).all()
-        if businesses:
-            try:
-                business_list = []
-
-                for business in businesses:
-                    _object = {
-                        'id': business.id,
-                        'name': business.name,
-                        'category': business.category,
-                        'location': business.location,
-                        'summary': business.summary,
-                        'created_by': business.created_by
-                    }
-                    business_list.append(_object)
-
-                pagination_res = get_paginated_list(business_list,
-                                                    '/api/v1/business/search',
-                                                    result_start, result_limit)
-                response = jsonify(pagination_res)
-                response.status_code = 200
-                return response
-            except Exception as e:
-                response = jsonify({
-                    'response_message': str(e)
-                })
-
-                response.status_code = 500
-                return response
         else:
             response = jsonify({
-                'response_message': 'Businesses not found in this location!'
+                'response_message': 'User is not registered!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
 
 
@@ -809,7 +585,7 @@ class SearchBusiness(Resource):
         parameters:
             -   in: query
                 name: name
-                description: business name
+                description: business name/category/location
                 required: true
                 schema:
                     type: string
@@ -869,16 +645,21 @@ class SearchBusiness(Resource):
                             type: string
         """
 
-        user_request = request.args.get('q')
+        user_request = request.args.get('q').lower()
         result_start = int(request.args.get('start'))
         result_limit = int(request.args.get('limit'))
-        businesses = Business.query.filter(
-            Business.name.startswith(user_request)).all()
-        if businesses:
+        found_businesses = []
+        all_businesses = Business.query.all()
+        for row in all_businesses:
+            if row.name.startswith(user_request) or \
+                row.category.startswith(user_request) or \
+                    row.location.startswith(user_request):
+                        found_businesses.append(row)
+        if found_businesses:
             try:
                 business_list = []
 
-                for business in businesses:
+                for business in found_businesses:
                     _object = {
                         'id': business.id,
                         'name': business.name,
@@ -897,26 +678,23 @@ class SearchBusiness(Resource):
                 return response
             except Exception as e:
                 response = jsonify({
-                    'response_message': str(e)
+                    'response_message': str(e),
+                    'status_code': 500
                 })
-
-                response.status_code = 500
                 return response
         else:
             response = jsonify({
-                'response_message': 'Business not found!'
+                'response_message': 'Business not found!',
+                'status_code': 404
             })
-            response.status_code = 404
             return response
 
 
-business_api = Blueprint('views.business', __name__)
+business_api = Blueprint('business.views', __name__)
 api = Api(business_api)
 api.add_resource(Businesses, '/businesses', endpoint='businesses')
 api.add_resource(OneBusiness,
                  '/businesses/<int:business_id>', endpoint='business')
 api.add_resource(UserBusiness,
                  '/businesses/user/<int:user_id>', endpoint='user_business')
-api.add_resource(BusinessCategory, '/businesses/category', endpoint='category')
-api.add_resource(BusinessLocation, '/businesses/location', endpoint='location')
 api.add_resource(SearchBusiness, '/businesses/search', endpoint='search')

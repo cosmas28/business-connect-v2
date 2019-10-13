@@ -5,6 +5,10 @@ This module provides API endpoints to register users,
 
 """
 
+import re
+import os
+from itsdangerous import URLSafeTimedSerializer as Serializer
+
 from flask import Blueprint, request, make_response, jsonify
 from flask_jwt_extended import (
     create_access_token, create_refresh_token, jwt_required,
@@ -15,7 +19,9 @@ from werkzeug.security import generate_password_hash
 
 from app.models import User, RevokedToken
 from app.models import db
-from app.helper_functions import email_exist, username_exist, valid_password
+from app.utils import (
+    email_exist, username_exist, valid_password, valid_email, check_key_error,
+    send_mail)
 
 
 class RegisterUser(Resource):
@@ -72,25 +78,36 @@ class RegisterUser(Resource):
         """
 
         req_data = request.get_json()
-        email = req_data.get('email')
-        username = req_data.get('username')
+        email = re.sub(r'\s+', '', str(req_data.get('email'))).lower()
+        username = re.sub(r'\s+', '', str(req_data.get('username'))).lower()
         first_name = req_data.get('first_name')
         last_name = req_data.get('last_name')
         password = req_data.get('password')
         confirm_password = req_data.get('confirm_password')
+        user_data = dict(
+            email=email, username=username, first_name=first_name,
+            last_name=last_name, password=password,
+            confirm_password=confirm_password)
 
+        if check_key_error(**user_data):
+            return jsonify(check_key_error(**user_data))
         not_valid_password = valid_password(password, confirm_password)
         registered = username_exist(username) or email_exist(email)
         if not email or not username:
             response_message = jsonify({
-                'message': 'Email and Username are required!'})
-            response_message.status_code = 406
+                'message': 'Email and Username are required!',
+                'status_code': 406})
+            return response_message
+        elif not valid_email(email):
+            response_message = jsonify({
+                'message': 'Invalid email address!',
+                'status_code': 406})
             return response_message
         elif not password or not confirm_password:
             response_message = jsonify({
-                'message': 'Password and Confirmation password are required!'
+                'message': 'Password and Confirmation password are required!',
+                'status_code': 406
             })
-            response_message.status_code = 406
             return response_message
         elif not_valid_password:
             response_message = jsonify(not_valid_password)
@@ -103,18 +120,17 @@ class RegisterUser(Resource):
                             password=password)
                 user.save()
                 response_message = jsonify({
-                    'message': 'You have successfully created an account!'
+                    'message': 'You have successfully created an account!',
+                    'status_code': 201
                 })
-
-                response_message.status_code = 201
                 return response_message
             except Exception as error:
                 response_message = {'message': str(error)}
                 return make_response(jsonify(response_message))
         else:
             response_message = jsonify({
-                'message': 'User already exists. Sign in!'})
-            response_message.status_code = 406
+                'message': 'User already exists. Sign in!',
+                'status_code': 406})
             return response_message
 
 
@@ -163,29 +179,37 @@ class LoginUser(Resource):
 
         """
         req_data = request.get_json()
+        if 'email' not in req_data:
+            response_message = jsonify({
+                'message': 'email key is required!',
+                'status_code': 400})
+            return response_message
+        if 'password' not in req_data:
+            response_message = jsonify({
+                'message': 'password key is required!',
+                'status_code': 400})
+            return response_message
         email = req_data.get('email')
         password = req_data.get('password')
 
         if not email_exist(email):
             response = jsonify({
                 'response_message': 'Invalid email!',
+                'status_code': 401
             })
-            response.status_code = 401
             return response
 
         user = User.query.filter_by(email=email).first()
         if email_exist(email) and user.check_password(password):
             try:
                 access_token = create_access_token(identity=user.id)
-                refresh_token = create_refresh_token(identity=user.id)
                 if access_token:
                     response = jsonify({
                         'response_message': 'You logged in successfully!',
                         'access_token': access_token,
-                        'refresh_token': refresh_token,
-                        'user_id': user.id
+                        'user_id': user.id,
+                        'status_code': 200
                     })
-                    response.status_code = 200
                     return response
             except Exception as error:
                 response = {
@@ -194,9 +218,9 @@ class LoginUser(Resource):
 
                 return make_response(jsonify(response))
         response = jsonify({
-            'response_message': 'Invalid email or password!'
+            'response_message': 'Invalid email or password!',
+            'status_code': 401
         })
-        response.status_code = 401
         return response
 
 
@@ -221,15 +245,15 @@ class UserLogoutAccess(Resource):
             revoked_token = RevokedToken(jti)
             revoked_token.save()
             response = jsonify({
-                'response_message': 'Log out has been successful!'
+                'response_message': 'Log out has been successful!',
+                'status_code': 200
             })
-            response.status_code = 200
             return response
         except Exception as error:
             response = jsonify({
-                'response_message': str(error)
+                'response_message': str(error),
+                'status_code': 500
             })
-            response.status_code = 500
             return response
 
 
@@ -256,15 +280,15 @@ class UserLogoutRefresh(Resource):
             revoked_token = RevokedToken(jti)
             revoked_token.save()
             response = jsonify({
-                'response_message': 'Log out has been successful!'
+                'response_message': 'Log out has been successful!',
+                'status_code': 200
             })
-            response.status_code = 200
             return response
         except Exception as error:
             response = jsonify({
-                'response_message': str(error)
+                'response_message': str(error),
+                'status_code': 500
             })
-            response.status_code = 500
             return response
 
 
@@ -292,18 +316,90 @@ class TokenRefresh(Resource):
         access_token = create_refresh_token(identity=current_user)
 
         response = jsonify({
-            'access_token': access_token
+            'access_token': access_token,
+            'status_code': 200
         })
-
-        response.status_code = 200
         return response
+
+
+class ConfirmResetPasswordEmail(Resource):
+
+    """Illustrate API endpoint to confirm and validate user email."""
+
+    def post(self):
+        """Reset user password validate email.
+        ---
+        tags:
+            - User authentication and authorization
+        parameters:
+            -   in: body
+                name: body
+                schema:
+                    required:
+                        - email
+                    properties:
+                        email:
+                            type: string
+                            description: user email
+        responses:
+            200:
+                description: Email sent successfully
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+            406:
+                description: Invalid email, Null required parameters
+                schema:
+                    properties:
+                        response_message:
+                            type: string
+        """
+        req_data = request.get_json()
+        email = req_data.get('email')
+
+        if not email:
+            response_message = jsonify({
+                'response_message': 'Email is required!',
+                'status_code': 406})
+            return response_message
+        if email_exist(email):
+            try:
+                serializer = Serializer(
+                    os.getenv('SECRET_KEY'), salt='email-confirmation-salt')
+                token = serializer.dumps(email)
+                user = User.query.filter_by(email=email).first()
+                link = 'http://127.0.0.1:5000/api/v2/auth/reset_password/'\
+                    + token
+                mail_body = 'Hello ' + user.username + ', '\
+                            'You or someone else has requested that a '\
+                            'new password be generated for your account. '\
+                            'If you made this request, then please follow'\
+                            'this link:' + link
+                mail_response = send_mail(email, mail_body)
+                response = jsonify({
+                    'response_message': mail_response,
+                    'token': token,
+                    'status_code': 200
+                })
+                return response
+            except Exception as error:
+                response_message = jsonify({
+                    'message': str(error),
+                    'status_code': 500})
+                return response_message
+        else:
+            response_message = jsonify({
+                'response_message': 'Email not registered',
+                'status_code': 406})
+            return response_message
 
 
 class ResetPassword(Resource):
 
     """Illustrate API endpoint to reset user password."""
 
-    def post(self):
+    def post(self, token):
         """Reset user password.
         ---
         tags:
@@ -341,48 +437,41 @@ class ResetPassword(Resource):
                             type: string
         """
         req_data = request.get_json()
-        email = req_data.get('email')
         password = req_data.get('password')
         confirm_password = req_data.get('confirm_password')
 
         not_valid_password = valid_password(password, confirm_password)
-        if not email:
+        if not password or not confirm_password:
             response_message = jsonify({
-                'response_message': 'Email is required!'})
-            response_message.status_code = 406
-            return response_message
-        elif not password or not confirm_password:
-            response_message = jsonify({
-                'response_message': 'Password is required!'})
-            response_message.status_code = 406
+                'response_message': 'Password is required!',
+                'status_code': 406})
             return response_message
         elif not_valid_password:
             response_message = jsonify(not_valid_password)
             response_message.status_code = 406
             return response_message
-        if email_exist(email):
-            try:
-                User.query.filter_by(email=email).update(dict(
-                    password=generate_password_hash(password)))
-                db.session.commit()
+        try:
+            serializer = Serializer(
+                os.getenv('SECRET_KEY'), salt='email-confirmation-salt')
+            user_email = serializer.loads(
+                token, salt='email-confirmation-salt', max_age=300)
+            User.query.filter_by(email=user_email).update(dict(
+                password=generate_password_hash(password)))
+            db.session.commit()
 
-                response = jsonify({
-                    'response_message': 'Password reset successfully!'
-                })
-                response.status_code = 200
-                return response
-            except Exception as error:
-                response_message = jsonify({'message': str(error)})
-                response_message.status_code = 500
-                return response_message
-        else:
+            response = jsonify({
+                'response_message': 'Password reset successfully!',
+                'status_code': 200
+            })
+            return response
+        except Exception as error:
             response_message = jsonify({
-                'response_message': 'Email not registered'})
-            response_message.status_code = 406
+                'response_message': str(error),
+                'status_code': 500})
             return response_message
 
 
-user_api = Blueprint('views.user', __name__)
+user_api = Blueprint('users.views', __name__)
 api = Api(user_api)
 api.add_resource(RegisterUser, '/register', endpoint='register')
 api.add_resource(LoginUser, '/login', endpoint='login')
@@ -390,4 +479,8 @@ api.add_resource(TokenRefresh, '/refresh_token', endpoint='refresh_token')
 api.add_resource(UserLogoutAccess, '/logout', endpoint='logout')
 api.add_resource(UserLogoutRefresh,
                  '/logout_refresh_token', endpoint='logout_refresh_token')
-api.add_resource(ResetPassword, '/reset_password', endpoint='reset_password')
+api.add_resource(
+    ResetPassword, '/reset_password/<token>', endpoint='reset_password')
+api.add_resource(
+    ConfirmResetPasswordEmail, '/reset_password/confirm_email',
+    endpoint='confirm_password')
