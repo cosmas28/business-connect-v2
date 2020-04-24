@@ -22,11 +22,9 @@ class User(db.Model):
     _reviews = db.relationship(
         'Reviews', order_by='Reviews.id', cascade='all, delete-orphan')
 
-    def __init__(self, email, username, first_name, last_name, password):
+    def __init__(self, email, username, password):
         self.email = email.lower()
         self.username = username.lower()
-        self.first_name = first_name.capitalize()
-        self.last_name = last_name.capitalize()
         self.password = self.set_password(password)
 
     def set_password(self, password):

@@ -80,18 +80,13 @@ class RegisterUser(Resource):
         req_data = request.get_json()
         email = re.sub(r'\s+', '', str(req_data.get('email'))).lower()
         username = re.sub(r'\s+', '', str(req_data.get('username'))).lower()
-        first_name = req_data.get('first_name')
-        last_name = req_data.get('last_name')
         password = req_data.get('password')
-        confirm_password = req_data.get('confirm_password')
         user_data = dict(
-            email=email, username=username, first_name=first_name,
-            last_name=last_name, password=password,
-            confirm_password=confirm_password)
+            email=email, username=username, password=password)
 
         if check_key_error(**user_data):
             return jsonify(check_key_error(**user_data))
-        not_valid_password = valid_password(password, confirm_password)
+        not_valid_password = valid_password(password)
         registered = username_exist(username) or email_exist(email)
         if not email or not username:
             response_message = jsonify({
@@ -103,9 +98,9 @@ class RegisterUser(Resource):
                 'message': 'Invalid email address!',
                 'status_code': 406})
             return response_message
-        elif not password or not confirm_password:
+        elif not password:
             response_message = jsonify({
-                'message': 'Password and Confirmation password are required!',
+                'message': 'Password is required!',
                 'status_code': 406
             })
             return response_message
@@ -116,7 +111,6 @@ class RegisterUser(Resource):
         if not registered:
             try:
                 user = User(email=email, username=username,
-                            first_name=first_name, last_name=last_name,
                             password=password)
                 user.save()
                 response_message = jsonify({
@@ -440,7 +434,7 @@ class ResetPassword(Resource):
         password = req_data.get('password')
         confirm_password = req_data.get('confirm_password')
 
-        not_valid_password = valid_password(password, confirm_password)
+        not_valid_password = valid_password(password)
         if not password or not confirm_password:
             response_message = jsonify({
                 'response_message': 'Password is required!',

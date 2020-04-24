@@ -24,7 +24,7 @@ def username_exist(user_name):
     return user_name
 
 
-def valid_password(password, confirm_password):
+def valid_password(password):
     """Check whether the password have more than 6 characters."""
 
     if password.isalpha():
@@ -51,10 +51,6 @@ def valid_password(password, confirm_password):
     if len(password) <= 6:
         response_message = {
             'message': 'Password must be more than 6 characters!'}
-        return response_message
-    if password not in confirm_password:
-        response_message = {
-            'message': 'Password does not match the confirmation password!'}
         return response_message
 
 
