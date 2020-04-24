@@ -5,7 +5,7 @@ This platform creates awareness for businesses and gives the users the ability
 to write reviews about the businesses they have interacted with.
 
 ### API installation
-To set up WeConnect API, make sure that you have python 3.6, postman and pip installed.
+To set up WeConnect API, make sure that you have python 3.6 or more, postman and pip installed.
 
 * Clone the Repo into your local directory.
 
