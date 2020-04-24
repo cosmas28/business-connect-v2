@@ -71,7 +71,7 @@ class Businesses(Resource):
                             type: string
         """
         req_data = request.get_json(force=True)
-        business_name = re.sub(r'\s+', '', str(req_data.get('name'))).lower()
+        business_name = req_data.get('name')
         business_category = req_data.get('category')
         business_location = req_data.get('location')
         business_summary = req_data.get('summary')
@@ -93,15 +93,24 @@ class Businesses(Resource):
             return response
         if not business_name_registered(business_name):
             try:
-                business = Business(business_name, business_category,
+                business_to_save = Business(business_name, business_category,
                                     business_location,
                                     business_summary, created_by)
-                business.save()
-
+                business_to_save.save()
+                business = Business.query.filter_by(name=business_name).first()
+                business_object = {
+                        'id': business.id,
+                        'name': business.name,
+                        'category': business.category,
+                        'location': business.location,
+                        'summary': business.summary,
+                        'created_by': business.created_by
+                    }
                 response = jsonify({
                     'response_message':
                         'Business has been registered successfully!',
-                    'status_code': 201
+                    'status_code': 201,
+                    'data': business_object
                 })
                 return response
             except Exception as error:
@@ -374,14 +383,17 @@ class OneBusiness(Resource):
 
                 new_business = Business.query.filter_by(id=business_id).first()
                 business_object = jsonify({
-                    'id': new_business.id,
-                    'name': new_business.name,
-                    'category': new_business.category,
-                    'location': new_business.location,
-                    'summary': new_business.summary,
-                    'created_by': new_business.created_by
+                    'message': 'Business successfuly updated!',
+                    'status_code': 200,
+                    'data': {
+                        'id': new_business.id,
+                        'name': new_business.name,
+                        'category': new_business.category,
+                        'location': new_business.location,
+                        'summary': new_business.summary,
+                        'created_by': new_business.created_by
+                    }
                 })
-                business_object.status_code = 200
                 return business_object
             except Exception as e:
                 response = jsonify({
@@ -457,9 +469,16 @@ class OneBusiness(Resource):
                 db.session.delete(business)
                 db.session.commit()
                 response = jsonify({
-                    'response_message':
-                        'Business has been deleted successfully!',
-                        'status_code': 204
+                    'message': 'Business successfuly deleted!',
+                    'status_code': 204,
+                    'data': {
+                        'id': business.id,
+                        'name': business.name,
+                        'category': business.category,
+                        'location': business.location,
+                        'summary': business.summary,
+                        'created_by': business.created_by
+                    }
                 })
                 return response
             except Exception as e:
