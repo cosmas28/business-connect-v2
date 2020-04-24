@@ -32,11 +32,6 @@ def valid_password(password, confirm_password):
             'message': 'Password must contain different characters!',
             'status_code': 406}
         return response_message
-    if not password.isalnum():
-        response_message = {
-            'message': 'Password must contain alphanumeric characters!',
-            'status_code': 406}
-        return response_message
     if password.islower():
         response_message = {
             'message': 'Password must contain at least one capital character!',
