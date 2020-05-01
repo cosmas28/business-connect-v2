@@ -98,13 +98,15 @@ class Businesses(Resource):
                                     business_summary, created_by)
                 business_to_save.save()
                 business = Business.query.filter_by(name=business_name).first()
+                user = User.query.filter_by(id=business.created_by).first()
                 business_object = {
                         'id': business.id,
                         'name': business.name,
                         'category': business.category,
                         'location': business.location,
                         'summary': business.summary,
-                        'created_by': business.created_by
+                        'created_by': business.created_by,
+                        'user_name': user.username
                     }
                 response = jsonify({
                     'response_message':
@@ -182,13 +184,15 @@ class Businesses(Resource):
             business_result = []
 
             for business in businesses:
+                user = User.query.filter_by(id=business.created_by).first()
                 _object = {
                     'id': business.id,
                     'name': business.name,
                     'category': business.category,
                     'location': business.location,
                     'summary': business.summary,
-                    'created_by': business.created_by
+                    'created_by': business.created_by,
+                    'user_name': user.username
                 }
                 business_result.append(_object)
 
