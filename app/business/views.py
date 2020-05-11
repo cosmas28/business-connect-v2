@@ -386,6 +386,7 @@ class OneBusiness(Resource):
                 db.session.commit()
 
                 new_business = Business.query.filter_by(id=business_id).first()
+                user = User.query.filter_by(id=new_business.created_by).first()
                 business_object = jsonify({
                     'message': 'Business successfuly updated!',
                     'status_code': 200,
@@ -395,7 +396,8 @@ class OneBusiness(Resource):
                         'category': new_business.category,
                         'location': new_business.location,
                         'summary': new_business.summary,
-                        'created_by': new_business.created_by
+                        'created_by': new_business.created_by,
+                        'user_name': user.username
                     }
                 })
                 return business_object
